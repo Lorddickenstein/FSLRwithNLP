@@ -1,3 +1,5 @@
 print("Hello, World!")
 
-input("What is your name?")
+name = input("What is your name? ")
+print("Hello {}. How do you do?".format(name))
+

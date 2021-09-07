@@ -1,0 +1,38 @@
+Terminologies
+	Directory - Folders
+	Repository - Project, of the Folder/place where your project is kept
+	Git - Tool the tracks the changes overtime
+	Github - A website to host your repositories online
+	
+Git Hub Commands (command line)
+	git
+		- shows the list of commands in git hub
+		
+	git config --global user.email "jddestacamento@iskolarngbayan.pup.ph"
+	git config --global user.name "lord dickenstein"
+	(ommit --global to set the identity only in this repository)
+
+	git clone [clone url from git hub] 
+		ex. git close https://github.com/Lorddickenstein/gitTutorial.git
+		- get the repository from github or any other hosts into a folder on your local machine
+
+	git status
+		- checks if there is any differences in the project
+
+	git add [file name] or git add -A (add everything in the folder)
+		- specify a file to track from the project directory not currently added to git hub
+		
+	git commit -m "Enter message you want i.e. Added Hello.py"
+		- saves your files in Git
+		- if -m is forgotten and stuck in a command read key
+			- press esc + ':' + wq + enter
+			or add message then the key
+	
+	git push
+		- sync the project from local directory to the directory in github
+		- upload git to a remote repository such as github
+		
+	git pull
+		- sync the project from the github directory to your local directory
+		- must be in the directory
+		- download changes from remote repo to your local machine, opposite of git push

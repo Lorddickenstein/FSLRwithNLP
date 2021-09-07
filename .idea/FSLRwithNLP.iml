@@ -5,5 +5,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Python" />
+    <orderEntry type="module" module-name="gitTutorial" />
+    <orderEntry type="module" module-name="test" />
   </component>
 </module>

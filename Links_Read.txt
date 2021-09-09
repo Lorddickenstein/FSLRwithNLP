@@ -1,11 +1,27 @@
 A Comprehensive Guide to Convolutional Neural Networks
 https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53
+-read
 
 Introduction to Convolutional Neural Networks (CNN)
 https://www.analyticsvidhya.com/blog/2021/05/convolutional-neural-networks-cnn/
+-read
 
 Introduction to Convolutional Neural Networks (CNN) with TensorFlow
 https://towardsdatascience.com/introduction-to-convolutional-neural-networks-cnn-with-tensorflow-57e2f4837e18
+-unread
+
+What are convolutional neural networks?
+https://www.ibm.com/cloud/learn/convolutional-neural-networks
+-unread
+
+Convolutional Neural Networks with TensorFlow
+https://www.datacamp.com/community/tutorials/cnn-tensorflow-python
+-unread
 
 The Complete TensorFlow Tutorial for Newbies
 https://towardsdatascience.com/the-complete-tensorflow-tutorial-for-newbies-dc3acc1310f8
+-ongoing unread
+
+Step-by-step Guide to Building Your Own Neural Network From Scratch
+https://towardsdatascience.com/step-by-step-guide-to-building-your-own-neural-network-from-scratch-df64b1c5ab6e
+-unread

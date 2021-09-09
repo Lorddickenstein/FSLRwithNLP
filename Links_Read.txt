@@ -1,0 +1,8 @@
+A Comprehensive Guide to Convolutional Neural Networks
+https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53
+
+Introduction to Convolutional Neural Networks (CNN)
+https://www.analyticsvidhya.com/blog/2021/05/convolutional-neural-networks-cnn/
+
+Introduction to Convolutional Neural Networks (CNN) with TensorFlow
+https://towardsdatascience.com/introduction-to-convolutional-neural-networks-cnn-with-tensorflow-57e2f4837e18

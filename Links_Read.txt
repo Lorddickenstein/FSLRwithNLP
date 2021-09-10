@@ -20,7 +20,7 @@ https://www.datacamp.com/community/tutorials/cnn-tensorflow-python
 
 The Complete TensorFlow Tutorial for Newbies
 https://towardsdatascience.com/the-complete-tensorflow-tutorial-for-newbies-dc3acc1310f8
--ongoing unread
+-ongoing unread [useless]
 
 Step-by-step Guide to Building Your Own Neural Network From Scratch
 https://towardsdatascience.com/step-by-step-guide-to-building-your-own-neural-network-from-scratch-df64b1c5ab6e

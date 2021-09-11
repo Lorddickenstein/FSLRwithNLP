@@ -1,2 +1,0 @@
-Rock-Paper-Scissors Images
-https://www.kaggle.com/drgfreeman/rockpaperscissors

@@ -1,0 +1,11 @@
+git reset [file-name]
+	When trying to undo changes after setting the stage for commiting and adding the changes, use this command. It will unstage the changes
+
+git reset HEAD~N (Pointer to N commit where 1 is last commit)
+	When trying to undo a commit use this command. It will unstage and uncommit the changes.
+	
+git log
+	when undoing the commits, use this to see the history of commits done. It is listed in reverse chronological order. Use the hash id to get the commit that you want to uncommit.
+	
+git reset --hard [hash id]
+	unstage and remove any changes at a certain point

@@ -1,0 +1,35 @@
+Git Branching
+	- used to isolate changes/modification from the master code so that changes will only temporarily affect the current branch instead of the whole master code.
+	
+Commands
+	git branch
+		- shows current branch location
+	git checkout [branch name]
+		- switches between branches, but before you do, ALWAYS COMMIT FIRST SO THAT THE CHANGES IS NOT OVERWRITTEN
+	git checkout -b [new-branch-name]
+		- create a new branch
+		- other branches are commonly categorized as Feature Branch, Hot-Fix Branch, etc
+	git diff [branch-name]
+		- used to check the modification or differences before merging two versions of the code
+	{from master/base branch} git merge [branch-name]
+		- merge the two branches together
+
+	Notes: Before pushing changes from branch to git hub, it will ask which branch you want to push. To do this, you have to set the remote as upstreamm. To push the current branch,
+	use git push --set-upstream origin [branch-name] or -u as short hand for --set-upstream
+	
+	Now go to your git hub project, and manually merge the changes by accepting the pull-request. Review first the codes before confirming the merge.
+	
+Pull-request
+	- "a request to pull your code into another branch", to merge branch together
+	- once merged, the feature branch will be deleted and you have to create another branch if you want to modify another code.
+	
+	The branch is merged on git hub. To get the updated codes, use git pull to automatically download the new codes into your local machine.
+	
+	When the branch is not longer useful, you can delete it using the code:
+	git branch -d [branch-name]
+	
+Merge Conflicts
+	Two people can modify the code at the same time, you have to manually choose which one is to be merged to the main branch.
+	
+	git commit -am "I have modified a single file."
+		- adds and commit at the same time modified files and not newly-created files

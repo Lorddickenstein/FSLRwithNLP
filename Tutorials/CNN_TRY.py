@@ -6,11 +6,11 @@ import cv2
 import pandas as pd
 
 def test_model_from_dataset(x_train, y_train, x_test, y_test, model_name):
-    model = keras.models.load_model('Fingerspelling(16, 32, 64)_(0.5030-0.9015).h5')
-    print(y_train[26])
-    plt.imshow(x_train[26], cmap='gray')
+    model = keras.models.load_model(model_name)
+    print(y_train[10170])
+    plt.imshow(x_train[10170], cmap='gray')
     plt.show()
-    x_train = x_train[26].reshape(-1, 28, 28, 1)
+    x_train = x_train[10170].reshape(-1, 28, 28, 1)
     print(x_train)
     print(x_train.shape)
     print(x_train.ndim)
@@ -27,34 +27,12 @@ def test_model(img):
     print(find_match(class_x[0]))
 
 def find_match(x):
-    spell = {
-        0: 'A',
-        1: 'B',
-        2: 'C',
-        3: 'D',
-        4: 'E',
-        5: 'F',
-        6: 'G',
-        7: 'H',
-        8: 'I',
-        9: ' ',
-        10: 'K',
-        11: 'L',
-        12: 'M',
-        13: 'N',
-        14: 'O',
-        15: 'P',
-        16: 'Q',
-        17: 'R',
-        18: 'S',
-        19: 'T',
-        20: 'U',
-        21: 'V',
-        22: 'W',
-        23: 'X',
-        24: 'Y',
-        25: ' ',
-    }
+    spell = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E',
+             5: 'F', 6: 'G', 7: 'H', 8: 'I', 9: ' ',
+             10: 'K', 11: 'L',12: 'M', 13: 'N', 14: 'O',
+             15: 'P', 16: 'Q', 17: 'R', 18: 'S', 19: 'T',
+             20: 'U', 21: 'V', 22: 'W', 23: 'X', 24: 'Y',
+             25: ' ', }
     return spell[x]
 
 def show_image(img):
@@ -139,10 +117,12 @@ def create_model(x_train, y_train, x_test, y_test):
     model = keras.models.Sequential()
     model.add(keras.layers.Conv2D(16, kernel_size=(3, 3), activation='relu', input_shape=(28, 28, 1)))
     model.add(keras.layers.Conv2D(32, kernel_size=(3, 3), activation='relu'))
+    model.add(keras.layers.Conv2D(64, kernel_size=(3, 3), activation='relu'))
     model.add(keras.layers.MaxPool2D(pool_size=(2, 2)))
     model.add(keras.layers.Dropout(0.25))
+    # try to add with padding
     model.add(keras.layers.Flatten())
-    model.add(keras.layers.Dense(64, activation='relu'))
+    model.add(keras.layers.Dense(128, activation='relu'))
     model.add(keras.layers.Dropout(0.50))
     model.add(keras.layers.Dense(26, activation='softmax'))
 
@@ -163,9 +143,10 @@ img = preprocess_image(img)
 # show_image(img)
 test_model(img)
 
-# model_name = "Fingerspelling(16, 32, 64)_(0.5030-0.9015).h5"
-# model_name = "FingerSpelling(32, 64, 128)_(0.4652-0.9072).h5"
+# # model_name = "Fingerspelling(16, 32, 64)_(0.5030-0.9015).h5"
+# # model_name = "FingerSpelling(32, 64, 128)_(0.4652-0.9072).h5"
+# model_name = "test_(0.5979_0.9139).h5"
 # x_train, y_train, x_test, y_test = import_data()
-# model = create_model(x_train, y_train, x_test, y_test)
-# save_model(model, model_name)
+# # model = create_model(x_train, y_train, x_test, y_test)
+# # save_model(model, model_name)
 # test_model_from_dataset(x_train, y_train, x_test, y_test, model_name)

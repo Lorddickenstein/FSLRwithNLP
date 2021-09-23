@@ -20,7 +20,7 @@ def test_model_from_dataset(x_train, y_train, x_test, y_test, model_name):
     print(find_match(class_x[0]))
 
 def test_model(img):
-    model = keras.models.load_model('FingerSpelling(32, 64, 128)_(0.4652-0.9072).h5')
+    model = keras.models.load_model('Models\FingerSpelling(32, 64, 128)_(0.4652-0.9072).h5')
     prediction = model.predict(img)
     print(prediction)
     class_x = np.argmax(prediction, axis=1)
@@ -35,37 +35,52 @@ def find_match(x):
              25: ' ', }
     return spell[x]
 
-def show_image(img):
-    plt.imshow(img, cmap='gray')
-    plt.show()
-    # cv2.imshow('test', img)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+def show_image(name, img):
+    # plt.imshow(img, cmap='gray')
+    # plt.show()
+    cv2.imshow(name, img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
 def preprocess_image(img):
     """Smoothen img using Gausian blur"""
-    # gaussian = cv2.GaussianBlur(img, (11, 11), 0)
-    # show_image(gaussian)
-    # img = cv2.blur(img, (5, 5), 0)
-    # show_image(blur)
-    # median = cv2.medianBlur(img, 5)
-    # show_image(median)
-    """Reshape img to 28x28"""
-    img_size = 28
-    img = cv2.resize(img, (img_size, img_size))
+    blur_img = cv2.GaussianBlur(img, (5, 5), 0)
+    # blur_img = cv2.blur(img, (5, 5), 0)
+    # blur_img = cv2.medianBlur(img, 5)
+    # show_image('blur', blur_img)
+
+    """Threshold Image using Otsu's Binarization"""
+    _, th = cv2.threshold(blur_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    # show_image('threshold', th)
+
+    # canny edge
+
+    """Apply morphological transformation"""
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (20, 20))
+    morph = cv2.morphologyEx(th, cv2.MORPH_CLOSE, kernel)
+    show_image('morph', morph)
+
+    """Apply mask to extract object"""
+    mask = cv2.bitwise_and(img, img, mask=morph)
+    show_image('mask', mask)
 
     """Normalize img"""
-    img = img.astype('float32')
-    img /= 255
-    show_image(img)
+    norm_img = mask.astype('float32')
+    norm_img /= 255
+    show_image('normalized', norm_img)
+
+    """Reshape img to 28x28"""
+    img_size = 28
+    resize_img = cv2.resize(norm_img, (img_size, img_size), interpolation=cv2.INTER_CUBIC)
+    plt.imshow(resize_img, cmap='gray')
+    plt.show()
 
     """Expand img into 4d"""
-    img = np.expand_dims(img, axis=(0, -1))
+    resize_img = np.expand_dims(resize_img, axis=(0, -1))
     # print(img)
-    print("Shape", img.shape)
-    print(img.ndim)
-    # show_image(img)
-    return img
+    print("Shape", resize_img.shape)
+    print(resize_img.ndim)
+    return resize_img
 
 def import_data():
     """@doc Get the train datasets"""
@@ -73,10 +88,16 @@ def import_data():
         'D:/Documents/Thesis/FSLRwithNLP/Datasets/Fingerspelling/sign_mnist_train/sign_mnist_train.csv')
     # print(df_train.head())
 
-    x_train = df_train.drop(columns=['label'])
-    y_train = df_train[['label']]
+    x_sets = df_train.drop(columns=['label'])
+    y_sets = df_train[['label']]
+
+    x_train = x_sets[:22000]
+    y_train = y_sets[:22000]
     # print(x_train.head())
     # print(y_train.head())
+
+    x_valid = x_sets[22001:]
+    y_valid = y_sets[22001:]
 
     """@doc Get the test datasets"""
     df_test = pd.read_csv('D:/Documents/Thesis/FSLRwithNLP/Datasets/Fingerspelling/sign_mnist_test/sign_mnist_test.csv')
@@ -116,8 +137,8 @@ def create_model(x_train, y_train, x_test, y_test):
     """Create the model"""
     model = keras.models.Sequential()
     model.add(keras.layers.Conv2D(16, kernel_size=(3, 3), activation='relu', input_shape=(28, 28, 1)))
-    model.add(keras.layers.Conv2D(32, kernel_size=(3, 3), activation='relu'))
-    model.add(keras.layers.Conv2D(64, kernel_size=(3, 3), activation='relu'))
+    model.add(keras.layers.Conv2D(32, kernel_size=(3, 3), activation='relu', padding='same'))
+    model.add(keras.layers.Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
     model.add(keras.layers.MaxPool2D(pool_size=(2, 2)))
     model.add(keras.layers.Dropout(0.25))
     # try to add with padding
@@ -126,7 +147,8 @@ def create_model(x_train, y_train, x_test, y_test):
     model.add(keras.layers.Dropout(0.50))
     model.add(keras.layers.Dense(26, activation='softmax'))
 
-    model.compile(loss=keras.losses.categorical_crossentropy, optimizer=keras.optimizers.Adam(lr=0.001),
+    model.summary()
+    model.compile(loss=keras.losses.categorical_crossentropy, optimizer=keras.optimizers.Adam,
                   metrics=['accuracy'])
     model.fit(x_train, y_train, batch_size=128, epochs=20, validation_data=(x_test, y_test))
     print(model.evaluate(x_test, y_test))
@@ -138,15 +160,13 @@ def save_model(model, name):
 path = "D:\Documents\Thesis\FSLRwithNLP\Datasets\Test_Images"
 file_name = "Y2.jpg"
 img = cv2.imread(os.path.join(path, file_name), 0)
-# show_image(img)
 img = preprocess_image(img)
-# show_image(img)
 test_model(img)
 
-# # model_name = "Fingerspelling(16, 32, 64)_(0.5030-0.9015).h5"
-# # model_name = "FingerSpelling(32, 64, 128)_(0.4652-0.9072).h5"
-# model_name = "test_(0.5979_0.9139).h5"
+# # model_name = "\Models\Fingerspelling(16, 32, 64)_(0.5030-0.9015).h5"
+# # model_name = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\\test.h5"
+# model_name = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\\test_(0.5979_0.9139).h5"
 # x_train, y_train, x_test, y_test = import_data()
-# # model = create_model(x_train, y_train, x_test, y_test)
-# # save_model(model, model_name)
+# model = create_model(x_train, y_train, x_test, y_test)
+# save_model(model, model_name)
 # test_model_from_dataset(x_train, y_train, x_test, y_test, model_name)

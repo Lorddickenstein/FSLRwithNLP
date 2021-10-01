@@ -46,7 +46,9 @@ def get_convex_hull(hull, src_img):
     return hull
 
 
-img = cv2.imread('images/bear.jpg')
+img = cv2.imread('D:\Documents\Thesis\FSLRwithNLP\Datasets\OurDataset\Raw Dataset\A\color_0_1.jpg')
+show_image('original', img)
+# img = cv2.imread('D:\Documents\Python\images\hand.jpg')
 imgCopy = img.copy()
 imgCopy = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2GRAY)
 blank = np.zeros(imgCopy.shape, dtype='uint8')
@@ -54,7 +56,7 @@ blur_img = cv2.GaussianBlur(imgCopy, (5, 5), 0)
 # blur_img = cv2.bilateralFilter(imgCopy, 5, 10, 10)
 
 _, th = get_thresh(imgCopy)
-show_plt_image(th)
+# show_plt_image(th)
 
 morph = morph_image(th)
 
@@ -64,7 +66,7 @@ mask = 255 - morph
 
 # Apply mask
 result = cv2.bitwise_and(imgCopy, imgCopy, mask=mask)
-show_plt_image(result)
+# show_plt_image(result)
 
 edges = cv2.Canny(morph, 150, 210)
 contours, hierarchies = get_contours(edges)
@@ -76,8 +78,8 @@ rectangle = get_bounding_rect(imgCopy, mask)
 # rectangle = get_bounding_rotated_rect(imgCopy, mask)
 
 # show_plt_image(imgCopy)
-show_image('rectangle', imgCopy)
+show_plt_image(imgCopy)
 
 hull = get_convex_hull(img.copy(), mask)
-show_plt_image(hull)
+# show_plt_image(hull)
 

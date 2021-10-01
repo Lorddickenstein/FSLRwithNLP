@@ -44,7 +44,7 @@ def draw_contours_3(blank, contours):
     cv2.drawContours(blank, contours, -1, (255, 255, 255), 2)
     return blank
 
-img = cv2.imread('images/hand.jpg', 0)
+img = cv2.imread('D:\Documents\Python\images\hand.jpg', 0)
 imgCopy = img.copy()
 blank = np.zeros(img.shape, dtype='uint8')
 blur_img = cv2.GaussianBlur(img, (5, 5), 0)
@@ -69,6 +69,7 @@ def just_thresh(src_img, blank):
 
 def just_canny_edge(src_img, blank):
     edges = cv2.Canny(src_img, 150, 210)
+    show_image("edges", edges)
     contours2, hierarchy2 = get_contours(edges)
     mask = draw_contours_3(blank, contours2)
     # resize2 = resize_image(result2)
@@ -78,13 +79,13 @@ def canny_and_thresh(src_img, blank):
     morph = morph_image(src_img)
     # show_image('morph', morph)
     edges_with_th = cv2.Canny(morph, 150, 210)
-    # show_image('canny edge', edges_with_th)
+    show_image('canny edge', edges_with_th)
     contours3, hierarchy3 = get_contours(edges_with_th)
     mask = draw_contours_3(blank, contours3)
     # resize3 = resize_image(mask)
     # show_image("edges + thresh", resize3)
     show_plt_image(mask)
 
-just_thresh(th, blank)
+# just_thresh(th, blank)
 # just_canny_edge(blur_img, blank)
-# canny_and_thresh(th, blank)
+canny_and_thresh(th, blank)

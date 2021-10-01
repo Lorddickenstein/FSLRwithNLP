@@ -42,7 +42,14 @@ def show_image(name, img):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+def show_plt_image(img):
+    plt.imshow(img)
+    plt.show()
+
 def preprocess_image(img):
+    """Create a blank slate"""
+    blank = np.zeros(img.shape, dtype='uint8')
+
     """Smoothen img using Gausian blur"""
     blur_img = cv2.GaussianBlur(img, (5, 5), 0)
     # blur_img = cv2.blur(img, (5, 5), 0)
@@ -51,21 +58,26 @@ def preprocess_image(img):
 
     """Threshold Image using Otsu's Binarization"""
     _, th = cv2.threshold(blur_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    # _, th = cv2.threshold(blur_img, 125, 255, cv2.THRESH_BINARY)
+    show_plt_image(th)
     # show_image('threshold', th)
-
-    # canny edge
 
     """Apply morphological transformation"""
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (20, 20))
     morph = cv2.morphologyEx(th, cv2.MORPH_CLOSE, kernel)
     show_image('morph', morph)
 
+    """Canny Edge"""
+    edges = cv2.Canny(blur_img, 150, 210)
+    contours, hierarchy = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    blank = cv2.drawContours(blank, contours, -1, (255, 255, 255), 2)
+
     """Apply mask to extract object"""
-    mask = cv2.bitwise_and(img, img, mask=morph)
-    show_image('mask', mask)
+    # mask = cv2.bitwise_and(img, img, mask=morph)
+    # show_image('mask', mask)
 
     """Normalize img"""
-    norm_img = mask.astype('float32')
+    norm_img = blank.astype('float32')
     norm_img /= 255
     show_image('normalized', norm_img)
 
@@ -158,15 +170,16 @@ def save_model(model, name):
     model.save(name)
 
 path = "D:\Documents\Thesis\FSLRwithNLP\Datasets\Test_Images"
-file_name = "Y2.jpg"
+file_name = "L.jpg"
 img = cv2.imread(os.path.join(path, file_name), 0)
+show_image('grayscale', img)
 img = preprocess_image(img)
 test_model(img)
 
-# # model_name = "\Models\Fingerspelling(16, 32, 64)_(0.5030-0.9015).h5"
-# # model_name = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\\test.h5"
+# model_name = "\Models\Fingerspelling(16, 32, 64)_(0.5030-0.9015).h5"
+# model_name = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\\test.h5"
 # model_name = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\\test_(0.5979_0.9139).h5"
 # x_train, y_train, x_test, y_test = import_data()
-# model = create_model(x_train, y_train, x_test, y_test)
-# save_model(model, model_name)
+# # model = create_model(x_train, y_train, x_test, y_test)
+# # save_model(model, model_name)
 # test_model_from_dataset(x_train, y_train, x_test, y_test, model_name)

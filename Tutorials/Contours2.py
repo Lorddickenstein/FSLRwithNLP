@@ -46,9 +46,9 @@ def get_convex_hull(hull, src_img):
     return hull
 
 
-img = cv2.imread('D:\Documents\Thesis\FSLRwithNLP\Datasets\OurDataset\Raw Dataset\A\color_0_1.jpg')
+# img = cv2.imread('D:\Documents\Thesis\OurDataset\Raw Dataset\A\color_0_1.jpg')
+img = cv2.imread('D:\Documents\Python\images\L.jpg')
 show_image('original', img)
-# img = cv2.imread('D:\Documents\Python\images\hand.jpg')
 imgCopy = img.copy()
 imgCopy = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2GRAY)
 blank = np.zeros(imgCopy.shape, dtype='uint8')

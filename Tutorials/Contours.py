@@ -44,11 +44,14 @@ def draw_contours_3(blank, contours):
     cv2.drawContours(blank, contours, -1, (255, 255, 255), 2)
     return blank
 
-img = cv2.imread('D:\Documents\Python\images\hand.jpg', 0)
+# img = cv2.imread('D:\Documents\Python\images\hand.jpg', 0)
+img = cv2.imread('D:\Documents\Thesis\FSLRwithNLP\Datasets\Test_Images\L.jpg', 0)
 imgCopy = img.copy()
 blank = np.zeros(img.shape, dtype='uint8')
 blur_img = cv2.GaussianBlur(img, (5, 5), 0)
-_, th = cv2.threshold(blur_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+# _, th = cv2.threshold(blur_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+th = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 151, 6)
+show_image('name', th)
 # _, th = cv2.threshold(blur_img, 155, 220, cv2.THRESH_BINARY)
 
 def just_thresh(src_img, blank):

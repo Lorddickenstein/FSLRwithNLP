@@ -22,7 +22,7 @@ def morph_image(src_img):
     return cv2.morphologyEx(src_img, cv2.MORPH_CLOSE, kernel)
 
 def get_contours(img):
-    return cv2.findContours(img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    return cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
 def get_bounding_rect(src_img, mask):
     pts = np.column_stack(np.where(mask.transpose() > 0))
@@ -47,7 +47,7 @@ def get_convex_hull(hull, src_img):
 
 
 # img = cv2.imread('D:\Documents\Thesis\OurDataset\Raw Dataset\A\color_0_1.jpg')
-img = cv2.imread('D:\Documents\Python\images\L.jpg')
+img = cv2.imread('D:\Documents\Thesis\FSLRwithNLP\Datasets\Test_Images\L2.jpg')
 show_image('original', img)
 imgCopy = img.copy()
 imgCopy = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2GRAY)
@@ -56,7 +56,7 @@ blur_img = cv2.GaussianBlur(imgCopy, (5, 5), 0)
 # blur_img = cv2.bilateralFilter(imgCopy, 5, 10, 10)
 
 _, th = get_thresh(imgCopy)
-# show_plt_image(th)
+show_plt_image(th)
 
 morph = morph_image(th)
 
@@ -70,8 +70,9 @@ result = cv2.bitwise_and(imgCopy, imgCopy, mask=mask)
 
 edges = cv2.Canny(morph, 150, 210)
 contours, hierarchies = get_contours(edges)
+cnt = max(contours, key=lambda x: cv2.contourArea(x))
 cv2.drawContours(blank, contours, -1, (255,255,255), 2)
-# show_plt_image(blank)
+show_plt_image(blank)
 
 # Get rectangle
 rectangle = get_bounding_rect(imgCopy, mask)
@@ -81,5 +82,5 @@ rectangle = get_bounding_rect(imgCopy, mask)
 show_plt_image(imgCopy)
 
 hull = get_convex_hull(img.copy(), mask)
-# show_plt_image(hull)
+show_plt_image(hull)
 

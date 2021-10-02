@@ -34,7 +34,7 @@ def morph_image(src_img, kernel=(20, 20)):
 
 """ Calculate the contours of an image. """
 def get_contours(img, mode=cv2.RETR_LIST, method=cv2.CHAIN_APPROX_SIMPLE):
-    return cv2.findContours(img, mode, method)
+    return cv2.findContours(img.copy(), mode, method)
 
 
 """ Returns a new image with bounding rectangle. """
@@ -47,4 +47,36 @@ def get_bounding_rect(src_img, mask):
 """ Draw contours into an image. """
 def draw_contours(src_img, contours):
     return cv2.drawContours(src_img, contours, -1, (255, 255, 255), 2)
+
+
+""" Apply Skin Segmentation"""
+def segmentation(src_img):
+    # YCrCb pixel upper and lower boundaries
+    YCbCr_lower = np.array([0, 130, 80], np.uint8)
+    YCbCr_upper = np.array([255, 180, 140], np.uint8)
+
+    # Convert bgr to YCbCr color space
+    img_YCbCr = cv2.cvtColor(src_img, cv2.COLOR_BGR2YCrCb)
+
+    # Determine the intensities of YCbCr pixel intensities that fall inside the upper and lower boundaries
+    YCrCb_mask = cv2.inRange(img_YCbCr, YCbCr_lower, YCbCr_upper)
+
+    # Apply open morphological transformation
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15, 15))
+    YCrCb_mask = cv2.morphologyEx(YCrCb_mask, cv2.MORPH_OPEN, kernel)
+
+    # Apply close morphological transformation
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (9, 9))
+    YCrCb_mask = cv2.morphologyEx(YCrCb_mask, cv2.MORPH_CLOSE, kernel)
+
+    # Apply Dilation
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+    YCrCb_mask = cv2.dilate(YCrCb_mask, kernel, iterations=1)
+
+    # Blur image to lessen noise
+    YCrCb_mask_blur = cv2.medianBlur(YCrCb_mask, 9)
+
+    # Apply mask to the frame
+    return cv2.bitwise_and(src_img.copy(), src_img.copy(), mask=YCrCb_mask_blur)
+
 

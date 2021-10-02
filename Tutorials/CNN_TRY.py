@@ -57,15 +57,16 @@ def preprocess_image(img):
     # show_image('blur', blur_img)
 
     """Threshold Image using Otsu's Binarization"""
-    _, th = cv2.threshold(blur_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    # th = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 101, 6)
+    # _, th = cv2.threshold(blur_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     # _, th = cv2.threshold(blur_img, 125, 255, cv2.THRESH_BINARY)
-    show_plt_image(th)
+    # show_plt_image(th)
     # show_image('threshold', th)
 
     """Apply morphological transformation"""
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (20, 20))
-    morph = cv2.morphologyEx(th, cv2.MORPH_CLOSE, kernel)
-    show_image('morph', morph)
+    # kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (20, 20))
+    # morph = cv2.morphologyEx(th, cv2.MORPH_CLOSE, kernel)
+    # show_image('morph', morph)
 
     """Canny Edge"""
     edges = cv2.Canny(blur_img, 150, 210)
@@ -170,7 +171,7 @@ def save_model(model, name):
     model.save(name)
 
 path = "D:\Documents\Thesis\FSLRwithNLP\Datasets\Test_Images"
-file_name = "L.jpg"
+file_name = "L3.jpg"
 img = cv2.imread(os.path.join(path, file_name), 0)
 show_image('grayscale', img)
 img = preprocess_image(img)

@@ -27,13 +27,18 @@ def get_thresh(src_img):
 
 
 """ Returns an image with morphological transformation using MORPH_CLOSE. """
-def morph_image(src_img, kernel=(20, 20)):
+def morph_image(src_img, method=cv2.MORPH_CLOSE, kernel=(5, 5)):
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, kernel)
-    return cv2.morphologyEx(src_img, cv2.MORPH_CLOSE, kernel)
+    return cv2.morphologyEx(src_img, method, kernel)
+
+
+""" Get edges using Canny Edge Detection"""
+def get_edges(src_img, th1=150, th2=210):
+    return cv2.Canny(src_img, th1, th2)
 
 
 """ Calculate the contours of an image. """
-def get_contours(img, mode=cv2.RETR_LIST, method=cv2.CHAIN_APPROX_SIMPLE):
+def get_contours(img, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE):
     return cv2.findContours(img.copy(), mode, method)
 
 
@@ -50,7 +55,7 @@ def draw_contours(src_img, contours):
 
 
 """ Apply Skin Segmentation"""
-def segmentation(src_img):
+def skin_segmentation(src_img):
     # YCrCb pixel upper and lower boundaries
     YCbCr_lower = np.array([0, 130, 80], np.uint8)
     YCbCr_upper = np.array([255, 180, 140], np.uint8)
@@ -62,12 +67,10 @@ def segmentation(src_img):
     YCrCb_mask = cv2.inRange(img_YCbCr, YCbCr_lower, YCbCr_upper)
 
     # Apply open morphological transformation
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15, 15))
-    YCrCb_mask = cv2.morphologyEx(YCrCb_mask, cv2.MORPH_OPEN, kernel)
+    YCrCb_mask = morph_image(YCrCb_mask, method=cv2.MORPH_OPEN, kernel=(15, 15))
 
     # Apply close morphological transformation
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (9, 9))
-    YCrCb_mask = cv2.morphologyEx(YCrCb_mask, cv2.MORPH_CLOSE, kernel)
+    YCrCb_mask = morph_image(YCrCb_mask, method=cv2.MORPH_CLOSE, kernel=(9, 9))
 
     # Apply Dilation
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))

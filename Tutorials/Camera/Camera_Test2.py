@@ -27,7 +27,7 @@ while cap.isOpened():
     # Determine the HSV pixel intensities that fall inside the upper and lower boundaries
     HSV_mask = cv2.inRange(img_HSV, HSV_lower, HSV_upper)
     # kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
-    HSV_mask = cv2.morphologyEx(HSV_mask, cv2.MORPH_CLOSE,np.ones((3,3), np.uint8))
+    HSV_mask = cv2.morphologyEx(HSV_mask, cv2.MORPH_OPEN,np.ones((3,3), np.uint8))
 
     # Convert bgr to YCbCr color space
     img_YCbCr = cv2.cvtColor(frame, cv2.COLOR_BGR2YCrCb)

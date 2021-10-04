@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
+import utils
 
 def show_image(name, img):
     cv2.imshow(name, img)
@@ -18,7 +19,7 @@ def get_thresh(src_img):
     return cv2.threshold(src_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
 def morph_image(src_img):
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (20, 20))
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
     return cv2.morphologyEx(src_img, cv2.MORPH_CLOSE, kernel)
 
 def get_contours(img):
@@ -50,15 +51,20 @@ def get_convex_hull(hull, src_img):
 img = cv2.imread('D:\Documents\Thesis\FSLRwithNLP\Datasets\Test_Images\L2.jpg')
 show_image('original', img)
 imgCopy = img.copy()
-imgCopy = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2GRAY)
 blank = np.zeros(imgCopy.shape, dtype='uint8')
-blur_img = cv2.GaussianBlur(imgCopy, (5, 5), 0)
+
+skin_mask = utils.segmentation(imgCopy)
+gray_img = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2GRAY)
+
+blur_img = cv2.GaussianBlur(gray_img, (5, 5), 0)
 # blur_img = cv2.bilateralFilter(imgCopy, 5, 10, 10)
 
-_, th = get_thresh(imgCopy)
+_, th = get_thresh(blur_img)
 show_plt_image(th)
 
 morph = morph_image(th)
+edges = utils.get_edges(morph)
+
 
 # Inverse morph
 mask = 255 - morph
@@ -68,7 +74,7 @@ mask = 255 - morph
 result = cv2.bitwise_and(imgCopy, imgCopy, mask=mask)
 # show_plt_image(result)
 
-edges = cv2.Canny(morph, 150, 210)
+# edges = cv2.Canny(morph, 150, 210)
 contours, hierarchies = get_contours(edges)
 cnt = max(contours, key=lambda x: cv2.contourArea(x))
 cv2.drawContours(blank, contours, -1, (255,255,255), 2)

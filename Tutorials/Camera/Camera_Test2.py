@@ -3,8 +3,8 @@ import numpy as np
 import mediapipe as mp
 
 cap = cv2.VideoCapture(0)
-ret = cap.set(3, 720)
-ret = cap.set(4, 480)
+# ret = cap.set(3, 720)
+# ret = cap.set(4, 480)
 
 # HSV pixel upper and lower boundaries
 HSV_lower = np.array([0, 15, 0], np.uint8)

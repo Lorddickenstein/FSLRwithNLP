@@ -4,27 +4,31 @@ import matplotlib.pyplot as plt
 import os  # iterate through the directories
 import cv2
 import pandas as pd
+import Application.HandTrackingModule as HTM
 
 def test_model_from_dataset(x_train, y_train, x_test, y_test, model_name):
     model = keras.models.load_model(model_name)
-    print(y_train[10170])
-    plt.imshow(x_train[10170], cmap='gray')
+    print(y_train[157])
+    plt.imshow(x_train[157], cmap='gray')
     plt.show()
-    x_train = x_train[10170].reshape(-1, 28, 28, 1)
+    show_image('name', x_train[157])
+    x_train = x_train[157].reshape(-1, 28, 28, 1)
     print(x_train)
     print(x_train.shape)
     print(x_train.ndim)
     prediction = model.predict(x_train)
     print(prediction)
     class_x = np.argmax(prediction, axis=1)
+    print(class_x)
     print(find_match(class_x[0]))
 
-def test_model(img):
-    model = keras.models.load_model('Models\FingerSpelling(32, 64, 128)_(0.4652-0.9072).h5')
+def test_model(img, model_name):
+    model = keras.models.load_model(model_name)
     prediction = model.predict(img)
-    print(prediction)
-    class_x = np.argmax(prediction, axis=1)
-    print(find_match(class_x[0]))
+    # print(prediction)
+    class_x = np.argmax(prediction)
+    print(class_x)
+    print(find_match(class_x))
 
 def find_match(x):
     spell = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E',
@@ -36,22 +40,43 @@ def find_match(x):
     return spell[x]
 
 def show_image(name, img):
-    # plt.imshow(img, cmap='gray')
-    # plt.show()
     cv2.imshow(name, img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
 def show_plt_image(img):
-    plt.imshow(img)
+    plt.imshow(img, cmap='gray')
     plt.show()
+
+def preprocess(img):
+    img_copy = img.copy()
+    detector = HTM.HandDetector()
+    detected, pts_upper_left, pts_lower_right = detector.find_hands(img)
+
+    if detected:
+        cv2.rectangle(img_copy, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
+        show_plt_image(img_copy)
+        ROI = img[pts_lower_right[1]:pts_upper_left[1], pts_upper_left[0]:pts_lower_right[0]]
+        show_plt_image(cv2.cvtColor(ROI, cv2.COLOR_BGR2RGB))
+        gray = cv2.cvtColor(ROI, cv2.COLOR_BGR2GRAY)
+        blur_img = cv2.GaussianBlur(gray, (5, 5), 0)
+        norm_img = blur_img.astype('float32')
+        norm_img /= 255
+        new_size = cv2.resize(norm_img, (28, 28), interpolation=cv2.INTER_CUBIC)
+        show_plt_image(new_size)
+        new_dim = np.expand_dims(new_size, axis=(0, -1))
+        print(new_dim.shape)
+        return True, new_dim
+    return False, img
 
 def preprocess_image(img):
     """Create a blank slate"""
     blank = np.zeros(img.shape, dtype='uint8')
 
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
     """Smoothen img using Gausian blur"""
-    blur_img = cv2.GaussianBlur(img, (5, 5), 0)
+    blur_img = cv2.GaussianBlur(gray, (5, 5), 0)
     # blur_img = cv2.blur(img, (5, 5), 0)
     # blur_img = cv2.medianBlur(img, 5)
     # show_image('blur', blur_img)
@@ -154,7 +179,6 @@ def create_model(x_train, y_train, x_test, y_test):
     model.add(keras.layers.Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
     model.add(keras.layers.MaxPool2D(pool_size=(2, 2)))
     model.add(keras.layers.Dropout(0.25))
-    # try to add with padding
     model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(128, activation='relu'))
     model.add(keras.layers.Dropout(0.50))
@@ -170,6 +194,7 @@ def create_model(x_train, y_train, x_test, y_test):
 def save_model(model, name):
     model.save(name)
 
+<<<<<<< HEAD
 path = "D:\THESIS\FSLRwithNLP\FSLRwithNLP\Datasets\Test_Images\F.jpg"
 file_name = "L3.jpg"
 img = cv2.imread(os.path.join(path, file_name), 0)
@@ -181,6 +206,27 @@ test_model(img)
 # model_name = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\\test.h5"
 # model_name = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\\test_(0.5979_0.9139).h5"
 x_train, y_train, x_test, y_test = import_data()
+=======
+# model_name = "\Models\Fingerspelling(16, 32, 64)_(0.5030-0.9015).h5"
+# model_name = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\\test.h5"
+# model_name = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\FingerSpelling(32, 64, 128)_(0.4652-0.9072).h5"
+model_path = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models"
+name = "test.h5"
+model_name = os.path.join(model_path, name)
+
+path = "D:\Documents\Thesis\FSLRwithNLP\Datasets\Test_Images"
+file_name = "R3.jpg"
+img = cv2.imread(os.path.join(path, file_name))
+show_plt_image(img)
+# img = preprocess_image(img)
+flag, img = preprocess(img)
+if flag:
+    test_model(img, model_name)
+else:
+    print('something is wrong')
+
+# x_train, y_train, x_test, y_test = import_data()
+>>>>>>> e548339863aa5f906a65f76c947ff262922a971f
 # # model = create_model(x_train, y_train, x_test, y_test)
 # # save_model(model, model_name)
 test_model_from_dataset(x_train, y_train, x_test, y_test, model_name)

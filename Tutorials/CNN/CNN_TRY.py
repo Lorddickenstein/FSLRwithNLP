@@ -170,7 +170,7 @@ def create_model(x_train, y_train, x_test, y_test):
 def save_model(model, name):
     model.save(name)
 
-path = "D:\Documents\Thesis\FSLRwithNLP\Datasets\Test_Images"
+path = "D:\THESIS\FSLRwithNLP\FSLRwithNLP\Datasets\Test_Images\F.jpg"
 file_name = "L3.jpg"
 img = cv2.imread(os.path.join(path, file_name), 0)
 show_image('grayscale', img)
@@ -180,7 +180,7 @@ test_model(img)
 # model_name = "\Models\Fingerspelling(16, 32, 64)_(0.5030-0.9015).h5"
 # model_name = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\\test.h5"
 # model_name = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\\test_(0.5979_0.9139).h5"
-# x_train, y_train, x_test, y_test = import_data()
+x_train, y_train, x_test, y_test = import_data()
 # # model = create_model(x_train, y_train, x_test, y_test)
 # # save_model(model, model_name)
-# test_model_from_dataset(x_train, y_train, x_test, y_test, model_name)
+test_model_from_dataset(x_train, y_train, x_test, y_test, model_name)

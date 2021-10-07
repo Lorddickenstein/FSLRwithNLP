@@ -13,10 +13,10 @@ with mp_hands.Hands(
             print("Ignoring empty camera frame.")
             continue;
 
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         # image = cv2.flip(image, 1)
-        image.flags.writeable = False
-        results = hands.process(image)
+        rgb.flags.writeable = False
+        results = hands.process(rgb)
 
         image.flags.writeable = True
         if results.multi_hand_landmarks:

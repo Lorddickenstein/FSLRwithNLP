@@ -202,7 +202,7 @@ name = "test.h5"
 model_name = os.path.join(model_path, name)
 
 path = "D:\Documents\Thesis\FSLRwithNLP\Datasets\Test_Images"
-file_name = "R3.jpg"
+file_name = "R2.jpg"
 img = cv2.imread(os.path.join(path, file_name))
 show_plt_image(img)
 # img = preprocess_image(img)

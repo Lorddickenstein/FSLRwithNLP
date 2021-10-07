@@ -7,7 +7,8 @@ import numpy as np
 import utils
 
 def import_data():
-    DATADIR = "D:\Documents\Thesis\FSLRwithNLP\Datasets\OurDataset\Raw Dataset"
+    DATADIR = "D:\Documents\Thesis\FSLRwithNLP\Datasets\OurDataset\Raw_Dataset"
+    PROCESSEDDIR = "D:\Documents\Thesis\FSLRwithNLP\Datasets\OurDataset\Preprocessed"
     CATEGORIES = ['A', 'B', 'C', 'D', 'E',
                   'F', 'G', 'H', 'I', 'J',
                   'K', 'L', 'M', 'N', 'O',
@@ -18,6 +19,7 @@ def import_data():
         path = os.path.join(DATADIR, category)
         for image in os.listdir(path):
             img = cv2.imread(os.path.join(path, image), cv2.IMREAD_GRAYSCALE)
+            cv2.imwrite()
 
 
 def predict_image(src_img, model_name):

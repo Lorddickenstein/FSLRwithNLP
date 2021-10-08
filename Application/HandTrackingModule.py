@@ -59,7 +59,6 @@ def main():
             print("Ignoring empty camera frame.")
             continue
 
-        # Flip the image
         detected, pts_upper_left, pts_lower_right = detector.find_hands(frame)
 
         if detected:

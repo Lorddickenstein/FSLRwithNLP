@@ -18,6 +18,8 @@ YCbCr_upper = np.array([255, 180, 135], np.uint8)
 
 while cap.isOpened():
     _, frame = cap.read()
+    height, width, channel = frame.shape
+    print("{}, {}".format(height, width))
     if not _:
         print("Ignoring empty camera frame.")
         continue;

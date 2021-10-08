@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import mediapipe as mp
 import time
-import Tutorials.utils as utils
+import Application.utils as utils
 
 # Open the camera
 cap = cv2.VideoCapture(0)

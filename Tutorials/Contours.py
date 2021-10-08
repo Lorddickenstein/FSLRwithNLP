@@ -1,6 +1,8 @@
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
+import Application.HandTrackingModule as HTM
+import Application.utils as utils
 
 def show_image(name, img):
     cv2.imshow(name, img)
@@ -12,7 +14,7 @@ def show_plt_image(img):
     plt.show()
 
 def morph_image(src_img):
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (25, 25))
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
     return cv2.morphologyEx(src_img, cv2.MORPH_CLOSE, kernel)
 
 def resize_image(img):
@@ -44,15 +46,6 @@ def draw_contours_3(blank, contours):
     cv2.drawContours(blank, contours, -1, (255, 255, 255), 2)
     return blank
 
-# img = cv2.imread('D:\Documents\Python\images\hand.jpg', 0)
-img = cv2.imread('D:\Documents\Thesis\FSLRwithNLP\Datasets\Test_Images\L.jpg', 0)
-imgCopy = img.copy()
-blank = np.zeros(img.shape, dtype='uint8')
-blur_img = cv2.GaussianBlur(img, (5, 5), 0)
-# _, th = cv2.threshold(blur_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-th = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 151, 6)
-show_image('name', th)
-# _, th = cv2.threshold(blur_img, 155, 220, cv2.THRESH_BINARY)
 
 def just_thresh(src_img, blank):
     # show_image('thresh', src_img)
@@ -89,6 +82,33 @@ def canny_and_thresh(src_img, blank):
     # show_image("edges + thresh", resize3)
     show_plt_image(mask)
 
-# just_thresh(th, blank)
-# just_canny_edge(blur_img, blank)
-canny_and_thresh(th, blank)
+
+# img = cv2.imread('D:\Documents\Python\images\hand.jpg', 0)
+img = cv2.imread('D:\Documents\Thesis\FSLRwithNLP\Datasets\Test_Images\R_8.jpg')
+imgCopy = img.copy()
+show_plt_image(img)
+
+detector = HTM.HandDetector()
+detected, pts_upper_left, pts_lower_right = detector.find_hands(imgCopy)
+if detected:
+    roi = img[pts_lower_right[1]:pts_upper_left[1], pts_upper_left[0]:pts_lower_right[0]]
+    roi = cv2.resize(roi, (224, 224), interpolation=cv2.INTER_CUBIC)
+    # skin_masked = utils.skin_segmentation(roi)
+    # show_image('skin', roi)
+    show_plt_image(roi)
+    # gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+    # blur = cv2.GaussianBlur(gray, (5, 5), 0)
+    # _, th = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    # show_plt_image(th)
+    # just_thresh(th, blank)
+    # just_canny_edge(blur_img, blank)
+    # canny_and_thresh(th, imgCopy)
+else:
+    print("nothing detected")
+
+blank = np.zeros(img.shape, dtype='uint8')
+# th = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 151, 6)
+
+# _, th = cv2.threshold(blur_img, 155, 220, cv2.THRESH_BINARY)
+
+

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 
 """ Returns an image with dimension height by width. """
-def resize_image(src_img, height=224, width=300):
+def resize_image(src_img, height=224, width=224):
     return cv2.resize(src_img, (height, width), interpolation=cv2.INTER_CUBIC)
 
 
@@ -32,7 +32,7 @@ def morph_image(src_img, method=cv2.MORPH_CLOSE, kernel=(5, 5)):
     return cv2.morphologyEx(src_img, method, kernel)
 
 
-""" Get edges using Canny Edge Detection"""
+""" Get edges using Canny Edge Detection """
 def get_edges(src_img, th1=150, th2=210):
     return cv2.Canny(src_img, th1, th2)
 
@@ -52,6 +52,17 @@ def get_bounding_rect(src_img, mask):
 """ Draw contours into an image. """
 def draw_contours(src_img, contours):
     return cv2.drawContours(src_img, contours, -1, (255, 255, 255), 2)
+
+
+""" Draw convex hull from the given hull"""
+def draw_convex_hull(hull, src_img):
+    pts = np.column_stack(np.where(src_img.transpose() > 0))
+    hullpts = cv2.convexHull(pts)
+    ((centx, centy), (width, height), angle) = cv2.fitEllipse(hullpts)
+
+    # Draw convex hull on image
+    cv2.polylines(hull, [hullpts], True, (0, 0, 255), 1)
+    return hull
 
 
 """ Apply Skin Segmentation"""

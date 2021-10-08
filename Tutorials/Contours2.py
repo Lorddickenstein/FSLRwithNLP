@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-import utils
+import Application.utils as utils
 
 def show_image(name, img):
     cv2.imshow(name, img)
@@ -53,7 +53,7 @@ show_image('original', img)
 imgCopy = img.copy()
 blank = np.zeros(imgCopy.shape, dtype='uint8')
 
-skin_mask = utils.segmentation(imgCopy)
+skin_mask = utils.skin_segmentation(imgCopy)
 gray_img = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2GRAY)
 
 blur_img = cv2.GaussianBlur(gray_img, (5, 5), 0)
@@ -68,7 +68,7 @@ edges = utils.get_edges(morph)
 
 # Inverse morph
 mask = 255 - morph
-# show_image('mask', mask)
+show_image('mask', mask)
 
 # Apply mask
 result = cv2.bitwise_and(imgCopy, imgCopy, mask=mask)

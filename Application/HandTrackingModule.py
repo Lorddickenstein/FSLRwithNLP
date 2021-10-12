@@ -29,19 +29,22 @@ class HandDetector():
 
         if self.results.multi_hand_landmarks:
             x_pts, y_pts = [], []
+            i = 0
             for handLMs in self.results.multi_hand_landmarks:
                 for id, lm in enumerate(handLMs.landmark):
                     h, w, c = src_img.shape
                     cx, cy = int(lm.x * w), int(lm.y * h)
                     x_pts.append(cx)
                     y_pts.append(cy)
+                    i += 1
                 if draw:
                     self.mpDraw.draw_landmarks(src_img, handLMs, self.mpHands.HAND_CONNECTIONS)
 
-            # Find the max and min points
-            y_max, y_min, x_max, x_min = max(y_pts), min(y_pts), max(x_pts), min(x_pts)
-            return True, (x_min - 100, y_max + 100), (x_max + 100, y_min - 100)
-
+            if i == 21 or i == 42:
+                # Find the max and min points
+                y_max, y_min, x_max, x_min = max(y_pts), min(y_pts), max(x_pts), min(x_pts)
+                extra_space = src_img.shape[0] * 0.14
+                return True, (x_min - extra_space, y_max + extra_space), (x_max + extra_space, y_min - extra_space)
         return False, (), ()
 
 def main():

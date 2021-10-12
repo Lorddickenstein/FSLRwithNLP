@@ -5,6 +5,7 @@ import mediapipe as mp
 import time
 import Application.utils as utils
 import Application.HandTrackingModule as HTM
+import matplotlib.pyplot as plt
 import warnings
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -39,11 +40,13 @@ def preprocess_image(src_img):
     norm_img = blur_img.astype('float32')
     norm_img /= 255
     new_size = cv2.resize(norm_img, (28, 28), interpolation=cv2.INTER_CUBIC)
-    return np.expand_dims(new_size, axis=(0, -1))
+    new_shape = new_size.reshape(-1, 28, 28, 1)
+    return np.expand_dims(new_shape, axis=(0, -1))
 
 
 def classify_image(src_img):
-    model = keras.models.load_model('D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\\test.h5')
+    # model = keras.models.load_model('D:\Documents\Thesis\Other Datasets\Model\\Fingerspell_Detector_Experiment1.h5')
+    model = keras.models.load_model('D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\\Test.h5')
     prediction = model.predict(src_img)
     class_x = np.argmax(prediction)
     return find_match(class_x)
@@ -68,6 +71,7 @@ while True:
             roi = preprocess_image(roi)
             classification = classify_image(roi)
             cv2.putText(frame, classification, (10, height - 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+            cv2.rectangle(frame, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
     else:
         cv2.putText(frame, "No hands detected...", (10, height - 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
 

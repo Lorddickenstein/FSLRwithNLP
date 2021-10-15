@@ -44,7 +44,7 @@ class HandDetector():
                 # Find the max and min points
                 y_max, y_min, x_max, x_min = max(y_pts), min(y_pts), max(x_pts), min(x_pts)
                 extra_space = src_img.shape[0] * 0.14
-                return True, (x_min - extra_space, y_max + extra_space), (x_max + extra_space, y_min - extra_space)
+                return True, (int(x_min - extra_space), int(y_max + extra_space)), (int(x_max + extra_space), int(y_min - extra_space))
         return False, (), ()
 
 def main():

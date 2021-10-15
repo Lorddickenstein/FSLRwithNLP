@@ -91,7 +91,7 @@ show_plt_image(img)
 detector = HTM.HandDetector()
 detected, pts_upper_left, pts_lower_right = detector.find_hands(imgCopy)
 if detected:
-    roi = img[pts_lower_right[1]:pts_upper_left[1], pts_upper_left[0]:pts_lower_right[0]]
+    roi = img[int(pts_lower_right[1]):int(pts_upper_left[1]), int(pts_upper_left[0]):int(pts_lower_right[0])]
     roi = cv2.resize(roi, (224, 224), interpolation=cv2.INTER_CUBIC)
     # skin_masked = utils.skin_segmentation(roi)
     # show_image('skin', roi)

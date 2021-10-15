@@ -1,3 +1,4 @@
+import tensorflow as tf
 from tensorflow import keras
 import cv2
 import numpy as np
@@ -7,8 +8,8 @@ import Application.utils as utils
 import Application.HandTrackingModule as HTM
 import matplotlib.pyplot as plt
 import warnings
-
-warnings.simplefilter(action='ignore', category=FutureWarning)
+tf.get_logger().setLevel('ERROR')
+warnings.simplefilter(action='ignore', category=Warning)
 
 # Open the camera
 cap = cv2.VideoCapture(0)
@@ -36,12 +37,17 @@ def find_match(x):
 def preprocess_image(src_img):
     skin_mask = utils.skin_segmentation(src_img)
     gray_img = cv2.cvtColor(skin_mask, cv2.COLOR_BGR2GRAY)
-    blur_img = cv2.GaussianBlur(gray_img, (5, 5), 0)
-    norm_img = blur_img.astype('float32')
+    # blur_img = cv2.GaussianBlur(gray_img, (5, 5), 0)
+    norm_img = gray_img.astype('float32')
     norm_img /= 255
     new_size = cv2.resize(norm_img, (28, 28), interpolation=cv2.INTER_CUBIC)
-    new_shape = new_size.reshape(-1, 28, 28, 1)
-    return np.expand_dims(new_shape, axis=(0, -1))
+    cv2.imshow('what', new_size)
+    # new_shape = new_size.reshape(-1, 28, 28, 1)
+    return np.expand_dims(new_size, axis=(0, -1))
+
+def preprocess_image2(src_img):
+    skin_mask = utils.skin_segmentation(src_img)
+    gray_img = cv2.cvtColor(skin_mask, cv2.COLOR_BGR2RGB)
 
 
 def classify_image(src_img):
@@ -62,16 +68,21 @@ while True:
     # Filter lines to make it sharper and smoother
     frame = cv2.bilateralFilter(frame, 5, 50, 100)
 
-    detected, pts_upper_left, pts_lower_right = detector.find_hands(frame.copy())
+    detected, pts_upper_left, pts_lower_right = detector.find_hands(frame.copy(), draw=True)
 
     if detected:
         # cv2.rectangle(frame, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
         roi = frame[pts_lower_right[1]:pts_upper_left[1], pts_upper_left[0]:pts_lower_right[0]]
         if len(roi) != 0:
-            roi = preprocess_image(roi)
-            classification = classify_image(roi)
-            cv2.putText(frame, classification, (10, height - 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
-            cv2.rectangle(frame, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
+            try:
+                roi = preprocess_image(roi)
+                classification = classify_image(roi)
+                cv2.putText(frame, classification, (10, height - 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+                cv2.rectangle(frame, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
+            except Exception as exc:
+                pass
+        else:
+            cv2.putText(frame, "roi is empty", (10, height - 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
     else:
         cv2.putText(frame, "No hands detected...", (10, height - 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
 

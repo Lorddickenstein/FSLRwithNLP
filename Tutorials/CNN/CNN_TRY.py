@@ -54,15 +54,15 @@ def preprocess(img):
     detected, pts_upper_left, pts_lower_right = detector.find_hands(img)
 
     if detected:
-        cv2.rectangle(img_copy, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
-        show_plt_image(img_copy)
-        ROI = img[pts_lower_right[1]:pts_upper_left[1], pts_upper_left[0]:pts_lower_right[0]]
+        # cv2.rectangle(img_copy, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
+        # show_plt_image(img_copy)
+        ROI = img[int(pts_lower_right[1]):int(pts_upper_left[1]), int(pts_upper_left[0]):int(pts_lower_right[0])]
         show_plt_image(cv2.cvtColor(ROI, cv2.COLOR_BGR2RGB))
-        gray = cv2.cvtColor(ROI, cv2.COLOR_BGR2GRAY)
-        blur_img = cv2.GaussianBlur(gray, (5, 5), 0)
+        # gray = cv2.cvtColor(ROI, cv2.COLOR_BGR2GRAY)
+        blur_img = cv2.GaussianBlur(ROI, (5, 5), 0)
         norm_img = blur_img.astype('float32')
         norm_img /= 255
-        new_size = cv2.resize(norm_img, (28, 28), interpolation=cv2.INTER_CUBIC)
+        new_size = cv2.resize(norm_img, (224, 224), interpolation=cv2.INTER_CUBIC)
         show_plt_image(new_size)
         new_dim = np.expand_dims(new_size, axis=(0, -1))
         print(new_dim.shape)
@@ -197,12 +197,13 @@ def save_model(model, name):
 # model_name = "\Models\Fingerspelling(16, 32, 64)_(0.5030-0.9015).h5"
 # model_name = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\\test.h5"
 # model_name = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\FingerSpelling(32, 64, 128)_(0.4652-0.9072).h5"
-model_path = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models"
-name = "test.h5"
+# model_path = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models"
+model_path = 'D:\Documents\Thesis\Experimental_Models'
+name = "Fingerspell_Detector_Experiment2.h5"
 model_name = os.path.join(model_path, name)
 
 path = "D:\Documents\Thesis\FSLRwithNLP\Datasets\Test_Images"
-file_name = "R2.jpg"
+file_name = "R_2.jpg"
 img = cv2.imread(os.path.join(path, file_name))
 show_plt_image(img)
 # img = preprocess_image(img)

@@ -23,6 +23,7 @@ pTime = 0
 cTime = 0
 
 detector = HTM.HandDetector()
+model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Fingerspell_Detector_Experiment5(30-epochs).h5')
 
 
 def find_match(x):
@@ -36,23 +37,23 @@ def find_match(x):
 
 def preprocess_image(src_img):
     skin_mask = utils.skin_segmentation(src_img)
-    gray_img = cv2.cvtColor(skin_mask, cv2.COLOR_BGR2GRAY)
+    # gray_img = cv2.cvtColor(skin_mask, cv2.COLOR_BGR2GRAY)
     # blur_img = cv2.GaussianBlur(gray_img, (5, 5), 0)
-    norm_img = gray_img.astype('float32')
+    new_size = cv2.resize(skin_mask, (120, 120), interpolation=cv2.INTER_CUBIC)
+    norm_img = new_size.astype('float32')
     norm_img /= 255
-    new_size = cv2.resize(norm_img, (28, 28), interpolation=cv2.INTER_CUBIC)
-    cv2.imshow('what', new_size)
-    # new_shape = new_size.reshape(-1, 28, 28, 1)
-    return np.expand_dims(new_size, axis=(0, -1))
+    cv2.imshow('what', norm_img)
+    return np.expand_dims(norm_img, axis=0)
+
 
 def preprocess_image2(src_img):
     skin_mask = utils.skin_segmentation(src_img)
     gray_img = cv2.cvtColor(skin_mask, cv2.COLOR_BGR2RGB)
 
 
-def classify_image(src_img):
+def classify_image(src_img, model):
     # model = keras.models.load_model('D:\Documents\Thesis\Other Datasets\Model\\Fingerspell_Detector_Experiment1.h5')
-    model = keras.models.load_model('D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\\Test.h5')
+    # model = keras.models.load_model('D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\\Test.h5')
     prediction = model.predict(src_img)
     class_x = np.argmax(prediction)
     return find_match(class_x)
@@ -76,11 +77,17 @@ while True:
         if len(roi) != 0:
             try:
                 roi = preprocess_image(roi)
-                classification = classify_image(roi)
+                classification = classify_image(roi, model)
+                print(roi.shape)
                 cv2.putText(frame, classification, (10, height - 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
                 cv2.rectangle(frame, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
             except Exception as exc:
                 pass
+            # roi = preprocess_image(roi)
+            # print(roi.shape)
+            # classification = classify_image(roi, model)
+            # cv2.putText(frame, classification, (10, height - 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+            # cv2.rectangle(frame, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
         else:
             cv2.putText(frame, "roi is empty", (10, height - 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
     else:

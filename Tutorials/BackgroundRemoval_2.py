@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # Read image
-img = cv2.imread('D:\Documents\Thesis\FSLRwithNLP\Datasets\Test_Images\spell.27.jpg')
+img = cv2.imread('D:\Documents\Python\images\A_103.jpg')
 hh, ww = img.shape[:2]
 img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 

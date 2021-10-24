@@ -80,17 +80,17 @@ def skin_segmentation(src_img):
     YCrCb_mask = cv2.inRange(img_YCbCr, YCbCr_lower, YCbCr_upper)
 
     # Apply open morphological transformation
-    YCrCb_mask = morph_image(YCrCb_mask, method=cv2.MORPH_OPEN, kernel=(15, 15))
+    YCrCb_mask = morph_image(YCrCb_mask, method=cv2.MORPH_OPEN, kernel=(5, 5))
 
     # Apply close morphological transformation
     YCrCb_mask = morph_image(YCrCb_mask, method=cv2.MORPH_CLOSE, kernel=(9, 9))
 
     # Apply Dilation
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-    YCrCb_mask = cv2.dilate(YCrCb_mask, kernel, iterations=1)
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+    YCrCb_mask = cv2.dilate(YCrCb_mask, kernel, iterations=2)
 
     # Blur image to lessen noise
-    YCrCb_mask_blur = cv2.medianBlur(YCrCb_mask, 9)
+    YCrCb_mask_blur = cv2.medianBlur(YCrCb_mask, 21)
 
     # Apply mask to the frame
     return cv2.bitwise_and(src_img.copy(), src_img.copy(), mask=YCrCb_mask_blur)

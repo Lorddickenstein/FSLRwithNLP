@@ -8,6 +8,9 @@ import Application.utils as utils
 import Application.HandTrackingModule as HTM
 import matplotlib.pyplot as plt
 import warnings
+import time
+import imutils
+
 tf.get_logger().setLevel('ERROR')
 warnings.simplefilter(action='ignore', category=Warning)
 
@@ -23,8 +26,9 @@ pTime = 0
 cTime = 0
 
 detector = HTM.HandDetector()
-model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Fingerspell_Detector_Experiment5(30-epochs).h5')
-
+model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Best so far\Fingerspell_Detector_Experiment5(55-epochs)-accuracy_0.87-val_accuracy_0.84.h5')
+# model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Fingerspell_Detector_Experiment5(30-epochs).h5')
+# model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Fingerspell_Detector_Experiment6(10-epochs)-accuracy_0.87-val_accuracy_0.88.h5')
 
 def find_match(x):
     classes = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E',
@@ -32,13 +36,11 @@ def find_match(x):
              10: 'K', 11: 'L', 12: 'M', 13: 'N', 14: 'O',
              15: 'P', 16: 'Q', 17: 'R', 18: 'S', 19: 'T',
              20: 'U', 21: 'V', 22: 'W', 23: 'X', 24: 'Y',
-             25: ' '}
+             25: ' ', 26: 'cook', 27: 'how'}
     return classes[x]
 
 def preprocess_image(src_img):
     skin_mask = utils.skin_segmentation(src_img)
-    # gray_img = cv2.cvtColor(skin_mask, cv2.COLOR_BGR2GRAY)
-    # blur_img = cv2.GaussianBlur(gray_img, (5, 5), 0)
     new_size = cv2.resize(skin_mask, (120, 120), interpolation=cv2.INTER_CUBIC)
     norm_img = new_size.astype('float32')
     norm_img /= 255
@@ -46,17 +48,15 @@ def preprocess_image(src_img):
     return np.expand_dims(norm_img, axis=0)
 
 
-def preprocess_image2(src_img):
-    skin_mask = utils.skin_segmentation(src_img)
-    gray_img = cv2.cvtColor(skin_mask, cv2.COLOR_BGR2RGB)
-
-
 def classify_image(src_img, model):
     # model = keras.models.load_model('D:\Documents\Thesis\Other Datasets\Model\\Fingerspell_Detector_Experiment1.h5')
     # model = keras.models.load_model('D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\\Test.h5')
     prediction = model.predict(src_img)
     class_x = np.argmax(prediction)
-    return find_match(class_x)
+    print(class_x)
+    # score = float("%0.2f" % (max(prediction[0]) * 100))
+    score = float("%0.2f" % (prediction[0, class_x] * 100))
+    return score, find_match(class_x)
 
 
 while True:
@@ -65,6 +65,9 @@ while True:
     if not _:
         print("Ignoring empty camera frame.")
         continue;
+
+    frame = imutils.resize(frame, width=900)
+    print(frame.shape[0], frame.shape[1])
 
     # Filter lines to make it sharper and smoother
     frame = cv2.bilateralFilter(frame, 5, 50, 100)
@@ -77,9 +80,8 @@ while True:
         if len(roi) != 0:
             try:
                 roi = preprocess_image(roi)
-                classification = classify_image(roi, model)
-                print(roi.shape)
-                cv2.putText(frame, classification, (10, height - 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+                score, classification = classify_image(roi, model)
+                cv2.putText(frame, classification + " " + str(score), (10, height - 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
                 cv2.rectangle(frame, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
             except Exception as exc:
                 pass

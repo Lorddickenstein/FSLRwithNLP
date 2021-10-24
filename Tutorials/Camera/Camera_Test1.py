@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import mediapipe as mp
+import imutils
 
 cap = cv2.VideoCapture(0)
 ret = cap.set(3, 720)
@@ -15,6 +16,9 @@ def get_thresh(src_img):
 
 while cap.isOpened():
     _, frame = cap.read()
+    frame = imutils.resize(frame, width=720)
+
+    print(frame.shape[0], frame.shape[1])
     if not _:
         print("Ignoring empty camera frame.")
         continue;
@@ -26,7 +30,7 @@ while cap.isOpened():
     blur_img = cv2.GaussianBlur(frame, (35, 35), 0)
 
     """Thresh"""
-    _, th = get_thresh(blur_img)
+    # _, th = get_thresh(blur_img)
 
     """Convert frame to RGB"""
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -41,7 +45,7 @@ while cap.isOpened():
 
     cv2.imshow('Original', frame)
     cv2.imshow('Landmarks', blank)
-    cv2.imshow('Threshold', th)
+    # cv2.imshow('Threshold', th)
     if cv2.waitKey(5) & 0xFF == 27:
         break
 

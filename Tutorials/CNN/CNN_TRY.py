@@ -5,6 +5,7 @@ import os  # iterate through the directories
 import cv2
 import pandas as pd
 import Application.HandTrackingModule as HTM
+import Application.SignClassificationModule as SCM
 import Application.utils as utils
 
 def test_model_from_dataset(x_train, y_train, x_test, y_test, model_name):
@@ -23,22 +24,19 @@ def test_model_from_dataset(x_train, y_train, x_test, y_test, model_name):
     print(class_x)
     print(find_match(class_x[0]))
 
-def test_model(img, model_name):
-    model = keras.models.load_model(model_name)
-    prediction = model.predict(img)
-    print(prediction)
-    x = np.argsort(prediction)[0, -5:]
-    print(x)
-    for values in x:
-        print('{} {}'.format(find_match(values), prediction[0, values] * 100))
+def test_model(img):
+    prediction, top_prediction_indices = SCM.classify_image(img, model)
+    print(top_prediction_indices)
+    for index in top_prediction_indices:
+        print('{} {}'.format(find_match(index), prediction[0, index] * 100))
     class_x = np.argmax(prediction)
     score = float("%0.2f" % (max(prediction[0]) * 100))
     # print(class_x)
     print(score)
-    print(find_match2(class_x))
+    print(find_match(class_x))
 
 def find_match2(x):
-    sign = {0: 'Cook', 1: 'How'}
+    sign = {0: 'Y', 1: 'Why'}
     return sign[x]
 
 def find_match(x):
@@ -212,19 +210,21 @@ def save_model(model, name):
 # model_path = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models"
 # model_path = 'D:\Documents\Thesis\Experimental_Models'
 # name = "Fingerspell_Detector_Experiment2.h5"
-model_path = 'D:\Documents\Thesis\Experimental_Models'
-# name = 'Fingerspell_Detector_Experiment5(55-epochs)-accuracy_0.87-val_accuracy_0.84.h5'
-name = 'Fingerspell_Detector_Experiment6(10-epochs)-accuracy_0.90-val_accuracy_0.95.h5'
+# model_path = 'D:\Documents\Thesis\Experimental_Models'
+model_path = 'D:\Documents\Thesis\Experimental_Models\Best so far'
+name = 'Fingerspell_Detector_Experiment5(55-epochs)-accuracy_0.87-val_accuracy_0.84.h5'
+# name = 'Y-Why-2_Experiment6(20-epochs)-accuracy_0.87-val_accuracy_0.88.h5'
 model_name = os.path.join(model_path, name)
 
 path = "D:\Documents\Thesis\FSLRwithNLP\Datasets\Test_Images"
-file_name = "How_12.jpg"
+file_name = "Y_28.jpg"
 img = cv2.imread(os.path.join(path, file_name))
 show_plt_image(img)
 # img = preprocess_image(img)
 flag, img = preprocess(img)
+model = keras.models.load_model(model_name)
 if flag:
-    test_model(img, model_name)
+    test_model(img)
 else:
     print('something is wrong')
 

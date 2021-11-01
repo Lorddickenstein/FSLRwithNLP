@@ -94,3 +94,12 @@ def skin_segmentation(src_img):
 
     # Apply mask to the frame
     return cv2.bitwise_and(src_img.copy(), src_img.copy(), mask=YCrCb_mask_blur)
+
+
+""" Transform the image into a format that the model expects. """
+def preprocess_image(src_img):
+    skin_mask = skin_segmentation(src_img)
+    new_size = resize_image(skin_mask, height=120, width=120)
+    norm_img = new_size.astype('float32')
+    norm_img /= 255
+    return norm_img, np.expand_dims(norm_img, axis=0)

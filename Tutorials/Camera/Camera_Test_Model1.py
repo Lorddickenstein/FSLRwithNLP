@@ -6,6 +6,7 @@ import mediapipe as mp
 import time
 import Application.utils as utils
 import Application.HandTrackingModule as HTM
+import Application.SignClassificationModule as SCM
 import matplotlib.pyplot as plt
 import warnings
 import time
@@ -29,7 +30,8 @@ detector = HTM.HandDetector()
 # model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Best so far\Fingerspell_Detector_Experiment5(55-epochs)-accuracy_0.87-val_accuracy_0.84.h5')
 # model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Fingerspell_Detector_Experiment5(30-epochs).h5')
 # model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Fingerspell_Detector_Experiment6(10-epochs)-accuracy_0.87-val_accuracy_0.88.h5')
-model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Y-Why-2_Experiment6(20-epochs)-accuracy_0.87-val_accuracy_0.88.h5')
+# model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Y-Why-2_Experiment6(20-epochs)-accuracy_0.87-val_accuracy_0.88.h5')
+model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Best so far\Fingerspell_Detector_Experiment5(55-epochs)-accuracy_0.87-val_accuracy_0.84.h5')
 
 def find_match2(x):
     classes = {0:'Y', 1:'Why-2'}
@@ -72,7 +74,6 @@ while True:
         continue;
 
     frame = imutils.resize(frame, width=900)
-    print(frame.shape[0], frame.shape[1])
 
     # Filter lines to make it sharper and smoother
     frame = cv2.bilateralFilter(frame, 5, 50, 100)
@@ -84,8 +85,12 @@ while True:
         roi = frame[pts_lower_right[1]:pts_upper_left[1], pts_upper_left[0]:pts_lower_right[0]]
         if len(roi) != 0:
             try:
-                roi = preprocess_image(roi)
-                score, classification = classify_image(roi, model)
+                img_crop, roi = utils.preprocess_image(roi)
+                predictions, top_prediction_indices = SCM.classify_image(roi, model)
+                class_obj = np.argmax(predictions)
+                print(class_obj)
+                classification = SCM.find_match(class_obj)
+                score = float("%0.2f" % (max(predictions[0]) * 100))
                 cv2.putText(frame, classification + " " + str(score), (10, height - 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
                 cv2.rectangle(frame, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
             except Exception as exc:
@@ -108,7 +113,8 @@ while True:
     cv2.putText(frame, str(int(fps)), (10, 50), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
 
     cv2.imshow('Original', frame)
-    if cv2.waitKey(5) & 0xFF == 27:
+    k = cv2.waitKey(5)
+    if k == ord('q') or k == 27:
         break
 
 cap.release()

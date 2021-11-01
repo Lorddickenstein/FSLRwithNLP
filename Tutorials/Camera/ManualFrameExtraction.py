@@ -4,7 +4,7 @@ import numpy
 import os
 
 path = 'D:\Pictures\Camera Roll'
-file_name = 'add2'
+file_name = 'Jers-Late-1'
 file_path = os.path.join(path, file_name) + '.mp4'
 cap = cv2.VideoCapture(file_path)
 i = 0
@@ -14,9 +14,9 @@ while cap.isOpened():
     if not _:
         break
 
-    if i % 10 == 0:
+    if i % 6 == 0:
         name = file_name + '_' + str(k) + '.jpg'
-        path = 'D:\Pictures\Camera Roll\Temp2'
+        path = 'D:\Pictures\Camera Roll\Temp'
         path_class = os.path.join(path, file_name)
         if os.path.isdir(path_class) is False:
             os.makedirs(path_class)

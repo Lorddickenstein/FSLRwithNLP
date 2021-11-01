@@ -26,9 +26,14 @@ pTime = 0
 cTime = 0
 
 detector = HTM.HandDetector()
-model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Best so far\Fingerspell_Detector_Experiment5(55-epochs)-accuracy_0.87-val_accuracy_0.84.h5')
+# model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Best so far\Fingerspell_Detector_Experiment5(55-epochs)-accuracy_0.87-val_accuracy_0.84.h5')
 # model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Fingerspell_Detector_Experiment5(30-epochs).h5')
 # model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Fingerspell_Detector_Experiment6(10-epochs)-accuracy_0.87-val_accuracy_0.88.h5')
+model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Y-Why-2_Experiment6(20-epochs)-accuracy_0.87-val_accuracy_0.88.h5')
+
+def find_match2(x):
+    classes = {0:'Y', 1:'Why-2'}
+    return classes[x]
 
 def find_match(x):
     classes = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E',
@@ -56,7 +61,7 @@ def classify_image(src_img, model):
     print(class_x)
     # score = float("%0.2f" % (max(prediction[0]) * 100))
     score = float("%0.2f" % (prediction[0, class_x] * 100))
-    return score, find_match(class_x)
+    return score, find_match2(class_x)
 
 
 while True:

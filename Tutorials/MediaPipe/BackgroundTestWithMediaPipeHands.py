@@ -31,7 +31,7 @@ while True:
         try:
             roi = frame[pts_lower_right[1]:pts_upper_left[1], pts_upper_left[0]:pts_lower_right[0]]
             roi = utils.skin_segmentation(roi)
-            roi = utils.resize_image(roi, height=80, width=80)
+            roi = utils.resize_image(roi, height=120, width=120)
             cv2.imshow('Cropped', roi)
         except Exception:
             pass

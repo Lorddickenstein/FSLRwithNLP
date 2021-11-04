@@ -21,6 +21,9 @@ while True:
         print("Ignoring empty camera frame.")
         continue;
 
+    frame_number = cap.get(cv2.CAP_PROP_POS_FRAMES) - 1
+    print(frame_number)
+
     # Filter lines to make it sharper and smoother
     frame = cv2.bilateralFilter(frame, 5, 50, 100)
     # Flip the image

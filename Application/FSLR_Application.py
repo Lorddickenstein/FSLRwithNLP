@@ -21,13 +21,23 @@ def start_application():
     # Open the camera
     cap = cv2.VideoCapture(0)
 
+    # Time variables
     pTime = 0
     cTime = 0
+    prevTime = time.time()
+    currTime = 0
+    ctrTime = 0
 
     # Model
     model_path = 'D:\Documents\Thesis\Experimental_Models\Best so far'
     model_name = 'Fingerspell_Detector_Experiment5(55-epochs)-accuracy_0.87-val_accuracy_0.84.h5'
     model = load_model(os.path.join(model_path, model_name))
+
+    # Detection variables
+    sequence = []
+    sentence = []
+    threshold = 0.5
+
 
     while cap.isOpened():
         _, frame = cap.read()
@@ -42,6 +52,26 @@ def start_application():
 
 
 
+
+
+
+
+
+        # Calculate time lapse in seconds
+        currTime = time.time()
+        if currTime - prevTime >= 2.0:
+            ctrTime += 1
+            prevTime = currTime
+
+        cv2.putText(frame, str(ctrTime), (10, 50), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 3)
+
+
+        # Calculate FPS
+        cTime = time.time()
+        fps = 1 / (cTime - pTime)
+        pTime = cTime
+        # Show Fps
+        # cv2.putText(frame, str(int(fps)), (10, 50), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
 
         cv2.imshow('Camera', frame)
         k = cv2.waitKey(5)

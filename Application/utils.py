@@ -6,8 +6,8 @@ from PIL import Image
 
 
 """ Returns an image with dimension height by width. """
-def resize_image(src_img, height=224, width=224):
-    return cv2.resize(src_img, (height, width), interpolation=cv2.INTER_CUBIC)
+def resize_image(src_img, height=224, width=224, xScale=0, yScale=0):
+    return cv2.resize(src_img, (height, width), fx=xScale, fy=yScale, interpolation=cv2.INTER_AREA)
 
 
 """ Show image in opencv. """
@@ -56,6 +56,11 @@ def draw_contours(src_img, contours):
     return cv2.drawContours(src_img, contours, -1, (255, 255, 255), 2)
 
 
+""" Computes the Laplacian and returns the focus measure which is simply the variance of the Laplacian"""
+def variance_of_laplacian(image):
+	return cv2.Laplacian(image, cv2.CV_64F).var()
+
+
 """ Draw convex hull from the given hull"""
 def draw_convex_hull(hull, src_img):
     pts = np.column_stack(np.where(src_img.transpose() > 0))
@@ -99,7 +104,21 @@ def skin_segmentation(src_img):
 """ Transform the image into a format that the model expects. """
 def preprocess_image(src_img):
     skin_mask = skin_segmentation(src_img)
-    new_size = resize_image(skin_mask, height=120, width=120)
+    gray_img = cv2.cvtColor(skin_mask, cv2.COLOR_BGR2GRAY)
+    new_size = resize_image(gray_img, height=120, width=120)
     norm_img = new_size.astype('float32')
     norm_img /= 255
-    return norm_img, np.expand_dims(norm_img, axis=0)
+    norm_img.reshape(120, 120, 1)
+    return new_size, np.expand_dims(norm_img, axis=(-1, 0))
+
+
+""" Returns a boolean if the img is blurry or not """
+# https://www.pyimagesearch.com/2015/09/07/blur-detection-with-opencv/
+def detect_blur(src_img):
+    focus_measure = variance_of_laplacian(src_img)
+    blurriness = True if focus_measure < 200 else False
+    return blurriness, focus_measure
+
+def detect_blur2(src_img):
+    focus_measure = variance_of_laplacian(src_img)
+    return focus_measure

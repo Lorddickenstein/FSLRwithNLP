@@ -23,6 +23,8 @@ mpHands = mp.solutions.hands
 hands = mpHands.Hands()
 mp_draw = mp.solutions.drawing_utils
 
+threshold = 40.0
+
 pTime = 0
 cTime = 0
 
@@ -31,7 +33,8 @@ detector = HTM.HandDetector()
 # model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Fingerspell_Detector_Experiment5(30-epochs).h5')
 # model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Fingerspell_Detector_Experiment6(10-epochs)-accuracy_0.87-val_accuracy_0.88.h5')
 # model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Y-Why-2_Experiment6(20-epochs)-accuracy_0.87-val_accuracy_0.88.h5')
-model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Best so far\Fingerspell_Detector_Experiment5(55-epochs)-accuracy_0.87-val_accuracy_0.84.h5')
+# model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Best so far\Fingerspell_Detector_Experiment5(55-epochs)-accuracy_0.87-val_accuracy_0.84.h5')
+model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Part2_FSLR_CNN_Model(30-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.27.h5')
 
 def find_match2(x):
     classes = {0:'Y', 1:'Why-2'}
@@ -73,7 +76,7 @@ while True:
         print("Ignoring empty camera frame.")
         continue;
 
-    frame = imutils.resize(frame, width=900)
+    frame = imutils.resize(frame, width=1000)
 
     # Filter lines to make it sharper and smoother
     frame = cv2.bilateralFilter(frame, 5, 50, 100)
@@ -84,22 +87,50 @@ while True:
         # cv2.rectangle(frame, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
         roi = frame[pts_lower_right[1]:pts_upper_left[1], pts_upper_left[0]:pts_lower_right[0]]
         if len(roi) != 0:
+            # try:
+            #     img_crop, roi = utils.preprocess_image(roi)
+            #     cv2.imshow('cropped', img_crop)
+            # except Exception as e:
+            #     pass
+            #
+            # predictions, top_predictions = SCM.classify_image(roi, model)
+            #
+            # score = max(top_predictions, key=lambda x: x[1])
+            # if score[1] >= threshold:
+            #     cv2.putText(frame, top_predictions[4][0] + " " + str(top_predictions[4][1]),
+            #                 (10, height - int(0.50 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+            #     cv2.putText(frame, top_predictions[3][0] + " " + str(top_predictions[3][1]),
+            #                 (10, height - int(0.45 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+            #     cv2.putText(frame, top_predictions[2][0] + " " + str(top_predictions[2][1]),
+            #                 (10, height - int(0.40 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+            #     cv2.putText(frame, top_predictions[1][0] + " " + str(top_predictions[1][1]),
+            #                 (10, height - int(0.35 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+            #     cv2.putText(frame, top_predictions[0][0] + " " + str(top_predictions[0][1]),
+            #                 (10, height - int(0.3 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+            #
+            # cv2.rectangle(frame, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
+
             try:
                 img_crop, roi = utils.preprocess_image(roi)
-                predictions, top_prediction_indices = SCM.classify_image(roi, model)
-                class_obj = np.argmax(predictions)
-                print(class_obj)
-                classification = SCM.find_match(class_obj)
-                score = float("%0.2f" % (max(predictions[0]) * 100))
-                cv2.putText(frame, classification + " " + str(score), (10, height - 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+                cv2.imshow('cropped', img_crop)
+                predictions, top_predictions = SCM.classify_image(roi, model)
+
+                score = max(top_predictions, key=lambda x: x[1])
+                if score[1] >= threshold:
+                    cv2.putText(frame, top_predictions[4][0] + " " + str(top_predictions[4][1]),
+                                (10, height - int(0.50 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+                    cv2.putText(frame, top_predictions[3][0] + " " + str(top_predictions[3][1]),
+                                (10, height - int(0.45 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+                    cv2.putText(frame, top_predictions[2][0] + " " + str(top_predictions[2][1]),
+                                (10, height - int(0.40 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+                    cv2.putText(frame, top_predictions[1][0] + " " + str(top_predictions[1][1]),
+                                (10, height - int(0.35 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+                    cv2.putText(frame, top_predictions[0][0] + " " + str(top_predictions[0][1]),
+                                (10, height - int(0.3 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+
                 cv2.rectangle(frame, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
             except Exception as exc:
                 pass
-            # roi = preprocess_image(roi)
-            # print(roi.shape)
-            # classification = classify_image(roi, model)
-            # cv2.putText(frame, classification, (10, height - 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
-            # cv2.rectangle(frame, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
         else:
             cv2.putText(frame, "roi is empty", (10, height - 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
     else:

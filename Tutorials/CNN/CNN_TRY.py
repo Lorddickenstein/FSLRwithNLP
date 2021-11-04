@@ -25,12 +25,14 @@ def test_model_from_dataset(x_train, y_train, x_test, y_test, model_name):
     print(find_match(class_x[0]))
 
 def test_model(img):
-    prediction, top_prediction_indices = SCM.classify_image(img, model)
-    print(top_prediction_indices)
-    for index in top_prediction_indices:
-        print('{} {}'.format(find_match(index), prediction[0, index] * 100))
+    prediction, top_predictions = SCM.classify_image(img, model)
+    print(top_predictions)
+
+    score = max(top_predictions, key=lambda x: x[1])
+    print("score", score)
+
     class_x = np.argmax(prediction)
-    score = float("%0.2f" % (max(prediction[0]) * 100))
+    score = float("%.2f" % (max(prediction[0]) * 100))
     # print(class_x)
     print(score)
     print(find_match(class_x))

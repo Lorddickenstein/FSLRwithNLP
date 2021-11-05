@@ -2,48 +2,47 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import Application.HandTrackingModule as HTM
+import Application.utils as utils
 
-cap = cv2.VideoCapture('D:\Pictures\Camera Roll\\Ball2.mp4')
-ploty = np.array([])
-plotx = np.array([])
-gradientx = np.array([])
-gradienty = np.array([])
+detector = HTM.HandDetector()
+
+cap = cv2.VideoCapture('D:\Pictures\Camera Roll\\Test6.mp4')
+
+frm_num = []
+frm_gradients = []
+prevGradient = np.array([])
 i = 0
-cnt = 0
 while cap.isOpened():
     _, frame = cap.read()
     if not _:
         break
 
-    # print(cnt)
-    cnt += 1
     currFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     sobelx = cv2.Sobel(currFrame, cv2.CV_64F, 1, 0, ksize=cv2.FILTER_SCHARR)
     sobely = cv2.Sobel(currFrame, cv2.CV_64F, 0, 1, ksize=cv2.FILTER_SCHARR)
     currGradient = np.sqrt(np.square(sobelx) + np.square(sobely))
-    gradientx = np.append(gradientx, currGradient)
-    gradienty = np.append(gradientx, 1)
 
-    # print(currGradient.ndim)
-    # currGradient *= 255.0 / currGradient.max()
-    # print(sum(currGradient))
+    if i % 5 == 0 and i != 0:
 
-    # if i != 0:
-    #     diff = sum(currGradient) - sum(prevGradient)
-    #     # print(diff)
-    #     plotx = np.append(plotx, i)
-    #     ploty = np.append(ploty, diff)
+        frm_diff = cv2.absdiff(currGradient, prevGradient)
+        frm_sum = cv2.sumElems(frm_diff)
+        print(frm_sum, i)
 
-        # if diff == 0:
-        #     cv2.imwrite('D:\Documents\Python\images\Signs\\frame_' + str(i), frame)
+        frm_gradients.append(frm_sum)
+        frm_num.append(i)
+
+        cv2.imshow('Sobelx', sobelx)
+        cv2.imshow('Sobely', sobely)
+        cv2.imshow('Gradient', currGradient)
+        cv2.imshow('Sundown', currFrame)
 
     prevGradient = currGradient
-    cv2.imshow('Sundown', frame)
     i += 1
     if cv2.waitKey(5) & 0xFF == ord('q'):
         break
 
 cap.release()
-plt.plot(gradientx, gradienty)
+plt.plot(frm_num, frm_gradients)
 plt.show()
 cv2.destroyAllWindows()

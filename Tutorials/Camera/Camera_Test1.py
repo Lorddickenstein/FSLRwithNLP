@@ -112,54 +112,62 @@ while cap.isOpened():
         lastFrame = blur_gray
         isCapturing = True
     elif key == ord('e'):
-        text = 'Not Capturing'
-        isCapturing = False
-        y = np.array(lstdiffMag)
-        base = peakutils.baseline(y, 2)
-        indices = peakutils.indexes(y - base, min_dist=3)
-        cnt = 1
-        sentence = []
-        prevWord = ''
-        for index in indices:
-            extracted_frame = full_color[index]
-            detected, pts_upper_left, pts_lower_right = detector.find_hands(extracted_frame)
+        if isCapturing:
+            y = np.array(lstdiffMag)
+            base = peakutils.baseline(y, 2)
+            indices = peakutils.indexes(y - base, min_dist=3)
+            cnt = 1
+            sentence = []
+            prevWord = ''
+            for index in indices:
+                extracted_frame = full_color[index]
+                detected, pts_upper_left, pts_lower_right = detector.find_hands(extracted_frame)
 
-            if detected:
-                cv2.imwrite(os.path.join(keyframePath, 'keyframe' + str(cnt) + '.jpg'), extracted_frame)
-                roi = extracted_frame[pts_lower_right[1]:pts_upper_left[1], pts_upper_left[0]:pts_lower_right[0]]
-                try:
-                    img_crop, roi = utils.preprocess_image(roi)
-                    # fm = utils.detect_blur2(img_crop)
-                    # predictions, top_predictions = SCM.classify_image(roi, model)
-                    # print(top_predictions[2:])
-                    # score = max(top_predictions, key=lambda x: x[1])
-                    # word = top_predictions[4][0]
-                    # if word != prevWord:
-                    #     fm = "%.2f" % fm
-                    #     cv2.imwrite(os.path.join(croppedsignsPath, str(cnt) + "_" + word + '_' + fm + '.jpg'),
-                    #                 img_crop)
-                    #     sentence.append(word)
-                    # prevWord = word
-                    is_blurry, fm = utils.detect_blur(img_crop)
-                    if not is_blurry:
-                        predictions, top_predictions = SCM.classify_image(roi, model)
-                        print(top_predictions[2:])
-                        score = max(top_predictions, key=lambda x: x[1])
-                        word = top_predictions[4][0]
-                        if word != prevWord:
-                            fm = "%.2f" % fm
-                            cv2.imwrite(os.path.join(croppedsignsPath, str(cnt) + "_" + word + '_' + fm + '.jpg'), img_crop)
-                            sentence.append(word)
-                        prevWord = word
-                except Exception as exc:
-                    pass
-                cnt += 1
-        print(sentence)
-        lstfrm = []
-        lstdiffMag = []
-        timeSpans = []
-        images = []
-        full_color = []
+                if detected:
+                    roi = extracted_frame[pts_lower_right[1]:pts_upper_left[1], pts_upper_left[0]:pts_lower_right[0]]
+                    try:
+                        text = 'not detected'
+                        img_crop, roi = utils.preprocess_image(roi)
+
+                        """ Blur detecion using FFT"""
+                        # resized = imutils.resize(img_crop, width=500)
+                        # (mean, is_blurry) = utils.detect_blur_fft(resized, size=60, thresh=-35)
+                        # text = "Blurry ({:.2f})" if is_blurry else "Not Blurry ({:.2f})"
+                        # text = text.format(mean)
+                        # predictions, top_predictions = SCM.classify_image(roi, model)
+                        # print(top_predictions[2:])
+                        # score = max(top_predictions, key=lambda x: x[1])
+                        # word = top_predictions[4][0]
+                        # if word != prevWord:
+                        #     cv2.imwrite(os.path.join(croppedsignsPath, str(cnt) + "_" + word + '_' + text + '.jpg'), img_crop)
+                        #     sentence.append(word)
+                        # prevWord = word
+                        resized = imutils.resize(img_crop, width=500)
+                        (mean, is_blurry) = utils.detect_blur_fft(resized, size=60, thresh=-35)
+                        text = "Blurry ({:.2f})" if is_blurry else "Not Blurry ({:.2f})"
+                        text = text.format(mean)
+                        if not is_blurry:
+                            predictions, top_predictions = SCM.classify_image(roi, model)
+                            print(top_predictions[2:])
+                            score = max(top_predictions, key=lambda x: x[1])
+                            word = top_predictions[4][0]
+                            if word != prevWord:
+                                cv2.imwrite(os.path.join(croppedsignsPath, str(cnt) + "_" + word + '_' + text + '.jpg'),
+                                            img_crop)
+                                sentence.append(word)
+                            prevWord = word
+                    except Exception as exc:
+                        pass
+                    cv2.imwrite(os.path.join(keyframePath, 'keyframe_' + text + str(cnt) + '.jpg'), extracted_frame)
+                    cnt += 1
+            print(sentence)
+            lstfrm = []
+            lstdiffMag = []
+            timeSpans = []
+            images = []
+            full_color = []
+            isCapturing = False
+            text = 'Not Capturing'
 
 
 cap.release()

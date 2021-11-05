@@ -23,6 +23,11 @@ def show_plt_image(src_img):
     plt.show()
 
 
+""" Convert image into grayscale. """
+def convert_to_grayscale(src_img):
+    return cv2.cvtColor(src_img, cv2.COLOR_BGR2GRAY)
+
+
 """ Returns the image in binary using Otsu's binarization. """
 def get_thresh(src_img):
     return cv2.threshold(src_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -104,7 +109,7 @@ def skin_segmentation(src_img):
 """ Transform the image into a format that the model expects. """
 def preprocess_image(src_img):
     skin_mask = skin_segmentation(src_img)
-    gray_img = cv2.cvtColor(skin_mask, cv2.COLOR_BGR2GRAY)
+    gray_img = convert_to_grayscale(skin_mask)
     new_size = resize_image(gray_img, height=120, width=120)
     norm_img = new_size.astype('float32')
     norm_img /= 255
@@ -116,9 +121,41 @@ def preprocess_image(src_img):
 # https://www.pyimagesearch.com/2015/09/07/blur-detection-with-opencv/
 def detect_blur(src_img):
     focus_measure = variance_of_laplacian(src_img)
-    blurriness = True if focus_measure < 200 else False
+    blurriness = True if focus_measure < 500 else False
     return blurriness, focus_measure
 
 def detect_blur2(src_img):
     focus_measure = variance_of_laplacian(src_img)
     return focus_measure
+
+
+""" Returns a 2-tuple, the magnitude mean and a boolean indicating whether the image is blurry or not"""
+def detect_blur_fft(image, size=60, thresh=10):
+    # grab the dimensions of the image and use the dimensions to
+    # derive the center (x, y)-coordinates
+    (h, w) = image.shape
+    (cX, cY) = (int(w / 2.0), int(h / 2.0))
+
+    # compute the FFT to find the frequency transform, then shift
+    # the zero frequency component (i.e., DC component located at
+    # the top-left corner) to the center where it will be more
+    # easy to analyze
+    fft = np.fft.fft2(image)
+    fft_shift = np.fft.fftshift(fft)
+
+    # zero-out the center of the FFT shift (i.e., remove low
+    # frequencies), apply the inverse shift such that the DC
+    # component once again becomes the top-left, and then apply
+    # the inverse FFT
+    fft_shift[cY - size:cY + size, cX - size:cX + size] = 0
+    fft_shift = np.fft.ifftshift(fft_shift)
+    recon = np.fft.ifft2(fft_shift)
+
+    # compute the magnitude spectrum of the reconstructed image,
+    # then compute the mean of the magnitude values
+    magnitude = 20 * np.log(np.abs(recon))
+    mean = np.mean(magnitude)
+
+    # the image will be considered "blurry" if the mean value of the
+    # magnitudes is less than the threshold value
+    return (mean, mean <= thresh)

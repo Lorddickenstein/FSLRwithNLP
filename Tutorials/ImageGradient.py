@@ -11,9 +11,11 @@ def show_img(name, src_img):
     cv2.destroyAllWindows()
 
 img = cv2.imread('D:\Documents\Thesis\FSLRwithNLP\Datasets\Test_Images\A_68.jpg', 0)
+# img = cv2.imread('')
 img = resize_image(img)
 # show_img('Resized', img)
 sobelx = cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=cv2.FILTER_SCHARR)
 sobely = cv2.Sobel(img, cv2.CV_64F, 0, 1, ksize=cv2.FILTER_SCHARR)
-currGradient = np.sqrt(np.square(sobelx) + np.square(sobely))
+currGradient = abs(np.sqrt(np.square(sobelx) + np.square(sobely)))
 print(currGradient)
+print(currGradient.var())

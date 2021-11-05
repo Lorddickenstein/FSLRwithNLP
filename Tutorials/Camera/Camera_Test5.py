@@ -1,68 +1,98 @@
 import cv2
 import numpy as np
-import mediapipe as mp
-import time
+import matplotlib.pyplot as plt
 import Application.utils as utils
+import Application.HandTrackingModule as HTM
+import Application.SignClassificationModule as SCM
+import imutils
+import os
 
 # Open the camera
 cap = cv2.VideoCapture(0)
+detector = HTM.HandDetector()
 
-# Initialize mediapipe variables
-mpHands = mp.solutions.hands
-hands = mpHands.Hands()
-mp_draw = mp.solutions.drawing_utils
+text = 'Not Capturing'
+is_capturing = False
 
-pTime = 0
-cTime = 0
+frm_num_arr = []
+frm_gradients = []
+prevGradient = np.array([])
+frm_arr = []
 
-while True:
+frm_num = 0
+figures_path = 'D:\Documents\Thesis\FSLRwithNLP\Tutorials\Camera\Figures'
+gradient_thresh_value = 3.1
+TEN_MILLION = 10000000.0
+
+while cap.isOpened():
     _, frame = cap.read()
+    # Filter lines to make it sharper and smoother
+    frame = cv2.bilateralFilter(frame, 5, 50, 100)
+    frame = imutils.resize(frame, width=1000)
+    height, width, channel = frame.shape
+    frameCopy = frame.copy()
+
     if not _:
         print("Ignoring empty camera frame.")
         continue;
 
-    frame_number = cap.get(cv2.CAP_PROP_POS_FRAMES) - 1
-    print(frame_number)
+    cv2.putText(frame, text, (10, int(0.98 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
 
-    # Filter lines to make it sharper and smoother
-    frame = cv2.bilateralFilter(frame, 5, 50, 100)
-    # Flip the image
-    frame = cv2.flip(frame, 1)
+    if is_capturing:
+        detected, pts_upper_left, pts_lower_right = detector.find_hands(frameCopy)
+        if detected:
+            roi = frameCopy[pts_lower_right[1]:pts_upper_left[1], pts_upper_left[0]:pts_lower_right[0]]
 
-    # Convert frame to rgb for mediapipe
-    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    # Process the frame
-    results = hands.process(rgb)
+            try:
+                currFrame = utils.convert_to_grayscale(frameCopy)
+                # currFrame = utils.resize_image(currFrame, height=120, width=120)
+                sobelx = cv2.Sobel(currFrame, cv2.CV_64F, 1, 0, ksize=cv2.FILTER_SCHARR)
+                sobely = cv2.Sobel(currFrame, cv2.CV_64F, 0, 1, ksize=cv2.FILTER_SCHARR)
+                currGradient = np.sqrt(np.square(sobelx) + np.square(sobely))
 
-    if results.multi_hand_landmarks:
-        for handLMs in results.multi_hand_landmarks:
-            x_pts = []
-            y_pts = []
-            for id, lm in enumerate(handLMs.landmark):
-                h, w, c = frame.shape
-                cx, cy = int(lm.x*w), int(lm.y*h)
-                x_pts.append(cx)
-                y_pts.append(cy)
+                if frm_num != 0:
+                    frm_diff = cv2.absdiff(currGradient, prevGradient)
+                    frm_sum = cv2.sumElems(frm_diff)
+                    frm_sum = frm_sum[0]/TEN_MILLION
+                    if frm_sum < gradient_thresh_value:
+                        frm_sum = gradient_thresh_value
+                    print(frm_sum, frm_num)
 
-            # Find the max and min points
-            y_max, y_min, x_max, x_min = max(y_pts), min(y_pts), max(x_pts), min(x_pts)
-            cv2.rectangle(frame, (x_min - 20, y_max + 20), (x_max + 20, y_min - 20), (255, 0, 0), 3)
+                    frm_gradients.append(frm_sum)
+                    frm_num_arr.append(frm_num)
+                    frm_arr.append(frame)
 
-            mp_draw.draw_landmarks(frame, handLMs, mpHands.HAND_CONNECTIONS)
-    else:
-        # INSERT CODE TO DISPLAY IF NO HAND IS DETECTED
-        pass
-
-    # Calculate FPS
-    cTime = time.time()
-    fps = 1/(cTime-pTime)
-    pTime = cTime
-    # Show Fps
-    cv2.putText(frame, str(int(fps)), (10, 50), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
+                cv2.rectangle(frame, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
+                prevGradient = currGradient
+                frm_num += 1
+            except Exception as exc:
+                pass
 
     cv2.imshow('Original', frame)
-    if cv2.waitKey(5) & 0xFF == 27:
+    key = cv2.waitKey(5) & 0xFF
+    if key == 27 or key == ord('q'):
         break
+    elif key == ord('s'):
+        if not is_capturing:
+            text = 'Capturing'
+            is_capturing = True
+    elif key == ord('e'):
+        if is_capturing:
+            plt.plot(frm_num_arr, frm_gradients)
+            plt.savefig(os.path.join(figures_path, 'Figures.png'), bbox_inches='tight')
+            plt.show()
+
+            # for frm_gradient in frm_gradients:
+            #     if frm_gradient == gradient_thresh_value:
+
+            frm_num_arr = []
+            frm_gradients = []
+            frm_arr = []
+            frm_num = 0
+
+            text = 'Not Capturing'
+            is_capturing = False
+
 
 cap.release()
 cv2.destroyAllWindows()

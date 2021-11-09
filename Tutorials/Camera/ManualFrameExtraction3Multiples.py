@@ -12,8 +12,8 @@ def resize_image(src_img, img_size=(224, 224)):
   return cv2.resize(src_img, img_size, interpolation=cv2.INTER_CUBIC)
 
 path = 'D:\Pictures\Camera Roll'
-path_sign_dest = 'D:\Pictures\Camera Roll\Temp'
-file_name = ['Late']
+path_sign_dest = 'D:\Pictures\Camera Roll\Temp2'
+file_name = ['Come-2', 'D', 'Happen', 'Happen-2', 'He-She', 'Introduce-2', 'Them', 'Welcome-2', 'Work']
 print(len(file_name,))
 for file in file_name:
     file_path = os.path.join(path, file) + '.mp4'

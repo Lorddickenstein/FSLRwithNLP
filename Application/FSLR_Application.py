@@ -22,9 +22,9 @@ THRESHOLD = 40.0
 FRAME_LIMIT = 10
 
 # Paths and Directories
-figures_path = 'Figures'
-keyframes_path = 'Keyframes'
-cropped_img_path = 'Keyframes\Cropped Images'
+figures_path = 'D:\Documents\Thesis\Figures'
+keyframes_path = 'D:\Documents\Thesis\Keyframes'
+cropped_img_path = 'D:\Documents\Thesis\Keyframes\Cropped Images'
 
 # FSLR Model
 model_path = 'D:\Documents\Thesis\Experimental_Models'
@@ -83,7 +83,6 @@ def start_application():
         frame = cv2.bilateralFilter(frame, 5, 50, 100)
         frame = imutils.resize(frame, width=1000)
         height, width, channel = frame.shape
-        print(width, height)
         frameCopy = frame.copy()
 
         if not _:

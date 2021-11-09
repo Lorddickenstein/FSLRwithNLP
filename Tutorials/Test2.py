@@ -24,31 +24,26 @@ window.title("FSLR Translator")
 window.configure(background="grey")
 
 # Constants
-if int(datetime.now().strftime('%H')) <= 12:
-    GRADIENT_THRESH_VALUE = 1.6
-else:
-    GRADIENT_THRESH_VALUE = 4.8
-
 TEN_MILLION = 10000000.0
 THRESHOLD = 40.0
 FRAME_LIMIT = 10
+THRESH_EXTRA = 0.5
 
 # Variables
 detector = HTM.HandDetector()
 window.keyframes_arr, window.crop_frm_arr, window.frm_arr, window.frm_num_arr, window.frm_gradients = [], [], [], [], []
 window.prevGradient = np.array([])
-window.start_index, window.end_index, window.frm_num, window.stable_ctr = 0, 0, 0, 0
+window.start_index, window.end_index, window.frm_num = 0, 0, 0
+window.stable_ctr, window.cTime, window.GRADIENT_THRESH_VALUE = 0, 0, 0
 window.prev_frm_sum = TEN_MILLION
 
 window.text_is_capturing = 'Not Capturing'
 window.color_is_capturing = (0, 0, 153)
 window.is_capturing = False
 window.is_calculating = True
-window.GRADIENT_THRESH_VALUE = 1.6
 window.gradient_thresh_arr = []
 window.pTime = datetime.now().second
 window.sec = 6
-window.cTime = 0
 
 # Paths and Directories
 figures_path = 'D:\Documents\Thesis\Figures'
@@ -98,9 +93,7 @@ def start_application():
     if ret:
         # Filter lines to make it sharper and smoother
         frame = cv2.bilateralFilter(frame, 5, 50, 100)
-        # frame = imutils.resize(frame, width=700)
         height, width, channel = frame.shape
-        # print(height, width)
         frameCopy = frame.copy()
 
         if window.is_calculating is False:
@@ -137,10 +130,11 @@ def start_application():
                         if window.frm_num != 0:
                             frm_diff = cv2.absdiff(currGradient, window.prevGradient)
                             frm_sum = cv2.sumElems(frm_diff)
-                            frm_sum = '%.2f' % (frm_sum[0] / TEN_MILLION)
+                            frm_sum = frm_sum[0] / TEN_MILLION
+                            # frm_sum = '%.2f' % (frm_sum[0] / TEN_MILLION)
                             print(frm_sum, window.frm_num, window.GRADIENT_THRESH_VALUE)
 
-                            if frm_sum < window.GRADIENT_THRESH_VALUE:
+                            if '%.2f' % frm_sum < window.GRADIENT_THRESH_VALUE:
                                 img_name = os.path.join(keyframes_path, 'keyframe_' + str(window.frm_num) + '.jpg')
                                 cv2.imwrite(img_name, frameCopy)
                                 window.stable_ctr += 1
@@ -194,14 +188,13 @@ def start_application():
                     print(frm_sum, window.frm_num)
                     window.gradient_thresh_arr.append(frm_sum)
                 else:
-
-                    window.GRADIENT_THRESH_VALUE = np.mean(window.gradient_thresh_arr) + 0.5
-                    window.GRADIENT_THRESH_VALUE = '%.2f' % window.GRADIENT_THRESH_VALUE
+                    window.GRADIENT_THRESH_VALUE = '%.2f' % (np.mean(window.gradient_thresh_arr) + THRESH_EXTRA)
                     print('Average Gradient Difference:', window.GRADIENT_THRESH_VALUE)
 
                     window.is_calculating = False
                     window.frm_num = 0
                     window.prevGradient = np.array([])
+                    window.gradient_thresh_arr = []
                     time.sleep(1)
 
             window.cTime = datetime.now().second
@@ -265,15 +258,13 @@ def endCapture():
                     try:
                         cv2.imwrite(img_crop_path, crop_img)
                     except Exception as exc:
-                        print('Error was found at frame {}'.format(frm_position))
+                        print('Error was found at frame {}.'.format(frm_position))
                         try:
                             crop_img, _ = utils.preprocess_image(window.crop_frm_arr[frm_position])
                             cv2.imwrite(img_crop_path, crop_img)
                         except Exception as exc:
-                            print('Error saving frame again')
-                            crop_img, _ = utils.preprocess_image(window.crop_frm_arr[frm_position+1])
-                            cv2.imwrite(img_crop_path, crop_img)
-
+                            print('Error saving frame again. Ignoring saving.')
+                            word = '[unrecognized]'
                     sentence.append(word)
                     prev_word = word
                 print('From frame {} to {}: {} total frames {}'.format(start_frm, end_frm, length, word))

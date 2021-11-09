@@ -3,7 +3,7 @@ import tkinter as tk
 
 def homePage():
     about.destroy()
-    import Home
+    import Application.GUI.Home
 
 
 about = tk.Tk()

@@ -11,7 +11,7 @@ def showFeed():
     ret, frame = cap.read()
     frame = imutils.resize(frame, width=815)
     height, width, channel = frame.shape
-    print(height, width)
+    # print(height, width)
 
     if ret:
         frame = cv2.flip(frame, 1)
@@ -28,7 +28,7 @@ def showFeed():
         img = ImageTk.PhotoImage(image=videoImg)
         camLabel.configure(image=img)
         camLabel.imageTk = img
-        camLabel.after(100, showFeed)
+        camLabel.after(10, showFeed)
     else:
         camLabel.configure(image='')
 
@@ -46,7 +46,7 @@ def endCapture():
 
         fourcc = cv2.VideoWriter_fourcc(*'DIVX')
         cap_size = (int(cap.get(3)), int(cap.get(4)))
-        out = cv2.VideoWriter(img_path, fourcc, 20.0, cap_size)
+        out = cv2.VideoWriter('signs.avi', fourcc, 20.0, cap_size)
 
         for frm in frm_arr:
             out.write(frm)
@@ -119,7 +119,7 @@ genLanLabel.place(x=15, y=10)
 genLanCountLabel = tk.Label(genLanFrame, text="COUNT    :", bg="#E84747", fg="#FDFAFA", font=("Montserrat", 12, "bold"))
 genLanCountLabel.place(x=170, y=205)
 
-# showFeed()
+showFeed()
 window.mainloop()
 cap.release()
 cv2.destroyAllWindows()

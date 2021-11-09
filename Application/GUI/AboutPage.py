@@ -19,9 +19,5 @@ subLabel = tk.Label(about, text="Filipino Sign Language to Text", bg="#6997F3", 
 subLabel.place(x=250, y=100)
 home = tk.Button(frame, width=10, height=2, text="HOME", bg="LIGHT GREY",
                  font=("Montserrat", 9, "bold"), command=homePage)
-home.place(x=350, y=390)
-endBut = tk.Button(frame, width=10, height=2, text="EXIT", bg="LIGHT GREY", font=("Montserrat", 9, "bold"),
-                   command=about.destroy)
-endBut.place(x=450, y=390)
-
+home.place(x=450, y=390)
 about.mainloop()

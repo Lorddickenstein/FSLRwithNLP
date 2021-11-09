@@ -36,22 +36,25 @@ detector = HTM.HandDetector()
 # model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Y-Why-2_Experiment6(20-epochs)-accuracy_0.87-val_accuracy_0.88.h5')
 # model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Best so far\Fingerspell_Detector_Experiment5(55-epochs)-accuracy_0.87-val_accuracy_0.84.h5')
 # model = keras.models.load_model('D:\Documents\Thesis\Expeimental_Models\Part2_FSLR_CNN_Model(38-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.34-val_loss_0.33.h5')
-model_path = 'D:\Documents\Thesis\Experimental_Models'
-model_name = 'Part2_weights(20-epochs)-accuracy_0.90-val_accuracy_0.89-loss_0.41-val_loss_0.44.hdf5'
+model_path = "E:\\"
+model_name = "Part2_FSLR_CNN_Model(30-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.27.h5"
 model = SCM.load_and_compile(os.path.join(model_path, model_name))
 
+
 def find_match2(x):
-    classes = {0:'Y', 1:'Why-2'}
+    classes = {0: 'Y', 1: 'Why-2'}
     return classes[x]
+
 
 def find_match(x):
     classes = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E',
-             5: 'F', 6: 'G', 7: 'H', 8: 'I', 9: ' ',
-             10: 'K', 11: 'L', 12: 'M', 13: 'N', 14: 'O',
-             15: 'P', 16: 'Q', 17: 'R', 18: 'S', 19: 'T',
-             20: 'U', 21: 'V', 22: 'W', 23: 'X', 24: 'Y',
-             25: ' ', 26: 'cook', 27: 'how'}
+               5: 'F', 6: 'G', 7: 'H', 8: 'I', 9: ' ',
+               10: 'K', 11: 'L', 12: 'M', 13: 'N', 14: 'O',
+               15: 'P', 16: 'Q', 17: 'R', 18: 'S', 19: 'T',
+               20: 'U', 21: 'V', 22: 'W', 23: 'X', 24: 'Y',
+               25: ' ', 26: 'cook', 27: 'how'}
     return classes[x]
+
 
 def preprocess_image(src_img):
     skin_mask = utils.skin_segmentation(src_img)
@@ -78,7 +81,7 @@ while True:
     height, width, channel = frame.shape
     if not _:
         print("Ignoring empty camera frame.")
-        continue;
+        continue
 
     frame = imutils.resize(frame, width=1000)
 
@@ -147,7 +150,7 @@ while True:
 
     # Calculate FPS
     cTime = time.time()
-    fps = 1/(cTime-pTime)
+    fps = 1 / (cTime - pTime)
     pTime = cTime
     # Show Fps
     cv2.putText(frame, str(int(fps)), (10, 50), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)

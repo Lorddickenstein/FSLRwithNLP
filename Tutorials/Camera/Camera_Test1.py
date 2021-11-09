@@ -11,9 +11,12 @@ import Application.utils as utils
 import Application.SignClassificationModule as SCM
 from tensorflow import keras
 
-keyframePath = 'D:\Documents\Thesis\FSLRwithNLP\Tutorials\Camera\keyframes'
-croppedsignsPath = 'D:\Documents\Thesis\FSLRwithNLP\Tutorials\Camera\keyframes\cropped images'
-model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Part2_FSLR_CNN_Model(30-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.27.h5')
+# keyframePath = 'D:\Documents\Thesis\FSLRwithNLP\Tutorials\Camera\keyframes'
+# croppedsignsPath = 'D:\Documents\Thesis\FSLRwithNLP\Tutorials\Camera\keyframes\cropped images'
+# model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Part2_FSLR_CNN_Model(30-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.27.h5')
+keyframePath = 'E:\\test\\keyframes'
+croppedsignsPath = 'E:\\test\\keyframes\\cropped_images'
+model = keras.models.load_model('E:\\Part2_FSLR_CNN_Model(30-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.27.h5')
 
 cap = cv2.VideoCapture(0)
 ret = cap.set(3, 720)
@@ -25,8 +28,10 @@ hands = mp_hands.Hands()
 
 detector = HTM.HandDetector()
 
+
 def scale_img(src_img, xScale, yScale):
     return cv2.resize(src_img, None, fx=xScale, fy=yScale, interpolation=cv2.INTER_AREA)
+
 
 def convert_to_grayscale(frame):
     grayframe = None
@@ -41,6 +46,7 @@ def convert_to_grayscale(frame):
 
 def get_thresh(src_img):
     return cv2.threshold(src_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
 
 isCapturing = False
 lstfrm = []
@@ -168,7 +174,6 @@ while cap.isOpened():
             full_color = []
             isCapturing = False
             text = 'Not Capturing'
-
 
 cap.release()
 cv2.destroyAllWindows()

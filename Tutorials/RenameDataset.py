@@ -3,8 +3,11 @@ import os
 
 source = 'D:\Pictures\Camera Roll\Temp'
 dest = 'D:\Pictures\Camera Roll\Temp2'
+folders = ['Come-2', 'D', 'Happen', 'Happen-2', 'He-She', 'Introduce-2', 'Them', 'Welcome-2', 'Work']
 
 for folder in os.listdir(source):
+    if folder not in folders:
+        continue
     folder_source = os.path.join(source, folder)
     folder_dest = os.path.join(dest, folder)
     i = 0

@@ -1,5 +1,4 @@
 import nltk
-from nltk.tag import pos_tag
 from easynmt import EasyNMT
 
 

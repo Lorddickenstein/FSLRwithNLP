@@ -194,7 +194,6 @@ def create_model(x_train, y_train, x_test, y_test):
 def save_model(model, name):
     model.save(name)
 
-<<<<<<< HEAD
 path = "D:\THESIS\FSLRwithNLP\FSLRwithNLP\Datasets\Test_Images\F.jpg"
 file_name = "L3.jpg"
 img = cv2.imread(os.path.join(path, file_name), 0)
@@ -206,7 +205,6 @@ test_model(img)
 # model_name = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\\test.h5"
 # model_name = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\\test_(0.5979_0.9139).h5"
 x_train, y_train, x_test, y_test = import_data()
-=======
 # model_name = "\Models\Fingerspelling(16, 32, 64)_(0.5030-0.9015).h5"
 # model_name = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\\test.h5"
 # model_name = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\FingerSpelling(32, 64, 128)_(0.4652-0.9072).h5"
@@ -226,7 +224,6 @@ else:
     print('something is wrong')
 
 # x_train, y_train, x_test, y_test = import_data()
->>>>>>> e548339863aa5f906a65f76c947ff262922a971f
 # # model = create_model(x_train, y_train, x_test, y_test)
 # # save_model(model, model_name)
 test_model_from_dataset(x_train, y_train, x_test, y_test, model_name)

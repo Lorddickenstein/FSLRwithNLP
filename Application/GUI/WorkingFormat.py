@@ -59,6 +59,14 @@ def homePage():
     import Home
 
 
+def setGThresh():
+    pop = tk.Tk()
+    pop.wm_title("TEST")
+    pop.geometry("300x100")
+    labelBonus = Label(pop, text="Set Gradient Threshold", font=("Montserrat", 15, "bold"))
+    labelBonus.place(x=25, y=25)
+
+
 window = tk.Tk()
 
 window.is_capturing = False
@@ -86,7 +94,7 @@ camLabel.place(x=20, y=20)
 startBut = tk.Button(rightFrame, width=25, height=2, text="START", bg="#1B7B03", font=("Montserrat", 9, "bold"),
                      command=startCapture)
 startBut.place(x=15, y=15)
-justBut = tk.Button(rightFrame, width=25, height=2, bg="#c4c4c4", font=("Montserrat", 9, "bold"))
+justBut = tk.Button(rightFrame, width=25, height=2, bg="#c4c4c4", font=("Montserrat", 9, "bold"), command=setGThresh)
 justBut.place(x=15, y=60)
 endBut = tk.Button(rightFrame, width=25, height=2, text="END", bg="#E21414", font=("Montserrat", 9, "bold"),
                    command=endCapture)

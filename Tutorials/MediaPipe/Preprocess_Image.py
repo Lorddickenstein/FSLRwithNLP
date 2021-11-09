@@ -1,16 +1,5 @@
 import os
 import cv2
-<<<<<<< HEAD
-import HandTrackingModule as HTM
-import utils as utils
-
-path = 'D:\THESIS\Frames1'
-dest = 'D:\THESIS\Preprocessed Images1'
-file_dir = ['Get-2', 'J', 'Nice',
-             'No', 'No-2', 'S', 'That',
-             'Umaga', 'We',
-             'We-2','Why']
-=======
 import Application.HandTrackingModule as HTM
 import Application.utils as utils
 
@@ -29,7 +18,6 @@ dest = 'D:\Pictures\Camera Roll\Temp2'
 #              'Jers-Today-2_1', 'Jers-Welcome-2', 'Jers-Where', 'Jers-Which',
 #              'Jers-Work']
 file_dir = ['test']
->>>>>>> 0593556a0c39c1e11953a098021b60d8238d3ede
 
 detector = HTM.HandDetector()
 

@@ -24,6 +24,7 @@ while True:
 
     frame = imutils.resize(frame, width=1000)
     height, width, channel = frame.shape
+    print(height, width)
     frameCopy = frame.copy()
 
 

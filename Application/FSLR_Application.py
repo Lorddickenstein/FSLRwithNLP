@@ -15,7 +15,7 @@ from datetime import datetime
 if int(datetime.now().strftime('%H')) <= 12:
     GRADIENT_THRESH_VALUE = 1.6
 else:
-    GRADIENT_THRESH_VALUE = 3.1
+    GRADIENT_THRESH_VALUE = 4.8
 
 TEN_MILLION = 10000000.0
 THRESHOLD = 40.0
@@ -30,7 +30,7 @@ cropped_img_path = 'Keyframes\Cropped Images'
 model_path = 'D:\Documents\Thesis\Experimental_Models'
 # model_name = 'Part2_FSLR_CNN_Model(38-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.34-val_loss_0.33.h5'
 # model = load_model(os.path.join(model_path, model_name))
-model_name = 'Part_2_weights_improvements-epoch_18-acc_0.93-loss_0.24-val_accuracy_0.92-val_loss_0.28.hdf5'
+model_name = 'Part2_weights(20-epochs)-accuracy_0.90-val_accuracy_0.89-loss_0.41-val_loss_0.44.hdf5'
 model = SCM.load_and_compile(os.path.join(model_path, model_name))
 
 def predict(img_arr, interval):
@@ -200,8 +200,11 @@ def start_application():
                                 cv2.imwrite(img_crop_path, crop_img)
                             except Exception as exc:
                                 print('Error was found at frame {}'.format(frm_position))
-                                crop_img, _ = utils.preprocess_image(crop_frm_arr[frm_position])
-                                cv2.imwrite(img_crop_path, crop_img)
+                                try:
+                                    crop_img, _ = utils.preprocess_image(crop_frm_arr[frm_position])
+                                    cv2.imwrite(img_crop_path, crop_img)
+                                except Exception as exc:
+                                    print('Error saving frame again')
                             sentence.append(word)
                             prev_word = word
                         print('From frame {} to {}: {} total frames {}'.format(start_frm, end_frm, length, word))

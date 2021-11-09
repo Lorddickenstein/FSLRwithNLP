@@ -1,3 +1,21 @@
-'A': 0, 'B': 1, 'Ball': 75, 'Banana': 76, 'Banana-2': 77, 'Bread': 78, 'Break': 79, 'Break-2': 81,
-'Bring': 82, 'Bring-2': 83, 'Buy': 84, 'Buy-2': 85, 'Bye': 86, 'C': 2, 'Chair': 52, 'Coconut': 87,
-'Coffee': 89, 'Come': 90, 'Come-2': 91, 'Congratulations': 39, 'Cook': 92, 'D': 3, 'E': 4, 'Egg': 80,'Egg-2': 88, 'Egg-3': 97, 'F': 5, 'Fine': 26, 'From': 93, 'From-2': 94, 'G': 6, 'Gabi': 27, 'Get': 95, 'Go': 98, 'Go-2': 99, 'Good': 28, 'Great': 40, 'H': 7, 'Hapon': 29, 'Happen': 100, 'Happen-2': 101, 'He-She': 30,'Help': 41, 'His-Her': 31, 'How': 102, 'How-2': 103, 'I': 8, 'I Love You': 32, 'I-Me': 33, 'Introduce': 104, 'Introduce-2': 105, 'Invite': 53, 'J': 9, 'K': 10, 'L': 11, 'Late': 54, 'Late-2': 55, 'Let': 106, 'Let-2': 107, 'Live': 108, 'M': 12, 'Mango': 109, 'Maybe': 110, 'Meet': 42, 'Mine': 34, 'N': 13, 'Name': 44, 'No': 56, 'Now': 112, 'O': 14, 'Occupation': 45, 'Office': 113, 'Office-2': 114, 'Our': 58, 'Our-2': 59, 'P': 15, 'Pen': 48, 'Pray': 46, 'Q': 16, 'R': 17, 'Rest': 47, 'S': 18, 'School': 115, 'Sit': 116, 'Sorry': 60, 'Stand': 49, 'Store': 117, 'Strawberry': 118, 'Study': 50, 'T': 19, 'Table': 43, 'Tanghali': 35, 'Thank You': 119, 'Thank You-2': 120, 'That': 61, 'Them': 62, 'This': 63, 'To': 51, 'Today': 121, 'Today-2': 122, 'U': 20, 'Umaga': 36, 'V': 21, 'W': 22, 'We': 64, 'We-2': 65,'Welcome': 66, 'Welcome-2': 67, 'What': 123, 'When': 68, 'Where': 124, 'Which': 125, 'Who': 69, 'Who-2': 70, 'Why': 71, 'Why-2': 72, 'Work': 126, 'X': 23, 'Y': 24, 'Yes': 73, 'Yesterday': 74, 'You': 37, 'Your': 38, 'Z': 25, 'get-2': 96, 'nice': 111, 'no-2': 57
+
+static_single = ['Fine', 'Gabi', 'Good', 'Hapon', 'He-She',
+                 'His-Her', 'I Love You', 'I-Me', 'Mine',
+                 'Tanghali', 'Umaga', 'You', 'Your']
+
+static_double = ['Congratulations', 'Great', 'Help', 'Meet', 'Table',
+                 'Name', 'Occupation', 'Pray', 'Rest', 'Pen',
+                 'Stand', 'Study', 'To', 'Chair']
+
+dynamic_single = ['Invite', 'Late', 'Late-2',
+                  'No', 'No-2', 'Our', 'Our-2', 'Sorry', 'That', 'Them',
+                  'This', 'We', 'We-2', 'Welcome', 'Welcome-2', 'When', 'Who',
+                  'Who-2', 'Why', 'Why-2', 'Yes', 'Yesterday']
+
+dynamic_double = ['Ball', 'Banana', 'Banana-2', 'Banana-3', 'Bread', 'Break', 'Egg',
+                  'Break-2', 'Bring-2', 'Buy', 'Buy-2', 'Bye', 'Coconut', 'Egg-2',
+                  'Coffee', 'Come', 'Come-2', 'Cook', 'From', 'From-2', 'Get', 'Get-2', 'Egg-3',
+                  'Go', 'Go-2', 'Happen', 'Happen-2', 'How', 'How-2', 'Introduce', 'Introduce-2',
+                  'Let', 'Let-2', 'Live', 'Mango', 'Maybe', 'Nice', 'Now', 'Office', 'Office-2',
+                  'School', 'Sit', 'Store', 'Strawberry', 'Thank You', 'Thank You-2', 'Today', 'Today-2',
+                  'What', 'Where', 'Which', 'Work']

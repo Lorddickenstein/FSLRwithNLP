@@ -12,8 +12,8 @@ def resize_image(src_img, img_size=(224, 224)):
   return cv2.resize(src_img, img_size, interpolation=cv2.INTER_CUBIC)
 
 path = 'D:\Pictures\Camera Roll'
-path_sign_dest = 'D:\Pictures\Camera Roll\Temp2'
-file_name = ['']
+path_sign_dest = 'D:\Pictures\Camera Roll\Temp'
+file_name = ['Late']
 print(len(file_name,))
 for file in file_name:
     file_path = os.path.join(path, file) + '.mp4'
@@ -28,13 +28,13 @@ for file in file_name:
             if not _:
                 break
 
-            if i % 10 == 0:
+            if i % 8 == 0:
                 path_class = os.path.join(path_sign_dest, file)
                 if os.path.isdir(path_class) is False:
                     os.makedirs(path_class)
                 detected, pts_upper_left, pts_lower_right = detector.find_hands(frame)
                 if detected:
-                    name = 'Ella_' + file + "_" + str(k) + "_new.jpg"
+                    name = 'Jers_new' + file + "_" + str(k) + ".jpg"
                     path_image = os.path.join(path_class, name)
                     roi = frame[abs(int(pts_lower_right[1])):abs(int(pts_upper_left[1])),
                           abs(int(pts_upper_left[0])):abs(int(pts_lower_right[0]))]

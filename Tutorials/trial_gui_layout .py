@@ -6,6 +6,7 @@ from PIL import Image, ImageTk
 from datetime import datetime
 from tkinter import messagebox
 import os
+import imutils
 
 
 def layout():
@@ -53,6 +54,7 @@ def layout():
 
 def showFeed():
     ret, frame = cap.read()
+    frame = cv2.bilateralFilter(frame, 5, 50, 100)
     height, width, channel = frame.shape
 
     if ret:
@@ -80,13 +82,14 @@ def startCapture():
 
 def endCapture():
     if root.is_capturing:
-        fourcc = cv2.VideoWriter_fourcc(*'DIVX')
         image_name = 'withering.avi'
         path = ("D:\Documents\Thesis\FSLRwithNLP\Tutorials\Images")
         img_path = os.path.join(path, image_name)
+
+        fourcc = cv2.VideoWriter_fourcc(*'DIVX')
         cap_size = (int(cap.get(3)), int(cap.get(4)))
-        out = cv2.VideoWriter('output.avi', fourcc, 20.0, cap_size)
-        print(frm_arr)
+        out = cv2.VideoWriter(img_path, fourcc, 20.0, cap_size)
+
         for frm in frm_arr:
             out.write(frm)
         print('video saved')
@@ -112,15 +115,14 @@ def startCam():
 root = tk.Tk()
 root.is_capturing = False
 cap = cv2.VideoCapture(0)
-
-width, height = 1000, 750
+width, height = 800, 600
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
 frm_arr = []
 
 root.title("Ready, Set, Translate")
-root.geometry("1200x850")
+root.geometry("1200x800")
 root.resizable(False, False)
 root.configure(background="grey")
 

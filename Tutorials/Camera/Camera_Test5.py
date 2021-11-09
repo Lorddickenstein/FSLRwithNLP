@@ -4,10 +4,11 @@ import matplotlib.pyplot as plt
 import Application.utils as utils
 import Application.HandTrackingModule as HTM
 import Application.SignClassificationModule as SCM
-from tensorflow import keras
+from keras.models import load_model
 import imutils
 import shutil
 import os
+from datetime import datetime
 
 # Open the camera
 cap = cv2.VideoCapture(0)
@@ -16,18 +17,25 @@ detector = HTM.HandDetector()
 text = 'Not Capturing'
 is_capturing = False
 
-GRADIENT_THRESH_VALUE = 3.1
+# Constants
+if int(datetime.now().strftime('%H')) <= 12:
+    GRADIENT_THRESH_VALUE = 1.6
+else:
+    GRADIENT_THRESH_VALUE = 3.1
+
+GRADIENT_THRESH_VALUE = 1.5
 TEN_MILLION = 10000000.0
 THRESHOLD = 40.0
 
 keyframes_arr, crop_frm_arr, frm_arr, frm_num_arr, frm_gradients = [], [], [], [], []
 prevGradient = np.array([])
-prev_frm_sum, start_index, end_index, frm_num = TEN_MILLION, 0, 0, 0
+start_index, end_index, frm_num, stable_ctr = 0, 0, 0, 0
+prev_frm_sum = TEN_MILLION
 
 figures_path = 'D:\Documents\Thesis\FSLRwithNLP\Tutorials\Camera\Figures'
 keyframes_path = 'D:\Documents\Thesis\FSLRwithNLP\Tutorials\Camera\keyframes'
 cropped_img_path = 'D:\Documents\Thesis\FSLRwithNLP\Tutorials\Camera\keyframes\cropped'
-model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Part2_FSLR_CNN_Model(30-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.27.h5')
+model = load_model('D:\Documents\Thesis\Experimental_Models\Part2_FSLR_CNN_Model(30-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.27.h5')
 
 
 def predict(img_arr, interval):
@@ -76,8 +84,16 @@ while cap.isOpened():
         if detected:
             roi = frameCopy[pts_lower_right[1]:pts_upper_left[1], pts_upper_left[0]:pts_lower_right[0]]
 
+            if stable_ctr >= 10:
+                cv2.putText(frame, 'Sign Captured', (int(0.75 * width), int(0.05 * height)), cv2.FONT_HERSHEY_PLAIN, 2,
+                            (0, 255, 0), 2)
+            else:
+                cv2.putText(frame, 'Stabilize your arms.', (int(0.65 * width), int(0.05 * height)), cv2.FONT_HERSHEY_PLAIN, 2,
+                            (0, 0, 255), 2)
+
             try:
-                currFrame = utils.convert_to_grayscale(frameCopy)
+                currframe = utils.resize_image(roi, height=500, width=500)
+                currFrame = utils.convert_to_grayscale(currframe)
                 sobelx = cv2.Sobel(currFrame, cv2.CV_64F, 1, 0, ksize=cv2.FILTER_SCHARR)
                 sobely = cv2.Sobel(currFrame, cv2.CV_64F, 0, 1, ksize=cv2.FILTER_SCHARR)
                 currGradient = np.sqrt(np.square(sobelx) + np.square(sobely))
@@ -86,9 +102,11 @@ while cap.isOpened():
                     frm_diff = cv2.absdiff(currGradient, prevGradient)
                     frm_sum = cv2.sumElems(frm_diff)
                     frm_sum = frm_sum[0]/TEN_MILLION
+                    print(frm_sum, frm_num)
                     if frm_sum < GRADIENT_THRESH_VALUE:
                         img_name = os.path.join(keyframes_path, 'keyframe_' + str(frm_num) + '.jpg')
                         cv2.imwrite(img_name, frameCopy)
+                        stable_ctr += 1
                         frm_sum = 0.0
 
                         if prev_frm_sum != 0:
@@ -98,10 +116,10 @@ while cap.isOpened():
                     else:
                         if prev_frm_sum == 0 and start_index < end_index:
                             keyframes_arr.append((start_index, end_index))
+                        stable_ctr = 0
 
                     prev_frm_sum = frm_sum
-
-                    print(frm_sum, frm_num)
+                    # print(frm_sum, frm_num)
 
                     frm_gradients.append(frm_sum)
                     frm_num_arr.append(frm_num)
@@ -131,7 +149,6 @@ while cap.isOpened():
             is_capturing = True
     elif key == ord('e'):
         if is_capturing:
-            # print(keyframes_arr)
             plt.plot(frm_num_arr, frm_gradients)
             plt.savefig(os.path.join(figures_path, 'Figures.png'), bbox_inches='tight')
             plt.show()
@@ -140,12 +157,9 @@ while cap.isOpened():
             sentence = []
             for (start_frm, end_frm) in keyframes_arr:
                 length = end_frm - start_frm + 1
-                if length > 2:
-                    if length <= 5:
-                        word, frm_position, frm_score, crop_img = predict(crop_frm_arr[start_frm: end_frm + 1], 1)
-                    else:
-                        interval = length // 5
-                        word, frm_position, frm_score, crop_img = predict(crop_frm_arr[start_frm: end_frm + 1], interval)
+                if length >= 10:
+                    interval = length // 5
+                    word, frm_position, frm_score, crop_img = predict(crop_frm_arr[start_frm: end_frm + 1], interval)
 
                     frm_position += start_frm
                     if word != prev_word:
@@ -157,9 +171,10 @@ while cap.isOpened():
                     print('From frame {} to {}: {} total frames {}'.format(start_frm, end_frm, length, word))
 
             print(sentence)
-            keyframes_arr, frm_arr, frm_num_arr, frm_gradients, sentence = [], [], [], [], []
+            keyframes_arr, crop_frm_arr, frm_arr, frm_num_arr, frm_gradients = [], [], [], [], []
             prevGradient = np.array([])
-            prev_frm_sum, start_index, end_index, frm_num = TEN_MILLION, 0, 0, 0
+            start_index, end_index, frm_num, stable_ctr = 0, 0, 0, 0
+            prev_frm_sum = TEN_MILLION
 
             text = 'Not Capturing'
             is_capturing = False

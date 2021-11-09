@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import warnings
 import time
 import imutils
+import os
 
 tf.get_logger().setLevel('ERROR')
 warnings.simplefilter(action='ignore', category=Warning)
@@ -34,7 +35,10 @@ detector = HTM.HandDetector()
 # model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Fingerspell_Detector_Experiment6(10-epochs)-accuracy_0.87-val_accuracy_0.88.h5')
 # model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Y-Why-2_Experiment6(20-epochs)-accuracy_0.87-val_accuracy_0.88.h5')
 # model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Best so far\Fingerspell_Detector_Experiment5(55-epochs)-accuracy_0.87-val_accuracy_0.84.h5')
-model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Part2_FSLR_CNN_Model(30-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.27.h5')
+# model = keras.models.load_model('D:\Documents\Thesis\Expeimental_Models\Part2_FSLR_CNN_Model(38-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.34-val_loss_0.33.h5')
+model_path = 'D:\Documents\Thesis\Experimental_Models'
+model_name = 'Part2_weights(20-epochs)-accuracy_0.90-val_accuracy_0.89-loss_0.41-val_loss_0.44.hdf5'
+model = SCM.load_and_compile(os.path.join(model_path, model_name))
 
 def find_match2(x):
     classes = {0:'Y', 1:'Why-2'}
@@ -114,9 +118,11 @@ while True:
                 img_crop, roi = utils.preprocess_image(roi)
                 cv2.imshow('cropped', img_crop)
                 predictions, top_predictions = SCM.classify_image(roi, model)
-
-                score = max(top_predictions, key=lambda x: x[1])
-                if score[1] >= threshold:
+                class_x = np.argmax(predictions)
+                # print(top_predictions[4][0])
+                score = float("%.2f" % (max(predictions[0]) * 100))
+                # score = max(top_predictions, key=lambda x: x[1])
+                if score >= threshold:
                     cv2.putText(frame, top_predictions[4][0] + " " + str(top_predictions[4][1]),
                                 (10, height - int(0.50 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
                     cv2.putText(frame, top_predictions[3][0] + " " + str(top_predictions[3][1]),
@@ -127,6 +133,9 @@ while True:
                                 (10, height - int(0.35 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
                     cv2.putText(frame, top_predictions[0][0] + " " + str(top_predictions[0][1]),
                                 (10, height - int(0.3 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+                    # cv2.putText(frame, SCM.find_match(class_x) + " " + str(score),
+                    #             (10, height - int(0.50 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+                    print(class_x, SCM.find_match(class_x))
 
                 cv2.rectangle(frame, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
             except Exception as exc:

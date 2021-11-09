@@ -13,7 +13,7 @@ detector = HTM.HandDetector()
 cap = cv2.VideoCapture(0)
 while True:
     _, frame = cap.read()
-    frame = imutils.resize(frame, width=720)
+    frame = imutils.resize(frame, width=1000)
     height, width, channel = frame.shape
     if not _:
         print("Ignoring empty camera frame.")
@@ -37,6 +37,8 @@ while True:
             pass
     else:
         cv2.putText(frame, "No hands detected...", (10, height - 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+
+    cv2.putText(frame, 'Stabilize your arms.', (int(0.65 * width), int(0.05 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
 
     cv2.imshow('Original', frame)
     if cv2.waitKey(5) & 0xFF == 27:

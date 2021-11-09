@@ -69,8 +69,8 @@ def showFeed():
 def startCapture():
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     image_name = 'video.avi'
-    root.out = cv2.VideoWriter('video.avi', fourcc, 20.0, (640, 480))
-    dirPath.set("D:\\thesis\\trials\\")
+    root.out = cv2.VideoWriter('D:\\Documents\\Thesis\\FSLRwithNLP\\Tutorials\\Images\\video.avi', fourcc, 20.0, (640, 480))
+    dirPath.set("D:\\Documents\\Thesis\\FSLRwithNLP\\Tutorials\\Images")
     if dirPath.get() != '':
         image_path = dirPath.get()
     else:

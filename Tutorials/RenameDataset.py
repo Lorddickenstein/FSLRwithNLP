@@ -1,8 +1,8 @@
 import cv2
 import os
 
-source = 'D:\Pictures\Camera Roll\Temp2'
-dest = 'D:\Pictures\Camera Roll\Temp3'
+source = 'D:\Pictures\Camera Roll\Temp'
+dest = 'D:\Pictures\Camera Roll\Temp2'
 
 for folder in os.listdir(source):
     folder_source = os.path.join(source, folder)
@@ -13,6 +13,7 @@ for folder in os.listdir(source):
         if os.path.isdir(folder_dest) is False:
             os.makedirs(folder_dest)
         name = folder + "_" + str(i) + ".jpg"
+        print(name)
         cv2.imwrite(os.path.join(folder_dest, name), img)
         i += 1
 

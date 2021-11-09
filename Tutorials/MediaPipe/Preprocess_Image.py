@@ -1,9 +1,5 @@
 import os
 import cv2
-<<<<<<< HEAD:Tutorials/MediaPipe/Preprocess_Image.py
-
-=======
->>>>>>> desta:Application/Preprocess_Image.py
 import Application.HandTrackingModule as HTM
 import Application.utils as utils
 

@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import utils
+import Application.utils as utils
 
 cap = cv2.VideoCapture(0)
 ret = cap.set(3, 720)

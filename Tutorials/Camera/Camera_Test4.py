@@ -1,20 +1,18 @@
 import cv2
 import numpy as np
-import mediapipe as mp
 import time
-import Tutorials.utils as utils
+import imutils
+import Application.utils as utils
 
 # Open the camera
 cap = cv2.VideoCapture(0)
 
-# Initialize mediapipe variables
-mpHands = mp.solutions.hands
-hands = mpHands.Hands()
-mp_draw = mp.solutions.drawing_utils
-
 pTime = 0
 cTime = 0
 
+is_capturing = False
+text = 'Not Capturing'
+full_color = []
 while True:
     _, frame = cap.read()
     if not _:
@@ -23,42 +21,40 @@ while True:
 
     # Filter lines to make it sharper and smoother
     frame = cv2.bilateralFilter(frame, 5, 50, 100)
-    # Flip the image
-    frame = cv2.flip(frame, 1)
 
-    # Convert frame to rgb for mediapipe
-    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    # Process the frame
-    results = hands.process(rgb)
+    frame = imutils.resize(frame, width=1000)
+    height, width, channel = frame.shape
+    frameCopy = frame.copy()
 
-    if results.multi_hand_landmarks:
-        x_pts, y_pts = [], []
-        for handLMs in results.multi_hand_landmarks:
-            for id, lm in enumerate(handLMs.landmark):
-                h, w, c = frame.shape
-                cx, cy = int(lm.x*w), int(lm.y*h)
-                x_pts.append(cx)
-                y_pts.append(cy)
 
-            # Find the max and min points
-            y_max, y_min, x_max, x_min = max(y_pts), min(y_pts), max(x_pts), min(x_pts)
-        cv2.rectangle(frame, (x_min - 40, y_max + 40), (x_max + 40, y_min - 40), (255, 0, 0), 3)
+    if is_capturing:
+        gray = utils.convert_to_grayscale(frameCopy)
+        sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=cv2.FILTER_SCHARR)
+        sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=cv2.FILTER_SCHARR)
+        currGradient = np.sqrt(np.square(sobelx) + np.square(sobely))
 
-            # mp_draw.draw_landmarks(frame, handLMs, mpHands.HAND_CONNECTIONS)
-    else:
-        # INSERT CODE TO DISPLAY IF NO HAND IS DETECTED
-        pass
 
-    # Calculate FPS
+
+
+
+
+    key = cv2.waitKey(3) & 0xFF
+    if key == ord('q') or key == 27:
+        break
+    elif key == ord('s'):
+        text = 'Capturing Frames'
+    elif key == ord('e'):
+        text = 'Not Capturing'
+
+    cv2.putText(frame, text, (10, int(0.95 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+
+    # Calculate FPS and show Fps
     cTime = time.time()
     fps = 1/(cTime-pTime)
     pTime = cTime
-    # Show Fps
     cv2.putText(frame, str(int(fps)), (10, 50), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
 
     cv2.imshow('Original', frame)
-    if cv2.waitKey(5) & 0xFF == 27:
-        break
 
 cap.release()
 cv2.destroyAllWindows()

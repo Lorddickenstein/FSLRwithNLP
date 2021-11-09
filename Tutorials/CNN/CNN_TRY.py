@@ -5,6 +5,8 @@ import os  # iterate through the directories
 import cv2
 import pandas as pd
 import Application.HandTrackingModule as HTM
+import Application.SignClassificationModule as SCM
+import Application.utils as utils
 
 def test_model_from_dataset(x_train, y_train, x_test, y_test, model_name):
     model = keras.models.load_model(model_name)
@@ -22,13 +24,22 @@ def test_model_from_dataset(x_train, y_train, x_test, y_test, model_name):
     print(class_x)
     print(find_match(class_x[0]))
 
-def test_model(img, model_name):
-    model = keras.models.load_model(model_name)
-    prediction = model.predict(img)
-    # print(prediction)
+def test_model(img):
+    prediction, top_predictions = SCM.classify_image(img, model)
+    print(top_predictions)
+
+    score = max(top_predictions, key=lambda x: x[1])
+    print("score", score)
+
     class_x = np.argmax(prediction)
-    print(class_x)
+    score = float("%.2f" % (max(prediction[0]) * 100))
+    # print(class_x)
+    print(score)
     print(find_match(class_x))
+
+def find_match2(x):
+    sign = {0: 'Y', 1: 'Why'}
+    return sign[x]
 
 def find_match(x):
     spell = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E',
@@ -54,17 +65,18 @@ def preprocess(img):
     detected, pts_upper_left, pts_lower_right = detector.find_hands(img)
 
     if detected:
-        cv2.rectangle(img_copy, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
-        show_plt_image(img_copy)
-        ROI = img[pts_lower_right[1]:pts_upper_left[1], pts_upper_left[0]:pts_lower_right[0]]
+        # cv2.rectangle(img_copy, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
+        # show_plt_image(img_copy)
+        ROI = img[int(pts_lower_right[1]):int(pts_upper_left[1]), int(pts_upper_left[0]):int(pts_lower_right[0])]
         show_plt_image(cv2.cvtColor(ROI, cv2.COLOR_BGR2RGB))
-        gray = cv2.cvtColor(ROI, cv2.COLOR_BGR2GRAY)
-        blur_img = cv2.GaussianBlur(gray, (5, 5), 0)
-        norm_img = blur_img.astype('float32')
+        # gray = cv2.cvtColor(ROI, cv2.COLOR_BGR2GRAY)
+        # blur_img = cv2.GaussianBlur(ROI, (5, 5), 0)
+        skin_mask = utils.skin_segmentation(ROI)
+        norm_img = skin_mask.astype('float32')
         norm_img /= 255
-        new_size = cv2.resize(norm_img, (28, 28), interpolation=cv2.INTER_CUBIC)
+        new_size = cv2.resize(norm_img, (120, 120), interpolation=cv2.INTER_CUBIC)
         show_plt_image(new_size)
-        new_dim = np.expand_dims(new_size, axis=(0, -1))
+        new_dim = np.expand_dims(new_size, axis=0)
         print(new_dim.shape)
         return True, new_dim
     return False, img
@@ -208,18 +220,24 @@ x_train, y_train, x_test, y_test = import_data()
 # model_name = "\Models\Fingerspelling(16, 32, 64)_(0.5030-0.9015).h5"
 # model_name = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\\test.h5"
 # model_name = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models\FingerSpelling(32, 64, 128)_(0.4652-0.9072).h5"
-model_path = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models"
-name = "test.h5"
+# model_path = "D:\Documents\Thesis\FSLRwithNLP\Tutorials\Models"
+# model_path = 'D:\Documents\Thesis\Experimental_Models'
+# name = "Fingerspell_Detector_Experiment2.h5"
+# model_path = 'D:\Documents\Thesis\Experimental_Models'
+model_path = 'D:\Documents\Thesis\Experimental_Models\Best so far'
+name = 'Fingerspell_Detector_Experiment5(55-epochs)-accuracy_0.87-val_accuracy_0.84.h5'
+# name = 'Y-Why-2_Experiment6(20-epochs)-accuracy_0.87-val_accuracy_0.88.h5'
 model_name = os.path.join(model_path, name)
 
 path = "D:\Documents\Thesis\FSLRwithNLP\Datasets\Test_Images"
-file_name = "R3.jpg"
+file_name = "Y_28.jpg"
 img = cv2.imread(os.path.join(path, file_name))
 show_plt_image(img)
 # img = preprocess_image(img)
 flag, img = preprocess(img)
+model = keras.models.load_model(model_name)
 if flag:
-    test_model(img, model_name)
+    test_model(img)
 else:
     print('something is wrong')
 

@@ -1,0 +1,21 @@
+
+static_single = ['Fine', 'Gabi', 'Good', 'Hapon', 'He-She',
+                 'His-Her', 'I Love You', 'I-Me', 'Mine',
+                 'Tanghali', 'Umaga', 'You', 'Your']
+
+static_double = ['Congratulations', 'Great', 'Help', 'Meet', 'Table',
+                 'Name', 'Occupation', 'Pray', 'Rest', 'Pen',
+                 'Stand', 'Study', 'To', 'Chair']
+
+dynamic_single = ['Invite', 'Late', 'Late-2',
+                  'No', 'No-2', 'Our', 'Our-2', 'Sorry', 'That', 'Them',
+                  'This', 'We', 'We-2', 'Welcome', 'Welcome-2', 'When', 'Who',
+                  'Who-2', 'Why', 'Why-2', 'Yes', 'Yesterday']
+
+dynamic_double = ['Ball', 'Banana', 'Banana-2', 'Banana-3', 'Bread', 'Break', 'Egg',
+                  'Break-2', 'Bring-2', 'Buy', 'Buy-2', 'Bye', 'Coconut', 'Egg-2',
+                  'Coffee', 'Come', 'Come-2', 'Cook', 'From', 'From-2', 'Get', 'Get-2', 'Egg-3',
+                  'Go', 'Go-2', 'Happen', 'Happen-2', 'How', 'How-2', 'Introduce', 'Introduce-2',
+                  'Let', 'Let-2', 'Live', 'Mango', 'Maybe', 'Nice', 'Now', 'Office', 'Office-2',
+                  'School', 'Sit', 'Store', 'Strawberry', 'Thank You', 'Thank You-2', 'Today', 'Today-2',
+                  'What', 'Where', 'Which', 'Work']

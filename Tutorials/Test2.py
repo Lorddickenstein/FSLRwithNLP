@@ -15,7 +15,7 @@ def show_plt_image(img):
     plt.show()
 
 path = "D:\Documents\Thesis\FSLRwithNLP\Datasets\Test_Images"
-file_name = "R3.jpg"
+file_name = "L4.jpg"
 img = cv2.imread(os.path.join(path, file_name))
 show_plt_image(img)
 
@@ -32,6 +32,6 @@ if detected:
     blur_img = cv2.GaussianBlur(gray, (5, 5), 0)
     norm_img = blur_img.astype('float32')
     norm_img /= 255
-    new_size = cv2.resize(norm_img, (28, 28), interpolation=cv2.INTER_CUBIC)
+    new_size = cv2.resize(norm_img, (224, 224), interpolation=cv2.INTER_CUBIC)
     show_plt_image(new_size)
     new_dim = np.expand_dims(new_size, axis=(0, -1))

@@ -1,2 +1,0 @@
-Sign Language Digits Dataset
-https://www.kaggle.com/ardamavi/sign-language-digits-dataset

@@ -18,7 +18,7 @@ from datetime import datetime
 # GUI Variables
 cap = cv2.VideoCapture(0)
 window = tk.Tk()
-window.geometry("1200x650+20+20")
+window.geometry("1300x680+20+20")
 window.resizable(False, False)
 window.title("FSLR Translator")
 window.configure(background="grey")
@@ -45,8 +45,10 @@ window.color_is_capturing = (0, 0, 153)
 window.is_capturing = False
 window.is_calculating = True
 window.GRADIENT_THRESH_VALUE = 1.6
+window.gradient_thresh_arr = []
+window.pTime = datetime.now().second
+window.sec = 6
 window.cTime = 0
-window.pTime = 0
 
 # Paths and Directories
 figures_path = 'D:\Documents\Thesis\Figures'
@@ -96,8 +98,9 @@ def start_application():
     if ret:
         # Filter lines to make it sharper and smoother
         frame = cv2.bilateralFilter(frame, 5, 50, 100)
-        # frame = imutils.resize(frame, width=1000)
+        # frame = imutils.resize(frame, width=700)
         height, width, channel = frame.shape
+        # print(height, width)
         frameCopy = frame.copy()
 
         if window.is_calculating is False:
@@ -114,6 +117,10 @@ def start_application():
                 detected, pts_upper_left, pts_lower_right = detector.find_hands(frameCopy)
                 if detected:
                     roi = frameCopy[pts_lower_right[1]:pts_upper_left[1], pts_upper_left[0]:pts_lower_right[0]]
+                    currFrame = utils.convert_to_grayscale(frameCopy)
+                    sobelx = cv2.Sobel(currFrame, cv2.CV_64F, 1, 0, ksize=cv2.FILTER_SCHARR)
+                    sobely = cv2.Sobel(currFrame, cv2.CV_64F, 0, 1, ksize=cv2.FILTER_SCHARR)
+                    currGradient = np.sqrt(np.square(sobelx) + np.square(sobely))
 
                     if window.stable_ctr >= FRAME_LIMIT:
                         sign_captured_pos = (int(0.70 * width), int(0.05 * height))
@@ -127,18 +134,13 @@ def start_application():
                     cv2.rectangle(frame, pts_upper_left, pts_lower_right, color_sign_captured, 3)
 
                     try:
-                        currFrame = utils.convert_to_grayscale(frameCopy)
-                        sobelx = cv2.Sobel(currFrame, cv2.CV_64F, 1, 0, ksize=cv2.FILTER_SCHARR)
-                        sobely = cv2.Sobel(currFrame, cv2.CV_64F, 0, 1, ksize=cv2.FILTER_SCHARR)
-                        currGradient = np.sqrt(np.square(sobelx) + np.square(sobely))
-
                         if window.frm_num != 0:
                             frm_diff = cv2.absdiff(currGradient, window.prevGradient)
                             frm_sum = cv2.sumElems(frm_diff)
-                            frm_sum = frm_sum[0] / TEN_MILLION
-                            print(frm_sum, window.frm_num)
+                            frm_sum = '%.2f' % (frm_sum[0] / TEN_MILLION)
+                            print(frm_sum, window.frm_num, window.GRADIENT_THRESH_VALUE)
 
-                            if frm_sum < GRADIENT_THRESH_VALUE:
+                            if frm_sum < window.GRADIENT_THRESH_VALUE:
                                 img_name = os.path.join(keyframes_path, 'keyframe_' + str(window.frm_num) + '.jpg')
                                 cv2.imwrite(img_name, frameCopy)
                                 window.stable_ctr += 1
@@ -159,24 +161,56 @@ def start_application():
                             window.frm_gradients.append(frm_sum)
                             window.frm_num_arr.append(window.frm_num)
 
-                        window.prevGradient = currGradient
                         window.frm_arr.append(frameCopy)
                         window.crop_frm_arr.append(roi)
-                        window.frm_num += 1
                     except Exception as exc:
                         pass
+
+                    window.prevGradient = currGradient
+                    window.frm_num += 1
 
                 cv2.putText(frame, text_sign_captured, sign_captured_pos,
                             cv2.FONT_HERSHEY_COMPLEX, 1, color_sign_captured, 3, cv2.LINE_AA)
         else:
-            frame = cv2.GaussianBlur(frame, (51, 51), 0)
-            window.cTime = time.time()
-            window.timer += window.cTime - window.pTime
-            if window.time:
-                print(window.cTime - window.pTime)
-                cv2.putText(frame, str(window.cTime - window.pTime), (int(width/2), int(height/2)),
-                        cv2.FONT_HERSHEY_DUPLEX, 4, (64, 64, 64), 1, cv2.LINE_AA)
+            currFrame = utils.convert_to_grayscale(frameCopy)
+            sobelx = cv2.Sobel(currFrame, cv2.CV_64F, 1, 0, ksize=cv2.FILTER_SCHARR)
+            sobely = cv2.Sobel(currFrame, cv2.CV_64F, 0, 1, ksize=cv2.FILTER_SCHARR)
+            currGradient = np.sqrt(np.square(sobelx) + np.square(sobely))
+
+            if window.sec >= 3:
+                frame = cv2.GaussianBlur(frame, (51, 51), 0)
+                cv2.putText(frame, str(window.sec - 3), (int(width / 2) - 40, int(height / 2) + 40),
+                            cv2.FONT_HERSHEY_DUPLEX, 5, (64, 64, 64, 128), 4, cv2.LINE_AA)
+            else:
+                if window.sec >= -1:
+                    cv2.putText(frame, 'Capturing average gradient pls do not move.',
+                                (10, int(0.98 * height)), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 204, 0), 3)
+                    cv2.putText(frame, str(window.sec + 1), (int(width / 2) - 40, int(height / 2) + 40),
+                                cv2.FONT_HERSHEY_DUPLEX, 5, (0, 204, 0), 4, cv2.LINE_AA)
+
+                    frm_diff = cv2.absdiff(currGradient, window.prevGradient)
+                    frm_sum = cv2.sumElems(frm_diff)
+                    frm_sum = frm_sum[0] / TEN_MILLION
+                    print(frm_sum, window.frm_num)
+                    window.gradient_thresh_arr.append(frm_sum)
+                else:
+
+                    window.GRADIENT_THRESH_VALUE = np.mean(window.gradient_thresh_arr) + 0.5
+                    window.GRADIENT_THRESH_VALUE = '%.2f' % window.GRADIENT_THRESH_VALUE
+                    print('Average Gradient Difference:', window.GRADIENT_THRESH_VALUE)
+
+                    window.is_calculating = False
+                    window.frm_num = 0
+                    window.prevGradient = np.array([])
+                    time.sleep(1)
+
+            window.cTime = datetime.now().second
+            if window.cTime - window.pTime == 1:
+                window.sec -= 1
             window.pTime = window.cTime
+
+            window.prevGradient = currGradient
+            window.frm_num += 1
 
         cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
         videoImg = Image.fromarray(cv2image)
@@ -256,52 +290,58 @@ def endCapture():
 
 
 def homePage():
-    window.pTime = time.time()
-    window.is_calculating = False
+    window.pTime = datetime.now().second
+    window.sec = 6
+    window.cTime = 0
+    window.is_calculating = True
     # window.destroy()
     # import Application.GUI.Home
 
 
-leftFrame = tk.Canvas(window, width=700, height=584, bg="#c4c4c4")
-leftFrame.place(x=35, y=35)
+leftFrame = tk.Canvas(window, width=850, height=645, bg="#c4c4c4")
+leftFrame.place(x=15, y=15)
 
-rightFrame = tk.Canvas(window, width=400, height=584, bg="#6997F3")
-rightFrame.place(x=765, y=35)
+rightFrame = tk.Canvas(window, width=400, height=645, bg="#6997F3")
+rightFrame.place(x=880, y=15)
 
 camLabel = tk.Label(leftFrame, text="here", borderwidth=3, relief="groove")
-camLabel.place(x=30, y=30)
-startBut = tk.Button(leftFrame, width=20, height=2, text="START", bg="#1B7B03", font=("Montserrat", 9, "bold"),
+camLabel.place(x=20, y=20)
+
+startBut = tk.Button(rightFrame, width=25, height=2, text="START", bg="#1B7B03", font=("Montserrat", 9, "bold"),
                      command=startCapture)
-startBut.place(x=30, y=530)
-endBut = tk.Button(leftFrame, width=20, height=2, text="END", bg="#E21414", font=("Montserrat", 9, "bold"),
+startBut.place(x=15, y=15)
+justBut = tk.Button(rightFrame, width=25, height=2, bg="#c4c4c4", font=("Montserrat", 9, "bold"))
+justBut.place(x=15, y=60)
+endBut = tk.Button(rightFrame, width=25, height=2, text="END", bg="#E21414", font=("Montserrat", 9, "bold"),
                    command=endCapture)
-endBut.place(x=195, y=530)
-homeBut = tk.Button(leftFrame, width=20, height=2, text="HOME", bg="#2B449D", font=("Montserrat", 9, "bold"), command=homePage)
-homeBut.place(x=525, y=530)
+endBut.place(x=205, y=15)
+homeBut = tk.Button(rightFrame, width=25, height=2, text="HOME", bg="#2B449D", font=("Montserrat", 9, "bold"),
+                    command=homePage)
+homeBut.place(x=205, y=60)
 
-bowFrame = tk.Canvas(rightFrame, width=350, height=255, bg="#E84747")
-bowFrame.place(x=25, y=28)
-genLanFrame = tk.Canvas(rightFrame, width=350, height=255, bg="#E84747")
-genLanFrame.place(x=25, y=308)
+bowFrame = tk.Canvas(rightFrame, width=370, height=250, bg="#E84747")
+bowFrame.place(x=15, y=115)
+genLanFrame = tk.Canvas(rightFrame, width=370, height=250, bg="#E84747")
+genLanFrame.place(x=15, y=380)
 
-bowText = tk.Text(bowFrame, width=34, height=8, bg="#FDFAFA", font="Montserrat")
-bowText.place(x=23, y=48)
+bowText = tk.Text(bowFrame, width=38, height=8, bg="#FDFAFA", font="Montserrat")
+bowText.place(x=15, y=45)
 bowCountText = tk.Text(bowFrame, width=10, height=2, bg="#FDFAFA", font="Montserrat")
-bowCountText.place(x=236, y=208)
-genLanText = tk.Text(genLanFrame, width=34, height=8, bg="#FDFAFA", font="Montserrat")
-genLanText.place(x=23, y=48)
+bowCountText.place(x=267, y=200)
+genLanText = tk.Text(genLanFrame, width=38, height=8, bg="#FDFAFA", font="Montserrat")
+genLanText.place(x=15, y=45)
 genLanCountText = tk.Text(genLanFrame, width=10, height=2, bg="#FDFAFA", font="Montserrat")
-genLanCountText.place(x=236, y=208)
+genLanCountText.place(x=267, y=200)
 
-bowLabel = tk.Label(bowFrame, text="BAG OF WORDS    :", bg="#E84747", fg="#FDFAFA", font=("Montserrat", 12, "bold"))
-bowLabel.place(x=23, y=16)
+bowLabel = tk.Label(bowFrame, text="BAG OF WORDS    :", bg="#E84747", fg="#FDFAFA", font=("Montserrat", 14, "bold"))
+bowLabel.place(x=15, y=10)
 bowCountLabel = tk.Label(bowFrame, text="COUNT    :", bg="#E84747", fg="#FDFAFA", font=("Montserrat", 12, "bold"))
-bowCountLabel.place(x=135, y=213)
+bowCountLabel.place(x=170, y=205)
 genLanLabel = tk.Label(genLanFrame, text="GENERATED LANGUAGE    :", bg="#E84747", fg="#FDFAFA",
-                       font=("Montserrat", 12, "bold"))
-genLanLabel.place(x=23, y=16)
+                       font=("Montserrat", 14, "bold"))
+genLanLabel.place(x=15, y=10)
 genLanCountLabel = tk.Label(genLanFrame, text="COUNT    :", bg="#E84747", fg="#FDFAFA", font=("Montserrat", 12, "bold"))
-genLanCountLabel.place(x=135, y=213)
+genLanCountLabel.place(x=170, y=205)
 
 start_application()
 window.mainloop()

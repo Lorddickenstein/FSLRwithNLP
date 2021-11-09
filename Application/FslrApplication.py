@@ -140,7 +140,7 @@ def start_application():
                             stable_ctr = 0
 
                         prev_frm_sum = frm_sum
-                        # print(frm_sum, frm_num)
+                        print(frm_sum, frm_num)
 
                         frm_gradients.append(frm_sum)
                         frm_num_arr.append(frm_num)

@@ -126,7 +126,7 @@ def start_application():
 
                         if frm_sum < GRADIENT_THRESH_VALUE:
                             img_name = os.path.join(keyframes_path, 'keyframe_' + str(frm_num) + '.jpg')
-                            # cv2.imwrite(img_name, frameCopy)
+                            cv2.imwrite(img_name, frameCopy)
                             stable_ctr += 1
                             frm_sum = 0.0
 
@@ -140,7 +140,7 @@ def start_application():
                             stable_ctr = 0
 
                         prev_frm_sum = frm_sum
-                        print(frm_sum, frm_num)
+                        # print(frm_sum, frm_num)
 
                         frm_gradients.append(frm_sum)
                         frm_num_arr.append(frm_num)

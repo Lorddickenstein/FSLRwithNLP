@@ -4,6 +4,7 @@ import cv2
 from PIL import Image, ImageTk
 from datetime import datetime
 import os
+import Application.FslrApplication as FK
 # import tensorflow as tf
 # from tensorflow import keras
 # import numpy as np
@@ -167,7 +168,7 @@ genLanLabel.place(x=23, y=16)
 genLanCountLabel = tk.Label(genLanFrame, text="COUNT    :", bg="#E84747", fg="#FDFAFA", font=("Montserrat", 12, "bold"))
 genLanCountLabel.place(x=135, y=213)
 
-showFeed()
+# showFeed()
 window.mainloop()
 cap.release()
 cv2.destroyAllWindows()

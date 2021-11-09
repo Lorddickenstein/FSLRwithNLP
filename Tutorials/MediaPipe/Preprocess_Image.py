@@ -1,12 +1,16 @@
 import os
 import cv2
+<<<<<<< HEAD:Tutorials/MediaPipe/Preprocess_Image.py
 
+=======
+>>>>>>> desta:Application/Preprocess_Image.py
 import Application.HandTrackingModule as HTM
 import Application.utils as utils
 
 path = 'D:\Pictures\Camera Roll\Temp3'
 dest = 'D:\Pictures\Camera Roll\Temp2'
-file_dir = ['Jers-Ago', 'Jers-Allow', 'Jers-Banana', 'Jers-Bread']
+
+file_dir = ['test']
 
 detector = HTM.HandDetector()
 

@@ -83,6 +83,7 @@ def start_application():
         frame = cv2.bilateralFilter(frame, 5, 50, 100)
         frame = imutils.resize(frame, width=1000)
         height, width, channel = frame.shape
+        print(width, height)
         frameCopy = frame.copy()
 
         if not _:

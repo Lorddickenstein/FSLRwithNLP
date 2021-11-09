@@ -1,18 +1,12 @@
 import nltk
+nltk.download('averaged_perceptron_tagger')
 from easynmt import EasyNMT
 
-
 def tokenizer(text):
-
-  tokens = nltk.word_tokenize(text)
-
-  return tokens
+  return nltk.word_tokenize(text)
 
 def pos_tag(tokens):
-
-  pos_tagged = nltk.pos_tag(tokens)
-
-  return pos_tagged
+  return nltk.pos_tag(tokens)
 
 
 def main():

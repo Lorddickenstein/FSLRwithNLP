@@ -9,10 +9,12 @@ preprocessed_src = 'D:\Pictures\Camera Roll\Temp2'
 train_path = 'D:\Pictures\Camera Roll\Temp\Train'
 valid_path = 'D:\Pictures\Camera Roll\Temp\Valid'
 test_path = 'D:\Pictures\Camera Roll\Temp\Test'
-
+file_name = ['Come-2', 'D', 'Happen', 'Happen-2', 'He-She', 'Introduce-2', 'Them', 'Welcome-2', 'Work']
 
 def copy_to_train_folder():
     for sign in os.listdir(preprocessed_src):
+        if sign not in file_name:
+            continue
         path_class_dest = os.path.join(train_path, sign)
         if os.path.isdir(path_class_dest) is False:
             os.makedirs(path_class_dest)
@@ -40,6 +42,8 @@ def take_samples():
     test_size = 20
 
     for sign in os.listdir(train_path):
+        if sign not in file_name:
+            continue
         path_class = os.path.join(train_path, sign)
         os.chdir(path_class)
         print(sign)
@@ -71,5 +75,5 @@ def verify_totals():
 
 # copy_to_train_folder()
 # count_items_in_train()
-# take_samples()
+take_samples()
 verify_totals()

@@ -1,4 +1,3 @@
-# Test an FslrApplication on Gradient Averaging
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Disable Tensorflow's Debugging Infos
 from keras.models import load_model
@@ -11,7 +10,6 @@ import Application.HandTrackingModule as HTM
 import Application.SignClassificationModule as SCM
 import matplotlib.pyplot as plt
 from datetime import datetime
-import time
 
 # Constants
 if int(datetime.now().strftime('%H')) <= 12:
@@ -22,9 +20,6 @@ else:
 TEN_MILLION = 10000000.0
 THRESHOLD = 40.0
 FRAME_LIMIT = 10
-
-# Variables
-is_calculating = False
 
 # Paths and Directories
 figures_path = 'D:\Documents\Thesis\Figures'
@@ -37,11 +32,6 @@ model_path = 'D:\Documents\Thesis\Experimental_Models'
 # model = load_model(os.path.join(model_path, model_name))
 model_name = 'Part2_weights(20-epochs)-accuracy_0.90-val_accuracy_0.89-loss_0.41-val_loss_0.44.hdf5'
 model = SCM.load_and_compile(os.path.join(model_path, model_name))
-
-
-def calculate_avg_gradient():
-    is_calculating = True
-
 
 def predict(img_arr, interval):
     temp_sentence, temp_score, temp_crop_img = [], [], []
@@ -103,70 +93,67 @@ def start_application():
                     cv2.FONT_HERSHEY_COMPLEX, 1, color_is_capturing, 4)
 
         if is_capturing:
-            if is_calculating is False:
-                sign_captured_pos = (int(0.65 * width), int(0.05 * height))
-                text_sign_captured = 'No Hands Detected.'
-                color_sign_captured = (255, 255, 0)
+            sign_captured_pos = (int(0.65 * width), int(0.05 * height))
+            text_sign_captured = 'No Hands Detected.'
+            color_sign_captured = (255, 255, 0)
 
-                detected, pts_upper_left, pts_lower_right = detector.find_hands(frameCopy)
-                if detected:
-                    roi = frameCopy[pts_lower_right[1]:pts_upper_left[1], pts_upper_left[0]:pts_lower_right[0]]
+            detected, pts_upper_left, pts_lower_right = detector.find_hands(frameCopy)
+            if detected:
+                roi = frameCopy[pts_lower_right[1]:pts_upper_left[1], pts_upper_left[0]:pts_lower_right[0]]
 
-                    if stable_ctr >= FRAME_LIMIT:
-                        sign_captured_pos = (int(0.70 * width), int(0.05 * height))
-                        text_sign_captured = 'Sign Captured.'
-                        color_sign_captured = (0, 255, 0)
-                    else:
-                        sign_captured_pos = (int(0.62 * width), int(0.05 * height))
-                        text_sign_captured = 'Stabilize Your Hands.'
-                        color_sign_captured = (0, 0, 255)
+                if stable_ctr >= FRAME_LIMIT:
+                    sign_captured_pos = (int(0.70 * width), int(0.05 * height))
+                    text_sign_captured = 'Sign Captured.'
+                    color_sign_captured = (0, 255, 0)
+                else:
+                    sign_captured_pos = (int(0.62 * width), int(0.05 * height))
+                    text_sign_captured = 'Stabilize Your Hands.'
+                    color_sign_captured = (0, 0, 255)
 
-                    cv2.rectangle(frame, pts_upper_left, pts_lower_right, color_sign_captured, 4)
+                cv2.rectangle(frame, pts_upper_left, pts_lower_right, color_sign_captured, 4)
 
-                    try:
-                        currFrame = utils.convert_to_grayscale(frameCopy)
-                        sobelx = cv2.Sobel(currFrame, cv2.CV_64F, 1, 0, ksize=cv2.FILTER_SCHARR)
-                        sobely = cv2.Sobel(currFrame, cv2.CV_64F, 0, 1, ksize=cv2.FILTER_SCHARR)
-                        currGradient = np.sqrt(np.square(sobelx) + np.square(sobely))
+                try:
+                    currFrame = utils.convert_to_grayscale(frameCopy)
+                    sobelx = cv2.Sobel(currFrame, cv2.CV_64F, 1, 0, ksize=cv2.FILTER_SCHARR)
+                    sobely = cv2.Sobel(currFrame, cv2.CV_64F, 0, 1, ksize=cv2.FILTER_SCHARR)
+                    currGradient = np.sqrt(np.square(sobelx) + np.square(sobely))
 
-                        if frm_num != 0:
-                            frm_diff = cv2.absdiff(currGradient, prevGradient)
-                            frm_sum = cv2.sumElems(frm_diff)
-                            frm_sum = frm_sum[0] / TEN_MILLION
-                            # print(frm_sum, frm_num)
+                    if frm_num != 0:
+                        frm_diff = cv2.absdiff(currGradient, prevGradient)
+                        frm_sum = cv2.sumElems(frm_diff)
+                        frm_sum = frm_sum[0] / TEN_MILLION
+                        # print(frm_sum, frm_num)
 
-                            if frm_sum < GRADIENT_THRESH_VALUE:
-                                img_name = os.path.join(keyframes_path, 'keyframe_' + str(frm_num) + '.jpg')
-                                cv2.imwrite(img_name, frameCopy)
-                                stable_ctr += 1
-                                frm_sum = 0.0
+                        if frm_sum < GRADIENT_THRESH_VALUE:
+                            img_name = os.path.join(keyframes_path, 'keyframe_' + str(frm_num) + '.jpg')
+                            cv2.imwrite(img_name, frameCopy)
+                            stable_ctr += 1
+                            frm_sum = 0.0
 
-                                if prev_frm_sum != 0:
-                                    start_index = frm_num
-                                else:
-                                    end_index = frm_num
+                            if prev_frm_sum != 0:
+                                start_index = frm_num
                             else:
-                                if prev_frm_sum == 0 and start_index < end_index:
-                                    keyframes_arr.append((start_index, end_index))
-                                stable_ctr = 0
+                                end_index = frm_num
+                        else:
+                            if prev_frm_sum == 0 and start_index < end_index:
+                                keyframes_arr.append((start_index, end_index))
+                            stable_ctr = 0
 
-                            prev_frm_sum = frm_sum
-                            # print(frm_sum, frm_num)
+                        prev_frm_sum = frm_sum
+                        # print(frm_sum, frm_num)
 
-                            frm_gradients.append(frm_sum)
-                            frm_num_arr.append(frm_num)
+                        frm_gradients.append(frm_sum)
+                        frm_num_arr.append(frm_num)
 
-                        prevGradient = currGradient
-                        frm_arr.append(frameCopy)
-                        crop_frm_arr.append(roi)
-                        frm_num += 1
-                    except Exception as exc:
-                        pass
+                    prevGradient = currGradient
+                    frm_arr.append(frameCopy)
+                    crop_frm_arr.append(roi)
+                    frm_num += 1
+                except Exception as exc:
+                    pass
 
-                cv2.putText(frame, text_sign_captured, sign_captured_pos,
-                            cv2.FONT_HERSHEY_COMPLEX, 1, color_sign_captured, 3, cv2.LINE_AA)
-            else:
-                frame = cv2.GaussianBlur(frame, (5, 5), 0)
+            cv2.putText(frame, text_sign_captured, sign_captured_pos,
+                        cv2.FONT_HERSHEY_COMPLEX, 1, color_sign_captured, 3, cv2.LINE_AA)
 
         cv2.imshow('Original', frame)
         key = cv2.waitKey(5) & 0xFF
@@ -231,16 +218,10 @@ def start_application():
                 text_is_capturing = 'Not Capturing'
                 color_is_capturing = (0, 0, 153)
                 is_capturing = False
-        elif key == ord('g'):
-            calculate_avg_gradient()
-        elif key == ord('f'):
-            is_calculating = False
-
 
     cap.release()
     cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
-    is_calculating = False
     start_application()

@@ -3,12 +3,11 @@ import tkinter as tk
 
 def translating():
     root.destroy()
-    import Application.FslrApplication
 
 
 def about():
     root.destroy()
-    import Application.GUI.AboutPage
+
 
 root = tk.Tk()
 root.geometry("800x500+20+20")

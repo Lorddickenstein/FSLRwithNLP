@@ -16,6 +16,8 @@ from datetime import datetime
 
 # GUI Variables
 cap = cv2.VideoCapture(0)
+cap.set(3, 600)
+cap.set(4, 480)
 window = tk.Tk()
 window.geometry("1300x680+20+20")
 window.resizable(False, False)
@@ -25,7 +27,7 @@ window.configure(background="grey")
 # Constants
 TEN_MILLION = 10000000.0
 THRESHOLD = 40.0
-FRAME_LIMIT = 10
+FRAME_LIMIT = 20
 THRESH_EXTRA = 0.5
 
 # Variables

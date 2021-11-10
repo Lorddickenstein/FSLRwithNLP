@@ -4,9 +4,10 @@ import cv2
 import shutil
 import numpy as np
 import matplotlib.pyplot as plt
-import Application.utils as utils
-import Application.HandTrackingModule as HTM
-import Application.SignClassificationModule as SCM
+# import Application.utils as utils
+import utils as utils
+import HandTrackingModule as HTM
+import SignClassificationModule as SCM
 import tkinter as tk
 import time
 from tkinter import *
@@ -15,7 +16,7 @@ from datetime import datetime
 
 # GUI Variables
 cap = cv2.VideoCapture(0)
-cap.set(3, 600)
+cap.set(3, 640)
 cap.set(4, 480)
 window = tk.Tk()
 window.geometry("1300x680+20+20")
@@ -54,10 +55,7 @@ cropped_img_path = 'D:\THESIS\Keyframes\Cropped Images'
 model_path = 'D:\THESIS\Models'
 # model_name = 'Part2_FSLR_CNN_Model(38-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.34-val_loss_0.33.h5'
 # model = load_model(os.path.join(model_path, model_name))
-<<<<<<< HEAD
-=======
 # model_name = 'Part2_weights(20-epochs)-accuracy_0.90-val_accuracy_0.89-loss_0.41-val_loss_0.44.hdf5'
->>>>>>> 093980282a36db465eac861577bd67b5b3cd451a
 model_name = 'Part_2_weights_improvements-epoch_22-acc_0.94-loss_0.22-val_accuracy_0.91-val_loss_0.52.hdf5'
 model = SCM.load_and_compile(os.path.join(model_path, model_name))
 

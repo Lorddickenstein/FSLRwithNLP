@@ -6,6 +6,8 @@ from datetime import datetime
 import os
 import imutils
 
+# new GUI Format on 11-10-21
+
 
 def showFeed():
     ret, frame = cap.read()

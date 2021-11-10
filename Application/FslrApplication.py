@@ -15,7 +15,7 @@ from datetime import datetime
 
 # GUI Variables
 cap = cv2.VideoCapture(0)
-cap.set(3, 600)
+cap.set(3, 620)
 cap.set(4, 480)
 window = tk.Tk()
 window.geometry("1300x680+20+20")
@@ -26,7 +26,7 @@ window.configure(background="grey")
 # Constants
 TEN_MILLION = 10000000.0
 THRESHOLD = 40.0
-FRAME_LIMIT = 20
+FRAME_LIMIT = 10
 THRESH_EXTRA = 0.3
 
 # Variables
@@ -264,6 +264,7 @@ def endCapture():
                         cv2.imwrite(img_crop_path, crop_img)
                     except Exception as exc:
                         print('Error was found at frame {}.'.format(frm_position))
+                        word = '[unrecognized]'
                         try:
                             crop_img, _ = utils.preprocess_image(window.crop_frm_arr[frm_position])
                             cv2.imwrite(img_crop_path, crop_img)
@@ -295,8 +296,8 @@ def set_gradient():
 def homePage():
     cap.release()
     cv2.destroyAllWindows()
-    import Home
     window.destroy()
+    import Home
 
 
 leftFrame = tk.Canvas(window, width=850, height=645, bg="#c4c4c4")

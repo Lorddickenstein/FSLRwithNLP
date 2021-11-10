@@ -2,13 +2,13 @@ import tkinter as tk
 
 
 def translating():
-    import FslrApplication
     root.destroy()
+    import FslrApplication
 
 
 def about():
-    import AboutPage
     root.destroy()
+    import AboutPage
 
 
 root = tk.Tk()

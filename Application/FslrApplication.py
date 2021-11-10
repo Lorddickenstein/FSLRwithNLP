@@ -47,15 +47,15 @@ window.pTime = datetime.now().second
 window.sec = 6
 
 # Paths and Directories
-figures_path = 'D:\Documents\Thesis\Figures'
-keyframes_path = 'D:\Documents\Thesis\Keyframes'
-cropped_img_path = 'D:\Documents\Thesis\Keyframes\Cropped Images'
+figures_path = 'D:\THESIS\Figures'
+keyframes_path = 'D:\THESIS\Keyframes'
+cropped_img_path = 'D:\THESIS\Keyframes\Cropped Images'
 
 # FSLR Model
-model_path = 'D:\Documents\Thesis\Experimental_Models'
+model_path = 'D:\THESIS\Models'
 # model_name = 'Part2_FSLR_CNN_Model(38-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.34-val_loss_0.33.h5'
 # model = load_model(os.path.join(model_path, model_name))
-model_name = 'Part2_weights(20-epochs)-accuracy_0.90-val_accuracy_0.89-loss_0.41-val_loss_0.44.hdf5'
+model_name = 'Part_2_weights_improvements-epoch_22-acc_0.94-loss_0.22-val_accuracy_0.91-val_loss_0.52.hdf5'
 model = SCM.load_and_compile(os.path.join(model_path, model_name))
 
 

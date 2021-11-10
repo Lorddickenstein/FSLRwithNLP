@@ -1,14 +1,15 @@
 import tkinter as tk
 
-
 def translating():
     root.destroy()
-    import Application.FslrApplication
+    from Application import FslrApplication
+    # import Application.FslrApplication
 
 
 def about():
     root.destroy()
-    import Application.GUI.AboutPage
+    # import Application.GUI.AboutPage
+    
 
 root = tk.Tk()
 root.geometry("800x500+20+20")

@@ -3,14 +3,20 @@ import tkinter as tk
 def translating():
     root.destroy()
     import FslrApplication
+<<<<<<< HEAD
     # import Application.FslrApplication
+=======
+>>>>>>> f9428e1d13507a2b5e2037459c06c8becc0467d3
 
 
 def about():
-    import AboutPage
     root.destroy()
+<<<<<<< HEAD
     # import Application.GUI.AboutPage
     
+=======
+    import AboutPage
+>>>>>>> f9428e1d13507a2b5e2037459c06c8becc0467d3
 
 
 root = tk.Tk()

@@ -1,5 +1,4 @@
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Disable Tensorflow's Debugging Infos
 import cv2
 import shutil
 import numpy as np
@@ -9,16 +8,23 @@ import Application.HandTrackingModule as HTM
 import Application.SignClassificationModule as SCM
 import tkinter as tk
 import time
+# <<<<<<< HEAD
+# # from tensorflow import keras
+# from keras.models import load_model
+# =======
+# >>>>>>> 0e907a5303e43ea01e4fb36c975053f05d68d0b8
 from tkinter import *
 from PIL import Image, ImageTk
 from datetime import datetime
 
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Disable Tensorflow's Debugging Infos
 # GUI Variables
 cap = cv2.VideoCapture(0)
 cap.set(3, 600)
 cap.set(4, 480)
 window = tk.Tk()
-window.geometry("1300x680+20+20")
+window.geometry("1250x680+20+20")
 window.resizable(False, False)
 window.title("FSLR Translator")
 window.configure(background="grey")
@@ -46,15 +52,18 @@ window.pTime = datetime.now().second
 window.sec = 6
 
 # Paths and Directories
-figures_path = 'D:\Documents\Thesis\Figures'
-keyframes_path = 'D:\Documents\Thesis\Keyframes'
-cropped_img_path = 'D:\Documents\Thesis\Keyframes\Cropped Images'
+figures_path = 'E:\\test\\Figures'
+keyframes_path = 'E:\\test\\keyframes'
+cropped_img_path = 'E:\\test\\keyframes\\cropped_images'
 
 # FSLR Model
-model_path = 'D:\Documents\Thesis\Experimental_Models'
-# model_name = 'Part2_FSLR_CNN_Model(38-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.34-val_loss_0.33.h5'
-# model = load_model(os.path.join(model_path, model_name))
-# model_name = 'Part2_weights(20-epochs)-accuracy_0.90-val_accuracy_0.89-loss_0.41-val_loss_0.44.hdf5'
+model_path = 'E:\\'
+# # model_name = 'Part2_FSLR_CNN_Model(38-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.34-val_loss_0.33.h5'
+# # model = load_model(os.path.join(model_path, model_name))
+# <<<<<<< HEAD
+# =======
+# # model_name = 'Part2_weights(20-epochs)-accuracy_0.90-val_accuracy_0.89-loss_0.41-val_loss_0.44.hdf5'
+# >>>>>>> 0e907a5303e43ea01e4fb36c975053f05d68d0b8
 model_name = 'Part_2_weights_improvements-epoch_22-acc_0.94-loss_0.22-val_accuracy_0.91-val_loss_0.52.hdf5'
 model = SCM.load_and_compile(os.path.join(model_path, model_name))
 
@@ -299,33 +308,45 @@ def homePage():
     window.destroy()
 
 
-leftFrame = tk.Canvas(window, width=850, height=645, bg="#c4c4c4")
-leftFrame.place(x=15, y=15)
+def Generate():
+    pop = tk.Tk()
+    pop.wm_title("Generate")
+    pop.geometry("300x100")
+    labelBonus = Label(pop, text="Bag of Words", font=("Montserrat", 15, "bold"))
+    labelBonus.place(x=25, y=25)
 
-rightFrame = tk.Canvas(window, width=400, height=645, bg="#6997F3")
-rightFrame.place(x=880, y=15)
+
+leftFrame = tk.Canvas(window, width=700, height=590, bg="#c4c4c4")
+leftFrame.place(x=50, y=50)
+
+rightFrame = tk.Canvas(window, width=425, height=600, bg="#6997F3")
+rightFrame.place(x=785, y=45)
+
 
 camLabel = tk.Label(leftFrame, text="here", borderwidth=3, relief="groove")
-camLabel.place(x=20, y=20)
+camLabel.place(x=25, y=25)
 
-startBut = tk.Button(rightFrame, width=25, height=2, text="START", bg="#1B7B03", font=("Montserrat", 9, "bold"),
+startBut = tk.Button(leftFrame, width=20, height=2, text="START", bg="#1B7B03", font=("Montserrat", 9, "bold"),
                      command=startCapture)
-startBut.place(x=15, y=15)
-setGradBut = tk.Button(rightFrame, width=25, height=2, text='SET THRESHOLD', bg="#c4c4c4", font=("Montserrat", 9,
-                                                                                                 "bold"),command=set_gradient)
-setGradBut.place(x=15, y=60)
-endBut = tk.Button(rightFrame, width=25, height=2, text="END", bg="#E21414", font=("Montserrat", 9, "bold"),
+startBut.place(x=20, y=525)
+setGradBut = tk.Button(leftFrame, width=20, height=2, text='SET THRESHOLD', bg="#c4c4c4", font=("Montserrat", 9,
+                                                                                                "bold"),
+                       command=set_gradient)
+setGradBut.place(x=350, y=525)
+endBut = tk.Button(leftFrame, width=20, height=2, text="END", bg="#E21414", font=("Montserrat", 9, "bold"),
                    command=endCapture)
-endBut.place(x=205, y=15)
-homeBut = tk.Button(rightFrame, width=25, height=2, text="HOME", bg="#2B449D", font=("Montserrat", 9, "bold"),
+endBut.place(x=185, y=525)
+homeBut = tk.Button(leftFrame, width=20, height=2, text="HOME", bg="#2B449D", font=("Montserrat", 9, "bold"),
                     command=homePage)
-homeBut.place(x=205, y=60)
+homeBut.place(x=520, y=525)
 
-bowFrame = tk.Canvas(rightFrame, width=370, height=250, bg="#E84747")
-bowFrame.place(x=15, y=115)
-genLanFrame = tk.Canvas(rightFrame, width=370, height=250, bg="#E84747")
-genLanFrame.place(x=15, y=380)
+bowFrame = tk.Canvas(rightFrame, width=385, height=250, bg="#E84747")
+bowFrame.place(x=20, y=20)
+genLanFrame = tk.Canvas(rightFrame, width=385, height=250, bg="#E84747")
+genLanFrame.place(x=20, y=330)
 
+bowBut = tk.Button(rightFrame, width=20, height=2, text="GENERATE", bg="#c4c4c4", font=("Montserrat", 9, "bold"), command=Generate)
+bowBut.place(x=260, y=280)
 bowText = tk.Text(bowFrame, width=38, height=8, bg="#FDFAFA", font="Montserrat")
 bowText.place(x=15, y=45)
 bowCountText = tk.Text(bowFrame, width=10, height=2, bg="#FDFAFA", font="Montserrat")

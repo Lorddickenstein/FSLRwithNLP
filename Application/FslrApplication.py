@@ -9,7 +9,6 @@ import Application.HandTrackingModule as HTM
 import Application.SignClassificationModule as SCM
 import tkinter as tk
 import time
-from keras.models import load_model
 from tkinter import *
 from PIL import Image, ImageTk
 from datetime import datetime
@@ -28,7 +27,7 @@ window.configure(background="grey")
 TEN_MILLION = 10000000.0
 THRESHOLD = 40.0
 FRAME_LIMIT = 20
-THRESH_EXTRA = 0.5
+THRESH_EXTRA = 0.3
 
 # Variables
 detector = HTM.HandDetector()
@@ -55,6 +54,10 @@ cropped_img_path = 'D:\THESIS\Keyframes\Cropped Images'
 model_path = 'D:\THESIS\Models'
 # model_name = 'Part2_FSLR_CNN_Model(38-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.34-val_loss_0.33.h5'
 # model = load_model(os.path.join(model_path, model_name))
+<<<<<<< HEAD
+=======
+# model_name = 'Part2_weights(20-epochs)-accuracy_0.90-val_accuracy_0.89-loss_0.41-val_loss_0.44.hdf5'
+>>>>>>> 093980282a36db465eac861577bd67b5b3cd451a
 model_name = 'Part_2_weights_improvements-epoch_22-acc_0.94-loss_0.22-val_accuracy_0.91-val_loss_0.52.hdf5'
 model = SCM.load_and_compile(os.path.join(model_path, model_name))
 
@@ -293,8 +296,10 @@ def set_gradient():
 
 
 def homePage():
+    cap.release()
+    cv2.destroyAllWindows()
+    import Home
     window.destroy()
-    import Application.GUI.Home
 
 
 leftFrame = tk.Canvas(window, width=850, height=645, bg="#c4c4c4")

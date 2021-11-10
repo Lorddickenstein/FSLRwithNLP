@@ -1,7 +1,6 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Disable Tensorflow's Debugging Infos
 import cv2
-import imutils
 import shutil
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,7 +11,6 @@ import tkinter as tk
 from tkinter import *
 from PIL import Image, ImageTk
 from datetime import datetime
-from keras.models import load_model
 
 # GUI Variables
 cap = cv2.VideoCapture(0)
@@ -243,7 +241,6 @@ def endCapture():
 
 def homePage():
     window.destroy()
-    import Application.GUI.Home
 
 
 leftFrame = tk.Canvas(window, width=700, height=584, bg="#c4c4c4")

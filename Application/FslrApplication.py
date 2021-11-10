@@ -295,6 +295,7 @@ def set_gradient():
 def homePage():
     cap.release()
     cv2.destroyAllWindows()
+    import Home
     window.destroy()
 
 

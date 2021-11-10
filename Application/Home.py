@@ -2,10 +2,12 @@ import tkinter as tk
 
 
 def translating():
+    import FslrApplication
     root.destroy()
 
 
 def about():
+    import AboutPage
     root.destroy()
 
 

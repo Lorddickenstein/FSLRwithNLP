@@ -94,7 +94,11 @@ camLabel.place(x=20, y=20)
 startBut = tk.Button(rightFrame, width=25, height=2, text="START", bg="#1B7B03", font=("Montserrat", 9, "bold"),
                      command=startCapture)
 startBut.place(x=15, y=15)
+<<<<<<< HEAD
 justBut = tk.Button(rightFrame, width=25, height=2, text="Threshold", bg="#c4c4c4", font=("Montserrat", 9, "bold"), command=setGThresh)
+=======
+justBut = tk.Button(rightFrame, width=25, height=2, bg="#c4c4c4", font=("Montserrat", 9, "bold"), command=setGThresh)
+>>>>>>> aa7921d130d91c98cfc355bfb95265500b6730d6
 justBut.place(x=15, y=60)
 endBut = tk.Button(rightFrame, width=25, height=2, text="END", bg="#E21414", font=("Montserrat", 9, "bold"),
                    command=endCapture)

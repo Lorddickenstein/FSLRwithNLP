@@ -1,37 +1,65 @@
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Disable Tensorflow's Debugging Infos
-from keras.models import load_model
 import cv2
-import imutils
 import shutil
 import numpy as np
+import matplotlib.pyplot as plt
 import Application.utils as utils
 import Application.HandTrackingModule as HTM
 import Application.SignClassificationModule as SCM
-import matplotlib.pyplot as plt
+import tkinter as tk
+import time
+# from tensorflow import keras
+from keras.models import load_model
+from tkinter import *
+from PIL import Image, ImageTk
 from datetime import datetime
 
-# Constants
-if int(datetime.now().strftime('%H')) <= 12:
-    GRADIENT_THRESH_VALUE = 1.6
-else:
-    GRADIENT_THRESH_VALUE = 4.8
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Disable Tensorflow's Debugging Infos
+# GUI Variables
+cap = cv2.VideoCapture(0)
+cap.set(3, 600)
+cap.set(4, 480)
+window = tk.Tk()
+window.geometry("1250x680+20+20")
+window.resizable(False, False)
+window.title("FSLR Translator")
+window.configure(background="grey")
+
+# Constants
 TEN_MILLION = 10000000.0
 THRESHOLD = 40.0
-FRAME_LIMIT = 10
+FRAME_LIMIT = 20
+THRESH_EXTRA = 0.5
+
+# Variables
+detector = HTM.HandDetector()
+window.keyframes_arr, window.crop_frm_arr, window.frm_arr, window.frm_num_arr, window.frm_gradients = [], [], [], [], []
+window.prevGradient = np.array([])
+window.start_index, window.end_index, window.frm_num = 0, 0, 0
+window.stable_ctr, window.cTime, window.GRADIENT_THRESH_VALUE = 0, 0, 0
+window.prev_frm_sum = TEN_MILLION
+
+window.text_is_capturing = 'Not Capturing'
+window.color_is_capturing = (51, 51, 255)
+window.is_capturing = False
+window.is_calculating = True
+window.gradient_thresh_arr = []
+window.pTime = datetime.now().second
+window.sec = 6
 
 # Paths and Directories
-figures_path = 'D:\Documents\Thesis\Figures'
-keyframes_path = 'D:\Documents\Thesis\Keyframes'
-cropped_img_path = 'D:\Documents\Thesis\Keyframes\Cropped Images'
+figures_path = 'E:\\test\\Figures'
+keyframes_path = 'E:\\test\\keyframes'
+cropped_img_path = 'E:\\test\\keyframes\\cropped_images'
 
 # FSLR Model
-model_path = 'D:\Documents\Thesis\Experimental_Models'
+model_path = 'E:\\'
 # model_name = 'Part2_FSLR_CNN_Model(38-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.34-val_loss_0.33.h5'
 # model = load_model(os.path.join(model_path, model_name))
-model_name = 'Part2_weights(20-epochs)-accuracy_0.90-val_accuracy_0.89-loss_0.41-val_loss_0.44.hdf5'
+model_name = 'Part_2_weights_improvements-epoch_22-acc_0.94-loss_0.22-val_accuracy_0.91-val_loss_0.52.hdf5'
 model = SCM.load_and_compile(os.path.join(model_path, model_name))
+
 
 def predict(img_arr, interval):
     temp_sentence, temp_score, temp_crop_img = [], [], []
@@ -63,165 +91,273 @@ def predict(img_arr, interval):
 
 
 def start_application():
-    # Open the camera
-    cap = cv2.VideoCapture(0)
-    detector = HTM.HandDetector()
+    ret, frame = cap.read()
 
-    # Detection Variables
-    keyframes_arr, crop_frm_arr, frm_arr, frm_num_arr, frm_gradients = [], [], [], [], []
-    prevGradient = np.array([])
-    start_index, end_index, frm_num, stable_ctr = 0, 0, 0, 0
-    prev_frm_sum = TEN_MILLION
-
-    text_is_capturing = 'Not Capturing'
-    color_is_capturing = (0, 0, 153)
-    is_capturing = False
-
-    while cap.isOpened():
-        _, frame = cap.read()
+    if ret:
         # Filter lines to make it sharper and smoother
         frame = cv2.bilateralFilter(frame, 5, 50, 100)
-        frame = imutils.resize(frame, width=1000)
         height, width, channel = frame.shape
         frameCopy = frame.copy()
 
-        if not _:
-            print("Ignoring empty camera frame.")
-            continue;
+        if window.is_calculating is False:
+            cv2.putText(frame, window.text_is_capturing, (10, int(0.98 * height)),
+                        cv2.FONT_HERSHEY_COMPLEX, 0.6, window.color_is_capturing, 2, cv2.LINE_AA)
 
-        cv2.putText(frame, text_is_capturing, (10, int(0.98 * height)),
-                    cv2.FONT_HERSHEY_COMPLEX, 1, color_is_capturing, 4)
+            if window.is_capturing:
+                sign_captured_pos = (int(0.55 * width), int(0.07 * height))
+                text_sign_captured = 'No Hands Detected.'
+                color_sign_captured = (255, 255, 0)
 
-        if is_capturing:
-            sign_captured_pos = (int(0.65 * width), int(0.05 * height))
-            text_sign_captured = 'No Hands Detected.'
-            color_sign_captured = (255, 255, 0)
-
-            detected, pts_upper_left, pts_lower_right = detector.find_hands(frameCopy)
-            if detected:
-                roi = frameCopy[pts_lower_right[1]:pts_upper_left[1], pts_upper_left[0]:pts_lower_right[0]]
-
-                if stable_ctr >= FRAME_LIMIT:
-                    sign_captured_pos = (int(0.70 * width), int(0.05 * height))
-                    text_sign_captured = 'Sign Captured.'
-                    color_sign_captured = (0, 255, 0)
-                else:
-                    sign_captured_pos = (int(0.62 * width), int(0.05 * height))
-                    text_sign_captured = 'Stabilize Your Hands.'
-                    color_sign_captured = (0, 0, 255)
-
-                cv2.rectangle(frame, pts_upper_left, pts_lower_right, color_sign_captured, 4)
-
-                try:
+                detected, pts_upper_left, pts_lower_right = detector.find_hands(frameCopy)
+                if detected:
+                    roi = frameCopy[pts_lower_right[1]:pts_upper_left[1], pts_upper_left[0]:pts_lower_right[0]]
                     currFrame = utils.convert_to_grayscale(frameCopy)
                     sobelx = cv2.Sobel(currFrame, cv2.CV_64F, 1, 0, ksize=cv2.FILTER_SCHARR)
                     sobely = cv2.Sobel(currFrame, cv2.CV_64F, 0, 1, ksize=cv2.FILTER_SCHARR)
                     currGradient = np.sqrt(np.square(sobelx) + np.square(sobely))
 
-                    if frm_num != 0:
-                        frm_diff = cv2.absdiff(currGradient, prevGradient)
-                        frm_sum = cv2.sumElems(frm_diff)
-                        frm_sum = frm_sum[0] / TEN_MILLION
-                        # print(frm_sum, frm_num)
+                    if window.stable_ctr >= FRAME_LIMIT:
+                        sign_captured_pos = (int(0.66 * width), int(0.07 * height))
+                        text_sign_captured = 'Sign Captured.'
+                        color_sign_captured = (0, 255, 0)
+                    else:
+                        sign_captured_pos = (int(0.50 * width), int(0.07 * height))
+                        text_sign_captured = 'Stabilize Your Hands.'
+                        color_sign_captured = (0, 0, 255)
 
-                        if frm_sum < GRADIENT_THRESH_VALUE:
-                            img_name = os.path.join(keyframes_path, 'keyframe_' + str(frm_num) + '.jpg')
-                            cv2.imwrite(img_name, frameCopy)
-                            stable_ctr += 1
-                            frm_sum = 0.0
+                    cv2.rectangle(frame, pts_upper_left, pts_lower_right, color_sign_captured, 3)
 
-                            if prev_frm_sum != 0:
-                                start_index = frm_num
+                    try:
+                        if window.frm_num != 0:
+                            frm_diff = cv2.absdiff(currGradient, window.prevGradient)
+                            frm_sum = cv2.sumElems(frm_diff)
+                            frm_sum = frm_sum[0] / TEN_MILLION
+                            print('%.2f' % frm_sum, window.frm_num, window.GRADIENT_THRESH_VALUE)
+
+                            if '%.2f' % frm_sum < window.GRADIENT_THRESH_VALUE:
+                                img_name = os.path.join(keyframes_path, 'keyframe_' + str(window.frm_num) + '.jpg')
+                                cv2.imwrite(img_name, frameCopy)
+                                window.stable_ctr += 1
+                                frm_sum = 0.0
+
+                                if window.prev_frm_sum != 0:
+                                    window.start_index = window.frm_num
+                                else:
+                                    window.end_index = window.frm_num
                             else:
-                                end_index = frm_num
-                        else:
-                            if prev_frm_sum == 0 and start_index < end_index:
-                                keyframes_arr.append((start_index, end_index))
-                            stable_ctr = 0
+                                if window.prev_frm_sum == 0 and window.start_index < window.end_index:
+                                    window.keyframes_arr.append((window.start_index, window.end_index))
+                                window.stable_ctr = 0
 
-                        prev_frm_sum = frm_sum
-                        # print(frm_sum, frm_num)
+                            window.prev_frm_sum = frm_sum
+                            # print(frm_sum, window.frm_num)
 
-                        frm_gradients.append(frm_sum)
-                        frm_num_arr.append(frm_num)
+                            window.frm_gradients.append(frm_sum)
+                            window.frm_num_arr.append(window.frm_num)
 
-                    prevGradient = currGradient
-                    frm_arr.append(frameCopy)
-                    crop_frm_arr.append(roi)
-                    frm_num += 1
-                except Exception as exc:
-                    pass
+                        window.frm_arr.append(frameCopy)
+                        window.crop_frm_arr.append(roi)
+                    except Exception as exc:
+                        pass
 
-            cv2.putText(frame, text_sign_captured, sign_captured_pos,
-                        cv2.FONT_HERSHEY_COMPLEX, 1, color_sign_captured, 3, cv2.LINE_AA)
+                    window.prevGradient = currGradient
+                    window.frm_num += 1
 
-        cv2.imshow('Original', frame)
-        key = cv2.waitKey(5) & 0xFF
-        if key == 27 or key == ord('q'):
-            break
-        elif key == ord('s'):
-            if not is_capturing:
-                try:
-                    shutil.rmtree(keyframes_path)
-                except OSError as e:
-                    print("Error: %s - %s." % (e.filename, e.strerror))
-                os.makedirs(keyframes_path)
-                os.makedirs(cropped_img_path)
+                cv2.putText(frame, text_sign_captured, sign_captured_pos,
+                            cv2.FONT_HERSHEY_COMPLEX, 0.8, color_sign_captured, 2, cv2.LINE_AA)
+        else:
+            currFrame = utils.convert_to_grayscale(frameCopy)
+            sobelx = cv2.Sobel(currFrame, cv2.CV_64F, 1, 0, ksize=cv2.FILTER_SCHARR)
+            sobely = cv2.Sobel(currFrame, cv2.CV_64F, 0, 1, ksize=cv2.FILTER_SCHARR)
+            currGradient = np.sqrt(np.square(sobelx) + np.square(sobely))
 
-                text_is_capturing = 'Capturing'
-                color_is_capturing = (0, 153, 0)
-                is_capturing = True
-        elif key == ord('e'):
-            if is_capturing:
-                if prev_frm_sum == 0 and start_index < end_index:
-                    keyframes_arr.append((start_index, end_index))
-                date_now = datetime.now()
-                fig_name = 'Figure_' + date_now.strftime('%Y-%m-%d_%H%M%S') + '.png'
-                plt.plot(frm_num_arr, frm_gradients)
-                plt.title('Key Frame Extraction Using The Gradient Values')
-                plt.xlabel('frame')
-                plt.ylabel('gradient value')
-                plt.savefig(os.path.join(figures_path, fig_name), bbox_inches='tight')
-                # plt.show()
+            if window.sec >= 3:
+                frame = cv2.GaussianBlur(frame, (51, 51), 0)
+                cv2.putText(frame, str(window.sec - 3), (int(width / 2) - 40, int(height / 2) - 20),
+                            cv2.FONT_HERSHEY_DUPLEX, 4, (51, 51, 255), 5, cv2.LINE_AA)
+                cv2.putText(frame, 'Stand in the middle of the frame.', (20, int(0.60 * height)),
+                            cv2.FONT_HERSHEY_COMPLEX, 1, (102, 255, 255), 3, cv2.LINE_AA)
+                cv2.putText(frame, 'Try not to move.', (int(0.25 * width), int(0.68 * height)),
+                            cv2.FONT_HERSHEY_COMPLEX, 1, (102, 255, 255), 3, cv2.LINE_AA)
+            else:
+                if window.sec >= -1:
+                    cv2.putText(frame, 'Calculating average gradient.', (75, int(0.60 * height)),
+                                cv2.FONT_HERSHEY_COMPLEX, 1, (102, 255, 255), 3, cv2.LINE_AA)
+                    cv2.putText(frame, str(window.sec + 1), (int(width / 2) - 40, int(height / 2) - 20),
+                                cv2.FONT_HERSHEY_DUPLEX, 4, (51, 255, 51), 5, cv2.LINE_AA)
 
-                prev_word = ''
-                sentence = []
-                for (start_frm, end_frm) in keyframes_arr:
-                    length = end_frm - start_frm + 1
-                    if length >= FRAME_LIMIT:
-                        interval = length // 5
-                        word, frm_position, frm_score, crop_img = predict(crop_frm_arr[start_frm: (end_frm + 1)],
-                                                                          interval)
-                        frm_position += start_frm
-                        if word != prev_word:
-                            img_crop_path = os.path.join(cropped_img_path, str(frm_position) + '_'
-                                                         + word + '_' + str(frm_score) + '.jpg')
-                            try:
-                                cv2.imwrite(img_crop_path, crop_img)
-                            except Exception as exc:
-                                print('Error was found at frame {}'.format(frm_position))
-                                try:
-                                    crop_img, _ = utils.preprocess_image(crop_frm_arr[frm_position])
-                                    cv2.imwrite(img_crop_path, crop_img)
-                                except Exception as exc:
-                                    print('Error saving frame again')
-                            sentence.append(word)
-                            prev_word = word
-                        print('From frame {} to {}: {} total frames {}'.format(start_frm, end_frm, length, word))
+                    frm_diff = cv2.absdiff(currGradient, window.prevGradient)
+                    frm_sum = cv2.sumElems(frm_diff)
+                    frm_sum = frm_sum[0] / TEN_MILLION
+                    print('%.2f' % frm_sum, window.frm_num)
+                    window.gradient_thresh_arr.append(frm_sum)
+                else:
+                    window.GRADIENT_THRESH_VALUE = '%.2f' % (np.mean(window.gradient_thresh_arr) + THRESH_EXTRA)
+                    print('Average Gradient Difference:', window.GRADIENT_THRESH_VALUE)
 
-                print(sentence)
-                keyframes_arr, crop_frm_arr, frm_arr, frm_num_arr, frm_gradients = [], [], [], [], []
-                prevGradient = np.array([])
-                start_index, end_index, frm_num, stable_ctr = 0, 0, 0, 0
-                prev_frm_sum = TEN_MILLION
+                    window.is_calculating = False
+                    window.frm_num = 0
+                    window.prevGradient = np.array([])
+                    window.gradient_thresh_arr = []
+                    time.sleep(1)
 
-                text_is_capturing = 'Not Capturing'
-                color_is_capturing = (0, 0, 153)
-                is_capturing = False
+            window.cTime = datetime.now().second
+            if window.cTime - window.pTime == 1:
+                window.sec -= 1
+            window.pTime = window.cTime
 
-    cap.release()
-    cv2.destroyAllWindows()
+            window.prevGradient = currGradient
+            window.frm_num += 1
+
+        cv2.putText(frame, datetime.now().strftime('%d/%m/%Y %H:%M:%S'), (20, 30),
+                    cv2.FONT_HERSHEY_DUPLEX, 0.6, (0, 255, 255), 1, cv2.LINE_AA)
+
+        cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+        videoImg = Image.fromarray(cv2image)
+        img = ImageTk.PhotoImage(image=videoImg)
+        camLabel.configure(image=img)
+        camLabel.imageTk = img
+        camLabel.after(1, start_application)
+    else:
+        camLabel.configure(image='')
 
 
-if __name__ == "__main__":
-    start_application()
+def startCapture():
+    if not window.is_capturing:
+        try:
+            shutil.rmtree(keyframes_path)
+        except OSError as e:
+            print("Error: %s - %s." % (e.filename, e.strerror))
+        os.makedirs(keyframes_path)
+        os.makedirs(cropped_img_path)
+
+        window.text_is_capturing = 'Capturing'
+        window.color_is_capturing = (51, 255, 51)
+        window.is_capturing = True
+    window.is_capturing = True
+
+
+def endCapture():
+    if window.is_capturing:
+        if window.prev_frm_sum == 0 and window.start_index < window.end_index:
+            window.keyframes_arr.append((window.start_index, window.end_index))
+        date_now = datetime.now()
+        fig_name = 'Figure_' + date_now.strftime('%Y-%m-%d_%H%M%S') + '.png'
+        plt.plot(window.frm_num_arr, window.frm_gradients)
+        plt.title('Key Frame Extraction Using The Gradient Values')
+        plt.xlabel('frame')
+        plt.ylabel('gradient value')
+        plt.savefig(os.path.join(figures_path, fig_name), bbox_inches='tight')
+        # plt.show()
+
+        prev_word = ''
+        sentence = []
+        for (start_frm, end_frm) in window.keyframes_arr:
+            length = end_frm - start_frm + 1
+            if length >= FRAME_LIMIT:
+                interval = length // 5
+                word, frm_position, frm_score, crop_img = predict(window.crop_frm_arr[start_frm: (end_frm + 1)],
+                                                                  interval)
+                frm_position += start_frm
+                if word != prev_word:
+                    img_crop_path = os.path.join(cropped_img_path, str(frm_position) + '_'
+                                                 + word + '_' + str(frm_score) + '.jpg')
+                    try:
+                        cv2.imwrite(img_crop_path, crop_img)
+                    except Exception as exc:
+                        print('Error was found at frame {}.'.format(frm_position))
+                        try:
+                            crop_img, _ = utils.preprocess_image(window.crop_frm_arr[frm_position])
+                            cv2.imwrite(img_crop_path, crop_img)
+                        except Exception as exc:
+                            print('Error saving frame again. Ignoring saving.')
+                            word = '[unrecognized]'
+                    sentence.append(word)
+                    prev_word = word
+                print('From frame {} to {}: {} total frames {}'.format(start_frm, end_frm, length, word))
+
+        print(sentence)
+        window.keyframes_arr, window.crop_frm_arr, window.frm_arr, window.frm_num_arr, window.frm_gradients = [], [], [], [], []
+        window.prevGradient = np.array([])
+        window.start_index, window.end_index, window.frm_num, window.stable_ctr = 0, 0, 0, 0
+        window.prev_frm_sum = TEN_MILLION
+
+        window.text_is_capturing = 'Not Capturing'
+        window.color_is_capturing = (51, 51, 255)
+        window.is_capturing = False
+
+
+def set_gradient():
+    window.pTime = datetime.now().second
+    window.sec = 6
+    window.cTime = 0
+    window.is_calculating = True
+
+
+def homePage():
+    window.destroy()
+    import Application.GUI.Home
+
+
+def Generate():
+    pop = tk.Tk()
+    pop.wm_title("Generate")
+    pop.geometry("300x100")
+    labelBonus = Label(pop, text="Bag of Words", font=("Montserrat", 15, "bold"))
+    labelBonus.place(x=25, y=25)
+
+
+leftFrame = tk.Canvas(window, width=700, height=590, bg="#c4c4c4")
+leftFrame.place(x=50, y=50)
+
+rightFrame = tk.Canvas(window, width=425, height=600, bg="#6997F3")
+rightFrame.place(x=785, y=45)
+
+
+camLabel = tk.Label(leftFrame, text="here", borderwidth=3, relief="groove")
+camLabel.place(x=25, y=25)
+
+startBut = tk.Button(leftFrame, width=20, height=2, text="START", bg="#1B7B03", font=("Montserrat", 9, "bold"),
+                     command=startCapture)
+startBut.place(x=20, y=525)
+setGradBut = tk.Button(leftFrame, width=20, height=2, text='SET THRESHOLD', bg="#c4c4c4", font=("Montserrat", 9,
+                                                                                                "bold"),
+                       command=set_gradient)
+setGradBut.place(x=350, y=525)
+endBut = tk.Button(leftFrame, width=20, height=2, text="END", bg="#E21414", font=("Montserrat", 9, "bold"),
+                   command=endCapture)
+endBut.place(x=185, y=525)
+homeBut = tk.Button(leftFrame, width=20, height=2, text="HOME", bg="#2B449D", font=("Montserrat", 9, "bold"),
+                    command=homePage)
+homeBut.place(x=520, y=525)
+
+bowFrame = tk.Canvas(rightFrame, width=385, height=250, bg="#E84747")
+bowFrame.place(x=20, y=20)
+genLanFrame = tk.Canvas(rightFrame, width=385, height=250, bg="#E84747")
+genLanFrame.place(x=20, y=330)
+
+bowBut = tk.Button(rightFrame, width=20, height=2, text="GENERATE", bg="#c4c4c4", font=("Montserrat", 9, "bold"), command=Generate)
+bowBut.place(x=260, y=280)
+bowText = tk.Text(bowFrame, width=38, height=8, bg="#FDFAFA", font="Montserrat")
+bowText.place(x=15, y=45)
+bowCountText = tk.Text(bowFrame, width=10, height=2, bg="#FDFAFA", font="Montserrat")
+bowCountText.place(x=267, y=200)
+genLanText = tk.Text(genLanFrame, width=38, height=8, bg="#FDFAFA", font="Montserrat")
+genLanText.place(x=15, y=45)
+genLanCountText = tk.Text(genLanFrame, width=10, height=2, bg="#FDFAFA", font="Montserrat")
+genLanCountText.place(x=267, y=200)
+
+bowLabel = tk.Label(bowFrame, text="BAG OF WORDS    :", bg="#E84747", fg="#FDFAFA", font=("Montserrat", 14, "bold"))
+bowLabel.place(x=15, y=10)
+bowCountLabel = tk.Label(bowFrame, text="COUNT    :", bg="#E84747", fg="#FDFAFA", font=("Montserrat", 12, "bold"))
+bowCountLabel.place(x=170, y=205)
+genLanLabel = tk.Label(genLanFrame, text="GENERATED LANGUAGE    :", bg="#E84747", fg="#FDFAFA",
+                       font=("Montserrat", 14, "bold"))
+genLanLabel.place(x=15, y=10)
+genLanCountLabel = tk.Label(genLanFrame, text="COUNT    :", bg="#E84747", fg="#FDFAFA", font=("Montserrat", 12, "bold"))
+genLanCountLabel.place(x=170, y=205)
+
+start_application()
+window.mainloop()
+cap.release()
+cv2.destroyAllWindows()

@@ -9,7 +9,8 @@ import imutils
 
 def showFeed():
     ret, frame = cap.read()
-    frame = imutils.resize(frame, width=815)
+    # frame = imutils.resize(frame, width=815)
+    frame = cv2.bilateralFilter(frame, 5, 50, 100)
     height, width, channel = frame.shape
     # print(height, width)
 
@@ -59,11 +60,19 @@ def homePage():
     import Home
 
 
-def setGThresh():
+def set_gradient():
     pop = tk.Tk()
     pop.wm_title("TEST")
     pop.geometry("300x100")
     labelBonus = Label(pop, text="Set Gradient Threshold", font=("Montserrat", 15, "bold"))
+    labelBonus.place(x=25, y=25)
+
+
+def Generate():
+    pop = tk.Tk()
+    pop.wm_title("Generate")
+    pop.geometry("300x100")
+    labelBonus = Label(pop, text="Bag of Words", font=("Montserrat", 15, "bold"))
     labelBonus.place(x=25, y=25)
 
 
@@ -77,41 +86,41 @@ cap.set(584, height)
 
 frm_arr = []
 
-window.geometry("1300x680+20+20")
+window.geometry("1250x680+20+20")
 window.resizable(False, False)
 window.title("FSLR Translator")
 window.configure(background="grey")
 
-leftFrame = tk.Canvas(window, width=850, height=645, bg="#c4c4c4")
-leftFrame.place(x=15, y=15)
+leftFrame = tk.Canvas(window, width=700, height=590, bg="#c4c4c4")
+leftFrame.place(x=50, y=50)
 
-rightFrame = tk.Canvas(window, width=400, height=645, bg="#6997F3")
-rightFrame.place(x=880, y=15)
+rightFrame = tk.Canvas(window, width=425, height=600, bg="#6997F3")
+rightFrame.place(x=785, y=45)
 
 camLabel = tk.Label(leftFrame, text="here", borderwidth=3, relief="groove")
-camLabel.place(x=20, y=20)
+camLabel.place(x=25, y=25)
 
-startBut = tk.Button(rightFrame, width=25, height=2, text="START", bg="#1B7B03", font=("Montserrat", 9, "bold"),
+startBut = tk.Button(leftFrame, width=20, height=2, text="START", bg="#1B7B03", font=("Montserrat", 9, "bold"),
                      command=startCapture)
-startBut.place(x=15, y=15)
-<<<<<<< HEAD
-justBut = tk.Button(rightFrame, width=25, height=2, text="Threshold", bg="#c4c4c4", font=("Montserrat", 9, "bold"), command=setGThresh)
-=======
-justBut = tk.Button(rightFrame, width=25, height=2, bg="#c4c4c4", font=("Montserrat", 9, "bold"), command=setGThresh)
->>>>>>> aa7921d130d91c98cfc355bfb95265500b6730d6
-justBut.place(x=15, y=60)
-endBut = tk.Button(rightFrame, width=25, height=2, text="END", bg="#E21414", font=("Montserrat", 9, "bold"),
+startBut.place(x=20, y=525)
+setGradBut = tk.Button(leftFrame, width=20, height=2, text='SET THRESHOLD', bg="#c4c4c4", font=("Montserrat", 9,
+                       "bold"), command=set_gradient)
+setGradBut.place(x=350, y=525)
+endBut = tk.Button(leftFrame, width=20, height=2, text="END", bg="#E21414", font=("Montserrat", 9, "bold"),
                    command=endCapture)
-endBut.place(x=205, y=15)
-homeBut = tk.Button(rightFrame, width=25, height=2, text="HOME", bg="#2B449D", font=("Montserrat", 9, "bold"),
+endBut.place(x=185, y=525)
+homeBut = tk.Button(leftFrame, width=20, height=2, text="HOME", bg="#2B449D", font=("Montserrat", 9, "bold"),
                     command=homePage)
-homeBut.place(x=205, y=60)
+homeBut.place(x=520, y=525)
 
-bowFrame = tk.Canvas(rightFrame, width=370, height=250, bg="#E84747")
-bowFrame.place(x=15, y=115)
-genLanFrame = tk.Canvas(rightFrame, width=370, height=250, bg="#E84747")
-genLanFrame.place(x=15, y=380)
+bowFrame = tk.Canvas(rightFrame, width=385, height=250, bg="#E84747")
+bowFrame.place(x=20, y=20)
+genLanFrame = tk.Canvas(rightFrame, width=385, height=250, bg="#E84747")
+genLanFrame.place(x=20, y=330)
 
+
+bowBut = tk.Button(rightFrame, width=20, height=2, text="GENERATE", bg="#c4c4c4", font=("Montserrat", 9, "bold"), command=Generate)
+bowBut.place(x=260, y=280)
 bowText = tk.Text(bowFrame, width=38, height=8, bg="#FDFAFA", font="Montserrat")
 bowText.place(x=15, y=45)
 bowCountText = tk.Text(bowFrame, width=10, height=2, bg="#FDFAFA", font="Montserrat")

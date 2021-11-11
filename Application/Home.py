@@ -1,6 +1,7 @@
 import tkinter as tk
 import sys
 
+
 def translating():
     root.destroy()
     import FslrApplication

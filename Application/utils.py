@@ -1,8 +1,6 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-import os
-from PIL import Image
 
 
 """ Returns an image with dimension height by width. """

@@ -1,5 +1,5 @@
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Disable Tensorflow's Debugging Infos
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Disable Tensorflow's Debugging Infos
 import cv2
 import shutil
 import numpy as np
@@ -14,10 +14,9 @@ from PIL import Image, ImageTk
 from datetime import datetime
 
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Disable Tensorflow's Debugging Infos
 # GUI Variables
 cap = cv2.VideoCapture(0)
-cap.set(3, 620)
+cap.set(3, 640)
 cap.set(4, 480)
 window = tk.Tk()
 window.geometry("1250x680+20+20")

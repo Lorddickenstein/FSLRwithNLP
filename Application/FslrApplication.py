@@ -1,18 +1,14 @@
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Disable Tensorflow's Debugging Infos
 import cv2
 import shutil
 import numpy as np
 import matplotlib.pyplot as plt
-import Application.utils as utils
-import Application.HandTrackingModule as HTM
-import Application.SignClassificationModule as SCM
+import utils as utils
+import HandTrackingModule as HTM
+import SignClassificationModule as SCM
 import tkinter as tk
 import time
-# <<<<<<< HEAD
-# # from tensorflow import keras
-# from keras.models import load_model
-# =======
-# >>>>>>> 0e907a5303e43ea01e4fb36c975053f05d68d0b8
 from tkinter import *
 from PIL import Image, ImageTk
 from datetime import datetime
@@ -33,7 +29,7 @@ window.configure(background="grey")
 TEN_MILLION = 10000000.0
 THRESHOLD = 40.0
 FRAME_LIMIT = 10
-THRESH_EXTRA = 0.3
+THRESH_EXTRA = 0.5
 
 # Variables
 detector = HTM.HandDetector()
@@ -52,19 +48,13 @@ window.pTime = datetime.now().second
 window.sec = 6
 
 # Paths and Directories
-figures_path = 'E:\\test\\Figures'
-keyframes_path = 'E:\\test\\keyframes'
-cropped_img_path = 'E:\\test\\keyframes\\cropped_images'
+figures_path = 'D:\Documents\Thesis\Figures'
+keyframes_path = 'D:\Documents\Thesis\Keyframes'
+cropped_img_path = 'D:\Documents\Thesis\Keyframes\Cropped Images'
 
 # FSLR Model
-model_path = 'E:\\'
-# # model_name = 'Part2_FSLR_CNN_Model(38-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.34-val_loss_0.33.h5'
-# # model = load_model(os.path.join(model_path, model_name))
-# <<<<<<< HEAD
-# =======
-# # model_name = 'Part2_weights(20-epochs)-accuracy_0.90-val_accuracy_0.89-loss_0.41-val_loss_0.44.hdf5'
-# >>>>>>> 0e907a5303e43ea01e4fb36c975053f05d68d0b8
-model_name = 'Part_2_weights_improvements-epoch_22-acc_0.94-loss_0.22-val_accuracy_0.91-val_loss_0.52.hdf5'
+model_path = 'D:\Documents\Thesis\Experimental_Models\Best so far'
+model_name = 'Model_1-Epochs 38.hdf5'
 model = SCM.load_and_compile(os.path.join(model_path, model_name))
 
 
@@ -78,6 +68,7 @@ def predict(img_arr, interval):
             score = top_predictions[4][1]
             if score >= THRESHOLD:
                 word = top_predictions[4][0]
+                # print(word, score)
             else:
                 raise Exception()
         except Exception as exc:
@@ -323,7 +314,6 @@ leftFrame.place(x=50, y=50)
 rightFrame = tk.Canvas(window, width=425, height=600, bg="#6997F3")
 rightFrame.place(x=785, y=45)
 
-
 camLabel = tk.Label(leftFrame, text="here", borderwidth=3, relief="groove")
 camLabel.place(x=25, y=25)
 
@@ -331,8 +321,7 @@ startBut = tk.Button(leftFrame, width=20, height=2, text="START", bg="#1B7B03", 
                      command=startCapture)
 startBut.place(x=20, y=525)
 setGradBut = tk.Button(leftFrame, width=20, height=2, text='SET THRESHOLD', bg="#c4c4c4", font=("Montserrat", 9,
-                                                                                                "bold"),
-                       command=set_gradient)
+                       "bold"), command=set_gradient)
 setGradBut.place(x=350, y=525)
 endBut = tk.Button(leftFrame, width=20, height=2, text="END", bg="#E21414", font=("Montserrat", 9, "bold"),
                    command=endCapture)
@@ -345,6 +334,7 @@ bowFrame = tk.Canvas(rightFrame, width=385, height=250, bg="#E84747")
 bowFrame.place(x=20, y=20)
 genLanFrame = tk.Canvas(rightFrame, width=385, height=250, bg="#E84747")
 genLanFrame.place(x=20, y=330)
+
 
 bowBut = tk.Button(rightFrame, width=20, height=2, text="GENERATE", bg="#c4c4c4", font=("Montserrat", 9, "bold"), command=Generate)
 bowBut.place(x=260, y=280)

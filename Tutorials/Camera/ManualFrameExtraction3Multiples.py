@@ -13,7 +13,7 @@ def resize_image(src_img, img_size=(224, 224)):
 
 path = 'D:\Pictures\Camera Roll'
 path_sign_dest = 'D:\Pictures\Camera Roll\Temp2'
-file_name = ['Come-2', 'D', 'Happen', 'Happen-2', 'He-She', 'Introduce-2', 'Them', 'Welcome-2', 'Work']
+file_name = ['What']
 print(len(file_name,))
 for file in file_name:
     file_path = os.path.join(path, file) + '.mp4'
@@ -34,7 +34,7 @@ for file in file_name:
                     os.makedirs(path_class)
                 detected, pts_upper_left, pts_lower_right = detector.find_hands(frame)
                 if detected:
-                    name = 'Jers_new' + file + "_" + str(k) + ".jpg"
+                    name = 'Jers' + file + "_" + str(k) + ".jpg"
                     path_image = os.path.join(path_class, name)
                     roi = frame[abs(int(pts_lower_right[1])):abs(int(pts_upper_left[1])),
                           abs(int(pts_upper_left[0])):abs(int(pts_lower_right[0]))]

@@ -1,9 +1,9 @@
 import cv2
 import os
 
-source = 'D:\Pictures\Camera Roll\Temp'
-dest = 'D:\Pictures\Camera Roll\Temp2'
-folders = ['Come-2', 'D', 'Happen', 'Happen-2', 'He-She', 'Introduce-2', 'Them', 'Welcome-2', 'Work']
+source = 'D:\Pictures\Camera Roll\Temp2'
+dest = 'D:\Pictures\Camera Roll\Temp3'
+folders = ['Ball', 'Chair', 'Help', 'Sit', 'Strawberry', 'Today-2', 'What', 'When', 'Yes']
 
 for folder in os.listdir(source):
     if folder not in folders:

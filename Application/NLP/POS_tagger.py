@@ -8,6 +8,7 @@ persons = {}
 for occupation, person in read_file('NLP\persons.txt'):
   persons[occupation] = person
 
+
 def is_alpha(letter):
   letters = ['A', 'B', 'C', 'D', 'E',
              'F', 'G', 'H', 'I', 'J',

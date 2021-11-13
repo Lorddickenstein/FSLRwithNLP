@@ -3,6 +3,7 @@ from tkinter import *
 import cv2
 from PIL import Image, ImageTk
 from datetime import datetime
+from Application.NLP import Tagger
 import os
 import imutils
 
@@ -38,10 +39,11 @@ def showFeed():
 
 def startCapture():
     frm_arr = []
-    window.is_capturing = True
+    # window.is_capturing = True
 
 
 def endCapture():
+    bowText.delete(1.0, END)
     if window.is_capturing:
         image_name = 'signs.avi'
         path = "E:\\thesis"
@@ -59,6 +61,7 @@ def endCapture():
 
 def homePage():
     startBut['state'] = DISABLED
+    bowText.insert(INSERT, datetime.now().strftime('%d/%m/%Y %H:%M:%S '))
 
 
 def set_gradient():
@@ -70,11 +73,10 @@ def set_gradient():
 
 
 def Generate():
-    pop = tk.Tk()
-    pop.wm_title("Generate")
-    pop.geometry("300x100")
-    labelBonus = Label(pop, text="Bag of Words", font=("Montserrat", 15, "bold"))
-    labelBonus.place(x=25, y=25)
+    sentence = bowText.get('1.0', END)
+    print(sentence)
+    sentence = Tagger.pos_tag(sentence.strip())
+    print(sentence)
 
 
 window = tk.Tk()
@@ -123,6 +125,7 @@ genLanFrame.place(x=20, y=330)
 bowBut = tk.Button(rightFrame, width=20, height=2, text="GENERATE", bg="#c4c4c4", font=("Montserrat", 9, "bold"), command=Generate)
 bowBut.place(x=260, y=280)
 bowText = tk.Text(bowFrame, width=38, height=8, bg="#FDFAFA", font="Montserrat", wrap=WORD)
+bowText.tag_add('endindex', '20.99999')
 bowText.place(x=15, y=45)
 bowCountText = tk.Text(bowFrame, width=10, height=2, bg="#FDFAFA", font="Montserrat", state=DISABLED)
 bowCountText.place(x=267, y=200)

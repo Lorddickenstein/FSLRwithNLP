@@ -1,12 +1,8 @@
-# import nltk
 from Application.NLP.Repos import read_file
-# from easynmt import EasyNMT
-# from nltk.tag import pos_tag
-# nltk.download('averaged_perceptron_tagger')
 
-persons = {}
-for occupation, person in read_file('NLP\persons.txt'):
-  persons[occupation] = person
+
+def tokenize(sentence):
+  return sentence.split(' ')
 
 
 def is_alpha(letter):
@@ -72,11 +68,14 @@ def pos_tag(tokens):
   return tokens
 
 
+persons = {}
+for occupation, person in read_file('NLP\persons.txt'):
+  persons[occupation] = person
+
+
 if __name__ == '__main__':
   sentence = ['I-Me', 'J', 'E', 'R', 'S', 'O', 'N', 'and', 'I-Me', 'Live', 'in', 'C', 'U', 'B', 'A', 'O', 'HO', 'I-Me', 'DRAWING', 'OCCUPATION']
   sentence = build_letters(sentence)
   print(sentence)
   sentence = anotate(sentence)
   print(sentence)
-
-  # main('this')

@@ -12,7 +12,7 @@ import time
 from tkinter import *
 from PIL import Image, ImageTk
 from datetime import datetime
-from NLP import POS_tagger
+from NLP import Tagger
 
 # GUI Variables
 cap = cv2.VideoCapture(0)
@@ -37,6 +37,7 @@ window.prevGradient = np.array([])
 window.start_index, window.end_index, window.frm_num = 0, 0, 0
 window.stable_ctr, window.cTime, window.GRADIENT_THRESH_VALUE = 0, 0, 0
 window.prev_frm_sum = TEN_MILLION
+window.count = 0
 
 window.text_is_capturing = 'Not Capturing'
 window.color_is_capturing = (51, 51, 255)
@@ -88,6 +89,13 @@ def predict(img_arr, interval):
     return most_occuring_word, frm_position * interval, frm_score, crop_img
 
 
+def update_count():
+    bowCountText['state'] = NORMAL
+    bowCountText.delete('1.0', END)
+    bowCountText.insert(END, window.count)
+    bowCountText['state'] = DISABLED
+
+
 def start_application():
     ret, frame = cap.read()
 
@@ -96,6 +104,12 @@ def start_application():
         frame = cv2.bilateralFilter(frame, 5, 50, 100)
         height, width, channel = frame.shape
         frameCopy = frame.copy()
+
+        sentence = bowText.get('1.0', END)
+        sentence = Tagger.tokenize(sentence.strip())
+        sentence = Tagger.pos_tag(sentence)
+        window.count = len(sentence) if sentence != [''] else 0
+        update_count()
 
         if window.is_calculating is False:
             cv2.putText(frame, window.text_is_capturing, (10, int(0.98 * height)),
@@ -229,6 +243,8 @@ def startCapture():
         os.makedirs(keyframes_path)
         os.makedirs(cropped_img_path)
 
+        bowText.delete('1.0', END)
+
         window.text_is_capturing = 'Capturing'
         window.color_is_capturing = (51, 255, 51)
         window.is_capturing = True
@@ -275,8 +291,12 @@ def endCapture():
                     prev_word = word
                 print('From frame {} to {}: {} total frames {}'.format(start_frm, end_frm, length, word))
 
-        sentence = POS_tagger.pos_tag(sentence)
         print(sentence)
+        sentence = Tagger.pos_tag(sentence)
+        bowText.insert(END, sentence)
+        window.count = len(sentence)
+        update_count()
+
         window.keyframes_arr, window.crop_frm_arr, window.frm_arr, window.frm_num_arr, window.frm_gradients = [], [], [], [], []
         window.prevGradient = np.array([])
         window.start_index, window.end_index, window.frm_num, window.stable_ctr = 0, 0, 0, 0
@@ -302,11 +322,12 @@ def homePage():
 
 
 def Generate():
-    pop = tk.Tk()
-    pop.wm_title("Generate")
-    pop.geometry("300x100")
-    labelBonus = Label(pop, text="Bag of Words", font=("Montserrat", 15, "bold"))
-    labelBonus.place(x=25, y=25)
+    sentence = bowText.get('1.0', END)
+    sentence = Tagger.tokenize(sentence.strip())
+    sentence = Tagger.pos_tag(sentence)
+    genLanCountText.delete('1.0', END)
+    genLanCountText.insert(END, len(sentence))
+    print(sentence)
 
 
 leftFrame = tk.Canvas(window, width=700, height=590, bg="#c4c4c4")
@@ -341,11 +362,11 @@ bowBut = tk.Button(rightFrame, width=20, height=2, text="GENERATE", bg="#c4c4c4"
 bowBut.place(x=260, y=280)
 bowText = tk.Text(bowFrame, width=38, height=8, bg="#FDFAFA", font="Montserrat")
 bowText.place(x=15, y=45)
-bowCountText = tk.Text(bowFrame, width=10, height=2, bg="#FDFAFA", font="Montserrat")
+bowCountText = tk.Text(bowFrame, width=10, height=2, bg="#FDFAFA", font="Montserrat", state=DISABLED)
 bowCountText.place(x=267, y=200)
 genLanText = tk.Text(genLanFrame, width=38, height=8, bg="#FDFAFA", font="Montserrat")
 genLanText.place(x=15, y=45)
-genLanCountText = tk.Text(genLanFrame, width=10, height=2, bg="#FDFAFA", font="Montserrat")
+genLanCountText = tk.Text(genLanFrame, width=10, height=2, bg="#FDFAFA", font="Montserrat", state=DISABLED)
 genLanCountText.place(x=267, y=200)
 
 bowLabel = tk.Label(bowFrame, text="BAG OF WORDS    :", bg="#E84747", fg="#FDFAFA", font=("Montserrat", 14, "bold"))

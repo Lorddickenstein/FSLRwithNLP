@@ -53,7 +53,7 @@ cropped_img_path = 'D:\Documents\Thesis\Keyframes\Cropped Images'
 
 # FSLR Model
 model_path = 'D:\Documents\Thesis\Experimental_Models\Best so far'
-model_name = 'Model_1-Epochs 38.hdf5'
+model_name = 'Model_3-Epochs 35.hdf5'
 model = SCM.load_and_compile(os.path.join(model_path, model_name))
 
 

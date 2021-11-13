@@ -12,6 +12,7 @@ import warnings
 import time
 import imutils
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Disable Tensorflow's Debugging Infos
 
 tf.get_logger().setLevel('ERROR')
 warnings.simplefilter(action='ignore', category=Warning)
@@ -36,8 +37,8 @@ detector = HTM.HandDetector()
 # model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Y-Why-2_Experiment6(20-epochs)-accuracy_0.87-val_accuracy_0.88.h5')
 # model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Best so far\Fingerspell_Detector_Experiment5(55-epochs)-accuracy_0.87-val_accuracy_0.84.h5')
 # model = keras.models.load_model('D:\Documents\Thesis\Expeimental_Models\Part2_FSLR_CNN_Model(38-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.34-val_loss_0.33.h5')
-model_path = "E:\\"
-model_name = "Part2_FSLR_CNN_Model(30-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.27.h5"
+model_path = 'D:\Documents\Thesis\Experimental_Models\Best so far'
+model_name = 'Model_1-Epochs 38.hdf5'
 model = SCM.load_and_compile(os.path.join(model_path, model_name))
 
 
@@ -94,28 +95,6 @@ while True:
         # cv2.rectangle(frame, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
         roi = frame[pts_lower_right[1]:pts_upper_left[1], pts_upper_left[0]:pts_lower_right[0]]
         if len(roi) != 0:
-            # try:
-            #     img_crop, roi = utils.preprocess_image(roi)
-            #     cv2.imshow('cropped', img_crop)
-            # except Exception as e:
-            #     pass
-            #
-            # predictions, top_predictions = SCM.classify_image(roi, model)
-            #
-            # score = max(top_predictions, key=lambda x: x[1])
-            # if score[1] >= threshold:
-            #     cv2.putText(frame, top_predictions[4][0] + " " + str(top_predictions[4][1]),
-            #                 (10, height - int(0.50 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
-            #     cv2.putText(frame, top_predictions[3][0] + " " + str(top_predictions[3][1]),
-            #                 (10, height - int(0.45 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
-            #     cv2.putText(frame, top_predictions[2][0] + " " + str(top_predictions[2][1]),
-            #                 (10, height - int(0.40 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
-            #     cv2.putText(frame, top_predictions[1][0] + " " + str(top_predictions[1][1]),
-            #                 (10, height - int(0.35 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
-            #     cv2.putText(frame, top_predictions[0][0] + " " + str(top_predictions[0][1]),
-            #                 (10, height - int(0.3 * height)), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
-            #
-            # cv2.rectangle(frame, pts_upper_left, pts_lower_right, (255, 0, 0), 3)
 
             try:
                 img_crop, roi = utils.preprocess_image(roi)

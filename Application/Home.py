@@ -1,22 +1,20 @@
 import tkinter as tk
+import sys
+
 
 def translating():
     root.destroy()
     import FslrApplication
-<<<<<<< HEAD
-    # import Application.FslrApplication
-=======
->>>>>>> f9428e1d13507a2b5e2037459c06c8becc0467d3
 
 
 def about():
     root.destroy()
-<<<<<<< HEAD
-    # import Application.GUI.AboutPage
-    
-=======
     import AboutPage
->>>>>>> f9428e1d13507a2b5e2037459c06c8becc0467d3
+
+
+def exit():
+    root.destroy
+    sys.exit(0)
 
 
 root = tk.Tk()
@@ -42,7 +40,7 @@ aboutBut = tk.Button(home, width=20, height=2, text="ABOUT THE APP", bg="LIGHT G
                      font=("Montserrat", 9, "bold"), command=about)
 aboutBut.place(x=320, y=320)
 endBut = tk.Button(home, width=20, height=2, text="EXIT", bg="LIGHT GREY", font=("Montserrat", 9, "bold"),
-                   command=root.destroy)
+                   command=exit)
 endBut.place(x=320, y=370)
 
 root.mainloop()

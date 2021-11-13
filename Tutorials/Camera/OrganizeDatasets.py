@@ -9,7 +9,7 @@ preprocessed_src = 'D:\Pictures\Camera Roll\Temp2'
 train_path = 'D:\Pictures\Camera Roll\Temp\Train'
 valid_path = 'D:\Pictures\Camera Roll\Temp\Valid'
 test_path = 'D:\Pictures\Camera Roll\Temp\Test'
-file_name = ['Come-2', 'D', 'Happen', 'Happen-2', 'He-She', 'Introduce-2', 'Them', 'Welcome-2', 'Work']
+file_name = ['Strawberry', 'Today-2', 'What', 'When', 'Yes']
 
 def copy_to_train_folder():
     for sign in os.listdir(preprocessed_src):

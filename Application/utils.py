@@ -1,8 +1,6 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-import os
-from PIL import Image
 
 
 """ Returns an image with dimension height by width. """
@@ -80,7 +78,7 @@ def draw_convex_hull(hull, src_img):
 """ Apply Skin Segmentation"""
 def skin_segmentation(src_img):
     # YCrCb pixel upper and lower boundaries
-    YCbCr_lower = np.array([0, 135, 80], np.uint8)
+    YCbCr_lower = np.array([0, 135, 85], np.uint8)
     YCbCr_upper = np.array([255, 180, 135], np.uint8)
 
     # Convert bgr to YCbCr color space

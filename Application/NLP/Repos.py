@@ -20,3 +20,4 @@ def read_file(name='None') -> tuple:
 
 if __name__ == '__main__':
     dictionary = read_file('dictionary.txt')
+    print(dictionary)

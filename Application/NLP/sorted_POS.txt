@@ -1,0 +1,20 @@
+JJ	: Fine | Good | Great | Late | Sorry | Welcome | Nice | Now | Thank You
+RB	: Afternoon | Morning | Great | Late | Yesterday | Maybe | Now | Today | Where
+NN	: Evening | Good | Afternoon | He-She | I Love You | I-Me | Mine | Noon | Morning |
+		Great | Help | Meet | Table | Name | Occupation | Rest | Pen | Stand | Study |
+		Chair | Invite | Our | Sorry | Them | Welcome | Yesterday | Ball | Banana | Bread |
+		Break | Coconut | Egg | Coffee | Happen | How | Introduce | Mango | Office | School |
+		Sit | Store | Strawberry | Thank You | Today | Work
+VB	: Help | Meet | Name | Pray | Rest | Stand | Study | Invite | Welcome | Break | Bring |
+		Buy | Come | Cook | Get | Go | Introduce | Let | Live | Sit
+PRP$: His-Her | Your | Our | This
+PRP	: I-Me | Mine | You | Them | We | He-She
+DT	: His-Her | Your | No | Our | That | This
+NNS : Congratulations
+IN	: To | That | Bye | Come | From
+UH	: No | Welcome | Yes | What
+WRB	: When | Why | How | What | Where
+CC	: When | How | Where
+WP	: Who | What
+WDT	: What | Which
+VBP	: Work

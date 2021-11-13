@@ -69,6 +69,7 @@ def predict(img_arr, interval):
                 word = top_predictions[4][0]
                 # print(word, score)
             else:
+                print('Score is below threshold')
                 raise Exception()
         except Exception as exc:
             word = ''

@@ -92,7 +92,7 @@ How		WRB
 How		CC
 How		NN
 Introduce		NN
-Introduced		VB
+Introduce		VB
 Let		VB
 Live		VB
 Mango		NN

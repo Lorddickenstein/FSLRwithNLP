@@ -1,23 +1,25 @@
 import os
 
-
-def read_file(name='None') -> tuple:
-    dictionary = []
+def read_file(name='None') -> list:
+    content = []
+    f = None
     if name:
         try:
             f = open(name, "r")
             for line in f:
-                print(line.strip('\n'))
                 word, tag = line.split('\t\t')
-                dictionary.append([word, tag.strip()])
+                content.append([word, tag.strip()])
         except FileNotFoundError as exc:
-            dictionary = None
+            content = None
             print(exc)
         finally:
             if f is not None: f.close()
 
-    return dictionary
+    return content
 
 if __name__ == '__main__':
-    dictionary = read_file('dictionary.txt')
-    print(dictionary)
+    # dictionary = read_file('dictionary.txt')
+    # print(dictionary)
+
+    persons = read_file('persons.txt')
+    print(persons)

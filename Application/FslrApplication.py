@@ -12,7 +12,7 @@ import time
 from tkinter import *
 from PIL import Image, ImageTk
 from datetime import datetime
-
+from NLP import POS_tagger
 
 # GUI Variables
 cap = cv2.VideoCapture(0)
@@ -275,6 +275,7 @@ def endCapture():
                     prev_word = word
                 print('From frame {} to {}: {} total frames {}'.format(start_frm, end_frm, length, word))
 
+        sentence = POS_tagger.pos_tag(sentence)
         print(sentence)
         window.keyframes_arr, window.crop_frm_arr, window.frm_arr, window.frm_num_arr, window.frm_gradients = [], [], [], [], []
         window.prevGradient = np.array([])

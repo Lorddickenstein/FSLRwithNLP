@@ -1,0 +1,5 @@
+TO_BE := am | is | are
+PRP := in | on | with | of | by | into | at | for
+DT := a | an | the 
+
+the at will a an for in on am 

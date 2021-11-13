@@ -1,8 +1,12 @@
-import nltk
+# import nltk
 from Application.NLP.Repos import read_file
-from easynmt import EasyNMT
-from nltk.tag import pos_tag
-nltk.download('averaged_perceptron_tagger')
+# from easynmt import EasyNMT
+# from nltk.tag import pos_tag
+# nltk.download('averaged_perceptron_tagger')
+
+persons = {}
+for occupation, person in read_file('NLP\persons.txt'):
+  persons[occupation] = person
 
 def is_alpha(letter):
   letters = ['A', 'B', 'C', 'D', 'E',
@@ -14,7 +18,7 @@ def is_alpha(letter):
   return True if letter in letters else False
 
 
-def tokenizer(sentence):
+def build_letters(sentence):
   index = 0
   new_sentence = []
   while index < len(sentence):
@@ -38,9 +42,9 @@ def tokenizer(sentence):
 
 
 def anotate(sentence):
-  person = {'STUDY': 'STUDENT', 'LAW': 'LAWYER', 'TEACH': 'TEACHER', 'DRAWING': 'ARCHITECT'}
   new_sentence = []
   index = 0
+
   while index < len(sentence):
     word = sentence[index]
     if word == 'HO':
@@ -51,9 +55,9 @@ def anotate(sentence):
       word = 'BF'
     elif word == 'OK':
       word = 'Okay'
-    elif word in person:
+    elif word in persons:
       if sentence[index + 1] == 'OCCUPATION':
-        word = person[word]
+        word = persons[word]
         index += 1
 
     new_sentence.append(word)
@@ -62,25 +66,16 @@ def anotate(sentence):
 
 
 def pos_tag(tokens):
-  return nltk.pos_tag(tokens)
+  tokens = build_letters(tokens)
+  tokens = anotate(tokens)
+  return tokens
 
-
-def main():
-
-  text = "Good Morning"
-  tokens = tokenizer(text)
-  print(tokens)
-  pos_tagged = pos_tag(tokens)
-
-def test():
-  dictionary = read_file('D:\Documents\Thesis\FSLRwithNLP\Application\\NLP\dictionary.txt')
-  print(pos_tag(dictionary))
 
 if __name__ == '__main__':
   sentence = ['I-Me', 'J', 'E', 'R', 'S', 'O', 'N', 'and', 'I-Me', 'Live', 'in', 'C', 'U', 'B', 'A', 'O', 'HO', 'I-Me', 'DRAWING', 'OCCUPATION']
-  sentence = tokenizer(sentence)
+  sentence = build_letters(sentence)
   print(sentence)
   sentence = anotate(sentence)
   print(sentence)
-  sentence = pos_tag(sentence)
-  print(sentence)
+
+  # main('this')

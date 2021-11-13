@@ -58,8 +58,7 @@ def endCapture():
 
 
 def homePage():
-    window.destroy()
-    import Home
+    startBut['state'] = DISABLED
 
 
 def set_gradient():
@@ -123,9 +122,9 @@ genLanFrame.place(x=20, y=330)
 
 bowBut = tk.Button(rightFrame, width=20, height=2, text="GENERATE", bg="#c4c4c4", font=("Montserrat", 9, "bold"), command=Generate)
 bowBut.place(x=260, y=280)
-bowText = tk.Text(bowFrame, width=38, height=8, bg="#FDFAFA", font="Montserrat")
+bowText = tk.Text(bowFrame, width=38, height=8, bg="#FDFAFA", font="Montserrat", wrap=WORD)
 bowText.place(x=15, y=45)
-bowCountText = tk.Text(bowFrame, width=10, height=2, bg="#FDFAFA", font="Montserrat")
+bowCountText = tk.Text(bowFrame, width=10, height=2, bg="#FDFAFA", font="Montserrat", state=DISABLED)
 bowCountText.place(x=267, y=200)
 genLanText = tk.Text(genLanFrame, width=38, height=8, bg="#FDFAFA", font="Montserrat")
 genLanText.place(x=15, y=45)
@@ -139,7 +138,8 @@ bowCountLabel.place(x=170, y=205)
 genLanLabel = tk.Label(genLanFrame, text="GENERATED LANGUAGE    :", bg="#E84747", fg="#FDFAFA",
                        font=("Montserrat", 14, "bold"))
 genLanLabel.place(x=15, y=10)
-genLanCountLabel = tk.Label(genLanFrame, text="COUNT    :", bg="#E84747", fg="#FDFAFA", font=("Montserrat", 12, "bold"))
+genLanCountLabel = tk.Label(genLanFrame, text="COUNT    :", bg="#E84747", fg="#FDFAFA", font=("Montserrat", 12, "bold"),
+                            state=DISABLED)
 genLanCountLabel.place(x=170, y=205)
 
 showFeed()

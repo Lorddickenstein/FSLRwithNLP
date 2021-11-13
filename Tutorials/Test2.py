@@ -1,24 +1,26 @@
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Disable Tensorflow's Debugging Infos
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Disable Tensorflow's Debugging Infos
 import cv2
-import imutils
 import shutil
 import numpy as np
 import matplotlib.pyplot as plt
-import Application.utils as utils
-import Application.HandTrackingModule as HTM
-import Application.SignClassificationModule as SCM
+from Application import utils as utils
+from Application import HandTrackingModule as HTM
+from Application import SignClassificationModule as SCM
+from Application.NLP import POS_tagger
 import tkinter as tk
 import time
-from keras.models import load_model
 from tkinter import *
 from PIL import Image, ImageTk
 from datetime import datetime
 
+
 # GUI Variables
 cap = cv2.VideoCapture(0)
+cap.set(3, 640)
+cap.set(4, 480)
 window = tk.Tk()
-window.geometry("1300x680+20+20")
+window.geometry("1250x680+20+20")
 window.resizable(False, False)
 window.title("FSLR Translator")
 window.configure(background="grey")
@@ -38,7 +40,7 @@ window.stable_ctr, window.cTime, window.GRADIENT_THRESH_VALUE = 0, 0, 0
 window.prev_frm_sum = TEN_MILLION
 
 window.text_is_capturing = 'Not Capturing'
-window.color_is_capturing = (0, 0, 153)
+window.color_is_capturing = (51, 51, 255)
 window.is_capturing = False
 window.is_calculating = True
 window.gradient_thresh_arr = []
@@ -51,10 +53,8 @@ keyframes_path = 'D:\Documents\Thesis\Keyframes'
 cropped_img_path = 'D:\Documents\Thesis\Keyframes\Cropped Images'
 
 # FSLR Model
-model_path = 'D:\Documents\Thesis\Experimental_Models'
-# model_name = 'Part2_FSLR_CNN_Model(38-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.34-val_loss_0.33.h5'
-# model = load_model(os.path.join(model_path, model_name))
-model_name = 'Part2_weights(20-epochs)-accuracy_0.90-val_accuracy_0.89-loss_0.41-val_loss_0.44.hdf5'
+model_path = 'D:\Documents\Thesis\Experimental_Models\Best so far'
+model_name = 'Model_3-Epochs 35.hdf5'
 model = SCM.load_and_compile(os.path.join(model_path, model_name))
 
 
@@ -68,7 +68,9 @@ def predict(img_arr, interval):
             score = top_predictions[4][1]
             if score >= THRESHOLD:
                 word = top_predictions[4][0]
+                # print(word, score)
             else:
+                print('Score is below threshold')
                 raise Exception()
         except Exception as exc:
             word = ''
@@ -97,13 +99,11 @@ def start_application():
         frameCopy = frame.copy()
 
         if window.is_calculating is False:
-            cv2.putText(frame, datetime.now().strftime('%d/%m/%Y %H:%M:%S'), (20, 30),
-                        cv2.FONT_HERSHEY_DUPLEX, 0.5, (64, 64, 64), 1, cv2.LINE_AA)
             cv2.putText(frame, window.text_is_capturing, (10, int(0.98 * height)),
-                        cv2.FONT_HERSHEY_COMPLEX, 1, window.color_is_capturing, 3)
+                        cv2.FONT_HERSHEY_COMPLEX, 0.6, window.color_is_capturing, 2, cv2.LINE_AA)
 
             if window.is_capturing:
-                sign_captured_pos = (int(0.65 * width), int(0.05 * height))
+                sign_captured_pos = (int(0.55 * width), int(0.07 * height))
                 text_sign_captured = 'No Hands Detected.'
                 color_sign_captured = (255, 255, 0)
 
@@ -116,11 +116,11 @@ def start_application():
                     currGradient = np.sqrt(np.square(sobelx) + np.square(sobely))
 
                     if window.stable_ctr >= FRAME_LIMIT:
-                        sign_captured_pos = (int(0.70 * width), int(0.05 * height))
+                        sign_captured_pos = (int(0.66 * width), int(0.07 * height))
                         text_sign_captured = 'Sign Captured.'
                         color_sign_captured = (0, 255, 0)
                     else:
-                        sign_captured_pos = (int(0.62 * width), int(0.05 * height))
+                        sign_captured_pos = (int(0.50 * width), int(0.07 * height))
                         text_sign_captured = 'Stabilize Your Hands.'
                         color_sign_captured = (0, 0, 255)
 
@@ -131,8 +131,7 @@ def start_application():
                             frm_diff = cv2.absdiff(currGradient, window.prevGradient)
                             frm_sum = cv2.sumElems(frm_diff)
                             frm_sum = frm_sum[0] / TEN_MILLION
-                            # frm_sum = '%.2f' % (frm_sum[0] / TEN_MILLION)
-                            print(frm_sum, window.frm_num, window.GRADIENT_THRESH_VALUE)
+                            print('%.2f' % frm_sum, window.frm_num, window.GRADIENT_THRESH_VALUE)
 
                             if '%.2f' % frm_sum < window.GRADIENT_THRESH_VALUE:
                                 img_name = os.path.join(keyframes_path, 'keyframe_' + str(window.frm_num) + '.jpg')
@@ -164,7 +163,7 @@ def start_application():
                     window.frm_num += 1
 
                 cv2.putText(frame, text_sign_captured, sign_captured_pos,
-                            cv2.FONT_HERSHEY_COMPLEX, 1, color_sign_captured, 3, cv2.LINE_AA)
+                            cv2.FONT_HERSHEY_COMPLEX, 0.8, color_sign_captured, 2, cv2.LINE_AA)
         else:
             currFrame = utils.convert_to_grayscale(frameCopy)
             sobelx = cv2.Sobel(currFrame, cv2.CV_64F, 1, 0, ksize=cv2.FILTER_SCHARR)
@@ -173,19 +172,23 @@ def start_application():
 
             if window.sec >= 3:
                 frame = cv2.GaussianBlur(frame, (51, 51), 0)
-                cv2.putText(frame, str(window.sec - 3), (int(width / 2) - 40, int(height / 2) + 40),
-                            cv2.FONT_HERSHEY_DUPLEX, 5, (64, 64, 64, 128), 4, cv2.LINE_AA)
+                cv2.putText(frame, str(window.sec - 3), (int(width / 2) - 40, int(height / 2) - 20),
+                            cv2.FONT_HERSHEY_DUPLEX, 4, (51, 51, 255), 5, cv2.LINE_AA)
+                cv2.putText(frame, 'Stand in the middle of the frame.', (20, int(0.60 * height)),
+                            cv2.FONT_HERSHEY_COMPLEX, 1, (102, 255, 255), 3, cv2.LINE_AA)
+                cv2.putText(frame, 'Try not to move.', (int(0.25 * width), int(0.68 * height)),
+                            cv2.FONT_HERSHEY_COMPLEX, 1, (102, 255, 255), 3, cv2.LINE_AA)
             else:
                 if window.sec >= -1:
-                    cv2.putText(frame, 'Capturing average gradient pls do not move.',
-                                (10, int(0.98 * height)), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 204, 0), 3)
-                    cv2.putText(frame, str(window.sec + 1), (int(width / 2) - 40, int(height / 2) + 40),
-                                cv2.FONT_HERSHEY_DUPLEX, 5, (0, 204, 0), 4, cv2.LINE_AA)
+                    cv2.putText(frame, 'Calculating average gradient.', (75, int(0.60 * height)),
+                                cv2.FONT_HERSHEY_COMPLEX, 1, (102, 255, 255), 3, cv2.LINE_AA)
+                    cv2.putText(frame, str(window.sec + 1), (int(width / 2) - 40, int(height / 2) - 20),
+                                cv2.FONT_HERSHEY_DUPLEX, 4, (51, 255, 51), 5, cv2.LINE_AA)
 
                     frm_diff = cv2.absdiff(currGradient, window.prevGradient)
                     frm_sum = cv2.sumElems(frm_diff)
                     frm_sum = frm_sum[0] / TEN_MILLION
-                    print(frm_sum, window.frm_num)
+                    print('%.2f' % frm_sum, window.frm_num)
                     window.gradient_thresh_arr.append(frm_sum)
                 else:
                     window.GRADIENT_THRESH_VALUE = '%.2f' % (np.mean(window.gradient_thresh_arr) + THRESH_EXTRA)
@@ -204,6 +207,9 @@ def start_application():
 
             window.prevGradient = currGradient
             window.frm_num += 1
+
+        cv2.putText(frame, datetime.now().strftime('%d/%m/%Y %H:%M:%S'), (20, 30),
+                    cv2.FONT_HERSHEY_DUPLEX, 0.6, (0, 255, 255), 1, cv2.LINE_AA)
 
         cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
         videoImg = Image.fromarray(cv2image)
@@ -225,7 +231,7 @@ def startCapture():
         os.makedirs(cropped_img_path)
 
         window.text_is_capturing = 'Capturing'
-        window.color_is_capturing = (0, 153, 0)
+        window.color_is_capturing = (51, 255, 51)
         window.is_capturing = True
     window.is_capturing = True
 
@@ -259,6 +265,7 @@ def endCapture():
                         cv2.imwrite(img_crop_path, crop_img)
                     except Exception as exc:
                         print('Error was found at frame {}.'.format(frm_position))
+                        word = '[unrecognized]'
                         try:
                             crop_img, _ = utils.preprocess_image(window.crop_frm_arr[frm_position])
                             cv2.imwrite(img_crop_path, crop_img)
@@ -270,51 +277,69 @@ def endCapture():
                 print('From frame {} to {}: {} total frames {}'.format(start_frm, end_frm, length, word))
 
         print(sentence)
+        sentence = POS_tagger.pos_tag(sentence)
         window.keyframes_arr, window.crop_frm_arr, window.frm_arr, window.frm_num_arr, window.frm_gradients = [], [], [], [], []
         window.prevGradient = np.array([])
         window.start_index, window.end_index, window.frm_num, window.stable_ctr = 0, 0, 0, 0
         window.prev_frm_sum = TEN_MILLION
 
         window.text_is_capturing = 'Not Capturing'
-        window.color_is_capturing = (0, 0, 153)
+        window.color_is_capturing = (51, 51, 255)
         window.is_capturing = False
 
 
-def homePage():
+def set_gradient():
     window.pTime = datetime.now().second
     window.sec = 6
     window.cTime = 0
     window.is_calculating = True
-    # window.destroy()
-    # import Application.GUI.Home
 
 
-leftFrame = tk.Canvas(window, width=850, height=645, bg="#c4c4c4")
-leftFrame.place(x=15, y=15)
+def homePage():
+    cap.release()
+    cv2.destroyAllWindows()
+    window.destroy()
+    from Application import Home
 
-rightFrame = tk.Canvas(window, width=400, height=645, bg="#6997F3")
-rightFrame.place(x=880, y=15)
+
+def Generate():
+    pop = tk.Tk()
+    pop.wm_title("Generate")
+    pop.geometry("300x100")
+    labelBonus = Label(pop, text="Bag of Words", font=("Montserrat", 15, "bold"))
+    labelBonus.place(x=25, y=25)
+
+
+leftFrame = tk.Canvas(window, width=700, height=590, bg="#c4c4c4")
+leftFrame.place(x=50, y=50)
+
+rightFrame = tk.Canvas(window, width=425, height=600, bg="#6997F3")
+rightFrame.place(x=785, y=45)
 
 camLabel = tk.Label(leftFrame, text="here", borderwidth=3, relief="groove")
-camLabel.place(x=20, y=20)
+camLabel.place(x=25, y=25)
 
-startBut = tk.Button(rightFrame, width=25, height=2, text="START", bg="#1B7B03", font=("Montserrat", 9, "bold"),
+startBut = tk.Button(leftFrame, width=20, height=2, text="START", bg="#1B7B03", font=("Montserrat", 9, "bold"),
                      command=startCapture)
-startBut.place(x=15, y=15)
-justBut = tk.Button(rightFrame, width=25, height=2, bg="#c4c4c4", font=("Montserrat", 9, "bold"))
-justBut.place(x=15, y=60)
-endBut = tk.Button(rightFrame, width=25, height=2, text="END", bg="#E21414", font=("Montserrat", 9, "bold"),
+startBut.place(x=20, y=525)
+setGradBut = tk.Button(leftFrame, width=20, height=2, text='SET THRESHOLD', bg="#c4c4c4", font=("Montserrat", 9,
+                       "bold"), command=set_gradient)
+setGradBut.place(x=350, y=525)
+endBut = tk.Button(leftFrame, width=20, height=2, text="END", bg="#E21414", font=("Montserrat", 9, "bold"),
                    command=endCapture)
-endBut.place(x=205, y=15)
-homeBut = tk.Button(rightFrame, width=25, height=2, text="HOME", bg="#2B449D", font=("Montserrat", 9, "bold"),
+endBut.place(x=185, y=525)
+homeBut = tk.Button(leftFrame, width=20, height=2, text="HOME", bg="#2B449D", font=("Montserrat", 9, "bold"),
                     command=homePage)
-homeBut.place(x=205, y=60)
+homeBut.place(x=520, y=525)
 
-bowFrame = tk.Canvas(rightFrame, width=370, height=250, bg="#E84747")
-bowFrame.place(x=15, y=115)
-genLanFrame = tk.Canvas(rightFrame, width=370, height=250, bg="#E84747")
-genLanFrame.place(x=15, y=380)
+bowFrame = tk.Canvas(rightFrame, width=385, height=250, bg="#E84747")
+bowFrame.place(x=20, y=20)
+genLanFrame = tk.Canvas(rightFrame, width=385, height=250, bg="#E84747")
+genLanFrame.place(x=20, y=330)
 
+
+bowBut = tk.Button(rightFrame, width=20, height=2, text="GENERATE", bg="#c4c4c4", font=("Montserrat", 9, "bold"), command=Generate)
+bowBut.place(x=260, y=280)
 bowText = tk.Text(bowFrame, width=38, height=8, bg="#FDFAFA", font="Montserrat")
 bowText.place(x=15, y=45)
 bowCountText = tk.Text(bowFrame, width=10, height=2, bg="#FDFAFA", font="Montserrat")

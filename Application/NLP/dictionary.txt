@@ -1,40 +1,40 @@
-Fine - NNS
-Gabi - NN
+Fine - NN		Fine - NNS
+Gabi - NN		Gabi - NN
 Good - JJ
 Hapon - NN
-He-She - PRP
-His-Her - PRP$
+He-She - NN		He-She - PRP
+His-Her - NN		His-Her - PRP$
 I Love You - NN
-I-Me - PRP
-Mine - PRP
+I-Me - PRP		I - NN
+Mine - PRP		Mine - NN
 Tanghali - NN
 Umaga - NN
-You - PRP
+You - PRP		You - NN
 Your - PRP$
-Congratulations - NN
-Great - JJ
-Help - VB
-Meet - VB
+Congratulations - NNS
+Great - JJ		Great - NN
+Help - VB		Help - NN
+Meet - VB		Meet - NN
 Table - NN
 Name - NN
 Occupation - NN
-Pray - VB
-Rest - VB
+Pray - VB		Pray - NN
+Rest - VB		Rest - NN
 Pen - NN
-Stand - VB
-Study - VB
+Stand - VB		Stand - NN
+Study - VB		Study - NN
 To - TO
 Chair - NN
-Invite - VB
+Invite - VB		Invite - NN
 Late - RB
 No - DT
-Our - PRP$
-Sorry - JJ
-That - DT
-Them - PRP
-This - DT
-We - PRP
-Welcome - NN 
+Our - PRP$		Our - NN
+Sorry - JJ		Sorry - NN
+That - DT		That - IN
+Them - PRP		Them - NN
+This - DT		This - NN
+We - PRP		We - NN
+Welcome - NN		Welcome - VB
 When - WRB
 Who - WP
 Why - WRB

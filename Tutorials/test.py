@@ -8,7 +8,7 @@ blank = np.zeros((500, 1200), dtype='uint8')
 Fonts = ['FONT_HERSHEY_SIMPLEX ', 'FONT_HERSHEY_PLAIN', 'FONT_HERSHEY_DUPLEX', 'FONT_HERSHEY_COMPLEX ',
          'FONT_HERSHEY_TRIPLEX', 'FONT_HERSHEY_COMPLEX_SMALL', 'FONT_HERSHEY_SCRIPT_SIMPLEX ', 'FONT_HERSHEY_SCRIPT_COMPLEX ']
 
-color = (255, 255, 0)
+color = (255, 255, 0, 128)
 
 cv2.putText(blank, Fonts[0], (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 3, cv2.LINE_AA)
 cv2.putText(blank, Fonts[1], (30, 100), cv2.FONT_HERSHEY_PLAIN, 1, color, 3, cv2.LINE_AA)
@@ -20,5 +20,8 @@ cv2.putText(blank, Fonts[6], (30, 350), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 1, colo
 cv2.putText(blank, Fonts[6], (30, 400), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 1, color, 3, cv2.LINE_AA)
 
 cv2.imshow('Fonts', blank)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+key = cv2.waitKey(0) & 0xFF
+if key == 27 or key == ord('q'):
+    cv2.destroyAllWindows()
+else:
+    exit()

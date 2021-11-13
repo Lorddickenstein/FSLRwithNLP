@@ -1,45 +1,65 @@
-Fine - NN		Fine - NNS
-Gabi - NN		Gabi - NN
-Good - JJ
-Hapon - NN
-He-She - NN		He-She - PRP
-His-Her - NN		His-Her - PRP$
-I Love You - NN
-I-Me - PRP		I - NN
-Mine - PRP		Mine - NN
-Tanghali - NN
-Umaga - NN
-You - PRP		You - NN
-Your - PRP$
-Congratulations - NNS
-Great - JJ		Great - NN
-Help - VB		Help - NN
-Meet - VB		Meet - NN
-Table - NN
-Name - NN
-Occupation - NN
-Pray - VB		Pray - NN
-Rest - VB		Rest - NN
-Pen - NN
-Stand - VB		Stand - NN
-Study - VB		Study - NN
-To - TO
-Chair - NN
-Invite - VB		Invite - NN
-Late - RB
-No - DT
-Our - PRP$		Our - NN
-Sorry - JJ		Sorry - NN
-That - DT		That - IN
-Them - PRP		Them - NN
-This - DT		This - NN
-We - PRP		We - NN
-Welcome - NN		Welcome - VB
-When - WRB
-Who - WP
-Why - WRB
-Yes - UH
-Yesterday - NN
+Fine		NN
+Gabi		NN
+Good		JJ
+Hapon		NN
+He-She		NN		
+He-She		PRP
+His-Her		NN
+His-Her		PRP$
+I Love You		NN
+I-Me		PRP
+I		NN
+Mine		PRP
+Mine		NN
+Tanghali		NN
+Umaga		NN
+You		PRP
+You		NN
+Your		PRP$
+Congratulations		NNS
+Great		JJ
+Great		NN
+Help		VB
+Help		NN
+Meet		VB
+Meet		NN
+Table		NN
+Name		NN
+Occupation		NN
+Pray		VB
+Pray		NN
+Rest		VB
+Rest		NN
+Pen		NN
+Stand		VB
+Stand		NN
+Study		VB
+Study		NN
+To		IN
+Chair		NN
+Invite		VB
+Invite		NN
+Late		RB
+No		DT
+Our		PRP$
+Our		NN
+Sorry		JJ
+Sorry		NN
+That		DT
+That		IN
+Them		PRP
+Them		NN
+This		DT
+This		NN
+We		PRP
+We		NN
+Welcome		NN
+Welcome		VB
+When		WRB
+Who		WP
+Why		WRB
+Yes		UH
+Yesterday		NN
 Ball - NN
 Banana - NN, NNP, NN
 Bread - NN

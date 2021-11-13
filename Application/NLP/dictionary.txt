@@ -56,42 +56,58 @@ We		NN
 Welcome		NN
 Welcome		VB
 When		WRB
-Who		WP
-Why		WRB
-Yes		UH
-Yesterday		NN
-Ball - NN
-Banana - NN, NNP, NN
-Bread - NN
-Break - NN
-Bring - NN, VB, VB
-Buy - VB
-Bye - NN
-Coconut - NN
-Egg - NN
-Coffee - NN
-Come - VB
-Cook - NN
-From - IN
-Get - VB
-Go - VB
-Happen - VB, VB, NN
-How - WRB
-Introduce - NN
-Let - VB
-Live - JJ
-Mango - NN
-Maybe - RB
-Nice - JJ, NN, JJ
-Now - RB, RB, NN
-Office - NN
-School - NN
-Sit - NN
-Store - NN
-Strawberry - NN
-Thank You - NN, [Thank - NN], [You - PRP, PRP, NN]
-Today - NN
-What - WP
-Where - WRB
-Which - WDT
-Work - NN
+Who     WP
+Why     WRB
+Yes     UH
+Yesterday       NN
+Yesterday       RB
+Ball        NN
+Banana      NN
+Bread       NN
+Break       VB
+Break       NN
+Bring       VB
+Buy     VB
+Bye     IN
+Coconut     NN
+Egg     NN
+Coffee      NN
+Come        VB
+Come        IN
+Cook        VB
+From        IN
+Get     VB
+Go      VB
+Happen      NN
+How     WRB
+How     CC
+How     NN
+Introduce       NN
+Introduced      VB
+Let     VB
+Live        VB
+Mango       NN
+Maybe       RB
+Nice        JJ
+Now     RB
+Now     JJ
+Office      NN
+School      NN
+Sit     NN
+Sit     VB
+Store       NN
+Strawberry      NN
+Thank You       JJ
+Thank You       NN
+Today       NN
+Today       RB
+What        WDT
+What        WP
+What        WRB
+What        UH
+Where       WRB
+Where       CC
+Where       RB
+Which       WDT
+Work        NN
+Work        VBP

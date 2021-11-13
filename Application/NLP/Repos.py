@@ -2,14 +2,14 @@ import os
 
 
 def read_file(name='None') -> tuple:
-    dictionary = ()
+    dictionary = []
     if name:
         try:
             f = open(name, "r")
             for line in f:
                 print(line.strip('\n'))
                 word, tag = line.split('\t\t')
-                dictionary.append((word, tag.strip('\n')))
+                dictionary.append([word, tag.strip()])
         except FileNotFoundError as exc:
             dictionary = None
             print(exc)

@@ -26,9 +26,9 @@ window.configure(background="grey")
 
 # Constants
 TEN_MILLION = 10000000.0
-THRESHOLD = 40.0
+THRESHOLD = 20.0
 FRAME_LIMIT = 10
-THRESH_EXTRA = 0.5
+THRESH_EXTRA = 0.8
 
 # Variables
 detector = HTM.HandDetector()
@@ -38,6 +38,7 @@ window.start_index, window.end_index, window.frm_num = 0, 0, 0
 window.stable_ctr, window.cTime, window.GRADIENT_THRESH_VALUE = 0, 0, 0
 window.prev_frm_sum = TEN_MILLION
 window.count = 0
+window.is_using_three_models = True
 
 window.text_is_capturing = 'Not Capturing'
 window.color_is_capturing = (51, 51, 255)
@@ -55,10 +56,14 @@ cropped_img_path = 'D:\Documents\Thesis\Keyframes\Cropped Images'
 # FSLR Model
 model_path = 'D:\Documents\Thesis\Experimental_Models\Best so far'
 model_name = 'Model_3-Epochs 35.hdf5'
-model = SCM.load_and_compile(os.path.join(model_path, model_name))
+model_name2 = 'Model_2-Epochs 29.hdf5'
+model_name3 = 'Model_1-Epochs 38.hdf5'
+model1 = SCM.load_and_compile(os.path.join(model_path, model_name))
+model2 = SCM.load_and_compile(os.path.join(model_path, model_name2))
+model3 = SCM.load_and_compile(os.path.join(model_path, model_name3))
 
 
-def predict(img_arr, interval):
+def predict(img_arr, interval, model):
     temp_sentence, temp_score, temp_crop_img = [], [], []
     index = 0
     while index < len(img_arr):
@@ -114,6 +119,12 @@ def start_application():
         if window.is_calculating is False:
             cv2.putText(frame, window.text_is_capturing, (10, int(0.98 * height)),
                         cv2.FONT_HERSHEY_COMPLEX, 0.6, window.color_is_capturing, 2, cv2.LINE_AA)
+            if window.is_using_three_models:
+                cv2.putText(frame, 'Using Three Models', (420, int(0.98 * height)),
+                            cv2.FONT_HERSHEY_COMPLEX, 0.6, (0, 128, 255), 2, cv2.LINE_AA)
+            else:
+                cv2.putText(frame, 'Using One Model', (420, int(0.98 * height)),
+                            cv2.FONT_HERSHEY_COMPLEX, 0.6, (0, 128, 255), 2, cv2.LINE_AA)
 
             if window.is_capturing:
                 sign_captured_pos = (int(0.55 * width), int(0.07 * height))
@@ -270,8 +281,20 @@ def endCapture():
             length = end_frm - start_frm + 1
             if length >= FRAME_LIMIT:
                 interval = length // 5
-                word, frm_position, frm_score, crop_img = predict(window.crop_frm_arr[start_frm: (end_frm + 1)],
-                                                                  interval)
+                word1, frm_position, frm_score, crop_img = predict(window.crop_frm_arr[start_frm: (end_frm + 1)],
+                                                                   interval, model1)
+                if window.is_using_three_models:
+                    word2, _, _, _ = predict(window.crop_frm_arr[start_frm: (end_frm + 1)],
+                                             interval, model2)
+                    word3, _, _, _ = predict(window.crop_frm_arr[start_frm: (end_frm + 1)],
+                                             interval, model3)
+
+                    word = [word1, word2, word3]
+                    print(word)
+                    word = max(set(word), key=word.count) if len(np.unique(word)) != 3 else word1
+                else:
+                    word = word1
+
                 frm_position += start_frm
                 if word != prev_word:
                     img_crop_path = os.path.join(cropped_img_path, str(frm_position) + '_'
@@ -291,7 +314,7 @@ def endCapture():
                     prev_word = word
                 print('From frame {} to {}: {} total frames {}'.format(start_frm, end_frm, length, word))
 
-        print(sentence)
+        print(sentence, len(sentence))
         sentence = Tagger.pos_tag(sentence)
         bowText.insert(END, sentence)
         window.count = len(sentence)
@@ -330,6 +353,15 @@ def Generate():
     print(sentence)
 
 
+def switch_model_num():
+    if not window.is_using_three_models:
+        bowThreeModels.config(text='Use One Model (Fast)')
+        window.is_using_three_models = True
+    else:
+        bowThreeModels.config(text='Use Three Models (Slow, More Accurate)')
+        window.is_using_three_models = False
+
+
 leftFrame = tk.Canvas(window, width=700, height=590, bg="#c4c4c4")
 leftFrame.place(x=50, y=50)
 
@@ -358,8 +390,14 @@ genLanFrame = tk.Canvas(rightFrame, width=385, height=250, bg="#E84747")
 genLanFrame.place(x=20, y=330)
 
 
-bowBut = tk.Button(rightFrame, width=20, height=2, text="GENERATE", bg="#c4c4c4", font=("Montserrat", 9, "bold"), command=Generate)
-bowBut.place(x=260, y=280)
+bowBut = tk.Button(rightFrame, width=10, height=2, text="GENERATE", bg="#c4c4c4",
+                   font=("Montserrat", 9, "bold"), command=Generate)
+bowBut.place(x=330, y=280)
+
+bowThreeModels = tk.Button(rightFrame, width=35, height=2, text="Use One Model (Fast)", bg="#c4c4c4",
+                           font=("Montserrat", 9, "bold"), command=switch_model_num)
+bowThreeModels.place(x=20, y=280)
+
 bowText = tk.Text(bowFrame, width=38, height=8, bg="#FDFAFA", font="Montserrat")
 bowText.place(x=15, y=45)
 bowCountText = tk.Text(bowFrame, width=10, height=2, bg="#FDFAFA", font="Montserrat", state=DISABLED)

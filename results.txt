@@ -1,0 +1,132 @@
+One Model
+Fingerspelling
+	1		(N -> Yes)		21/25
+			(M -> N)
+			(S -> A)
+			(T -> M)
+	2		(S -> Yes)		23/25
+			(T -> M)
+	3		(S -> M)		23/25
+			(T -> M)
+	4		(P -> Q)		22/22
+			(S -> E)
+			(T -> M)
+	5		(P -> Q)		23/25
+			(T -> M)
+							[22.4] / 25 * 100 = 89.6%
+
+Static Single
+	1		(I-Love-You -> Y)		10/13
+			(Tanghali -> Who)
+			(Your -> missing)
+	2		(I-Love-You -> Y)		11/13
+			(Tanghali -> Who)
+	3		(Tanghali -> Who)		11/13
+			(You -> E)
+	4		(I-Love-You -> L)		11/13
+			(Tanghali -> Who)
+	5		(I-Love-You -> L)		11/13
+			(Who -> Tanghali)
+									[10.8] / 13 * 100 = 83.07%
+	
+Static Double
+	1		(Pray -> Banana)		13/14
+	2		(Pray -> Banana)		13/14
+	3		(Pray -> Banana)		13/14
+	4								14/14
+	5		(Pray -> Banana)		13/14
+									[13.2] / 14 * 100 = 94.29%
+	
+Dynamic Single
+	1		(Yesterday -> Q)		14/15
+	2								15/15
+	3		(No -> D)				14/15
+	4		(No -> D)				14/15
+	5		(Yesterday -> Q)		14/15
+									[14.2] / 15 * 100 = 94.57%
+									
+Dynamic Double
+	1		(Buy -> Welcome)		33/35
+			(Store -> Coffee)
+	2		(Buy -> Welcome)		31/35
+			(Get -> Go)
+			(Happen -> How)
+			(Store -> Coffee)
+	3		(Get -> Go)				32/35
+			(Store -> Coffee)
+			(Thank You -> Today)
+	4		(Buy -> Where)			29/35
+			(Happen -> Egg)
+			(Let -> Great)
+			(Nice -> Welcome)
+			(Maybe -> Missing)
+			(Office -> Happen)
+	5		(Buy -> Where)			33/35
+			(Sit -> Chair)			
+			(Store -> Coffee)
+									[31.6] / 35 * 100 = 90.29%
+	
+
+Three Models
+Fingerspelling
+	1		(G -> We), (T->M)		23/25
+	2		(P -> J)				24/25
+	3		(K -> We), (S -> M)		21/25
+			(T -> N), (V -> R)
+	4		(K -> We), (M -> N)		22/25
+			(X -> Yes)
+	5		(V -> I), (X -> G)		23/25
+									[22.6] / 25 * 100 = 90.4%
+
+Static Single
+	1		(You -> E)				12/13
+	2		(Tanghali -> Who)		12/13
+	3		(You -> Extra)			12/13
+	4								13/13
+	5								13/13
+									[12.4] / 13 * 100 = 95.34%
+
+Static Double
+	1		(Pray -> Banana)		13/14
+	2								14/14
+	3		(Pray -> Banana)		13/14
+	4								14/14
+	5		(Pray -> Banana)		13/14
+									[13.4] / 14 * 100 = 95.71%
+
+Dynamic Single
+	1		(Yesterday -> Q)		14/15
+	2		(Yesterday -> Q)		14/15
+	3		(No -> D)				14/15
+	4		(No -> D)				14/15
+	5		(Yesterday -> Q)		14/15
+									[14] / 15 * 100 = 93.33%
+
+Dynamic Double
+	1		(Buy -> Welcome)		30/35
+			(Bye -> Missing)
+			(Sit -> Break)
+			(Store -> Study)
+			(Strawberry -> Banana)
+	2		(Bye -> Welcome)		30/35
+			(Get -> Go)
+			(Happen -> How)
+			(Sit -> Go)
+			(Store -> Study)
+	3		(Get -> Go)				33/35
+			(Maybe -> Where)
+	4		(Buy -> Where)			30/35
+			(Get -> Go)
+			(Happen -> Egg)
+			(Maybe -> Missing)
+			(Sit -> Go)
+	5		(Sit -> Chair)			31/35
+			(Store -> Coffee)
+			(Buy -> Where)
+			(Strawberry -> Banana)
+									[30.8] / 35 * 100 = 88.0%
+									
+Overall
+	One model = (89.6 + 83.07 + 94.29 + 94.57 + 90.29) / 5 = 90.36%
+	Three models = (90.4 + 95.34 + 95.71 + 93.33 + 88.0) / 5 = 92.56%
+			

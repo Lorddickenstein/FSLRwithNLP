@@ -47,9 +47,9 @@ def anotate(sentence):
     if word == 'HO':
       word = 'HELLO'
     elif word == 'GF':
-      word = 'G'
+      word = 'Girlfriend'
     elif word == 'BF':
-      word = 'BF'
+      word = 'Boyfriend'
     elif word == 'OK':
       word = 'Okay'
     elif word in persons:

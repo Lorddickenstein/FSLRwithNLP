@@ -1,21 +1,24 @@
 import nltk
 
 grammar1 = nltk.CFG.fromstring("""
-  S -> QP | VP SP | QP SP | O SP | O VBP | WP | SP
-  SP -> PRP NN | PRP IN | NN
-  QP -> WP | WRB A2
-  O -> PRP | PRP A1 | PRP A2 A3 | PRP
+  S -> QP | VP SP | QP SP | O VBP | WP | O JJ | VBP SP
+  SP -> PRP NN | PRP IN | NN | PRP |
+  QP -> WP NN | WRB A2 | WP | WRB
+  O -> SP A1 | SP A2 A3 | SP
+  VBP -> VB RB | VB WRB | VB TO | QP
   A1 -> "is"
   A2 -> "are"
-  A3 -> "ay"
+  A3 -> "am"
   IN -> "from"
-  WP -> "What" | "How" | "When"
-  WDT -> "Which"
-  WRB -> "Where"
-  NN -> "name" | "estudyante"
-  PRP -> "you" | "I"
+  JJ -> "good"
+  WP -> "what" | "when"
+  WDT -> "which"
+  WRB -> "where" | "how"
+  NN -> "name" | "okay" | "office" | "work"
+  PRP -> "you" | "i"
   RB -> "here" 
-  VBP -> "live"
+  TO -> "to"
+  VB -> "live" | "go"
   """)
 # (S (QP (WP What)) (SP (PRP you) (NN name)))
 grammar2 = nltk.CFG.fromstring("""
@@ -57,7 +60,7 @@ grammar3 = nltk.CFG.fromstring("""
 
 grammar1.productions()
 
-text = "What you name"
+text = "you name what"
 sent = text.split()
 # rd_parser = nltk.parse.shiftreduce.ShiftReduceParser(grammar1)
 rd_parser = nltk.parse.recursivedescent.RecursiveDescentParser(grammar1)

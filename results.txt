@@ -26,7 +26,7 @@ Static Single
 	4		(I-Love-You -> L)		11/13
 			(Tanghali -> Who)
 	5		(I-Love-You -> L)		11/13
-			(Who -> Tanghali)
+			(Tanghali -> Who)
 									[10.8] / 13 * 100 = 83.07%
 	
 Static Double

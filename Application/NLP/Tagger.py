@@ -1,7 +1,7 @@
 from Application.NLP.Repos import read_file
 
 
-def tokenize(sentence):
+def separate_words(sentence):
   return sentence.split(' ')
 
 
@@ -47,11 +47,11 @@ def anotate(sentence):
     if word == 'HO':
       word = 'HELLO'
     elif word == 'GF':
-      word = 'Girlfriend'
+      word = 'GIRLFRIEND'
     elif word == 'BF':
-      word = 'Boyfriend'
+      word = 'BOYFRIEND'
     elif word == 'OK':
-      word = 'Okay'
+      word = 'OKAY'
     elif word in persons:
       if sentence[index + 1] == 'OCCUPATION':
         word = persons[word]
@@ -62,7 +62,7 @@ def anotate(sentence):
   return new_sentence
 
 
-def pos_tag(tokens):
+def tokenize(tokens):
   tokens = build_letters(tokens)
   tokens = anotate(tokens)
   return tokens

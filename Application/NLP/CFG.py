@@ -137,11 +137,32 @@ grammar6 = nltk.CFG.fromstring("""
   P -> 'PP'
   """)
 
+grammar8 = nltk.CFG.fromstring("""
+  S -> QP | SP VP | SP JJ | SP PNN | VP PP
+  QP -> SP WQ | SP PP WQ | SP VP WQ
+  SP -> PRP NN | PRP | NN | NN SP
+  VP -> VB RB | VB 
+  PP -> IN DT SP | IN SP | IN
+  WQ -> WP | WRB
+  NN -> 'name' | 'eggs' | 'office' | 'work'
+  PRP -> 'you' | 'i-me'
+  WP -> 'what' | 'who' | 'when'
+  WRB -> 'how' | 'where'
+  JJ -> 'good' | 'okay'
+  IN -> 'from' | 'to'
+  RB -> 'here'
+  VB -> 'live' | 'cook' | 'go'
+  DT -> 'the' | 'an' | 'a'
+  NNP -> letter NNP | letter
+  letter -> 'J' | 'E' | 'R' | 'S'
+  PNN -> 'jers'
+""")
+
 # What's your name (you name what?) - (S (O (SP (PRP you) (NN name))) (VBP (QP (WP what))))
 # I'm good (I good) - (S (O (SP (PRP i))) (JJ good))
 # Where you from (you from where) -> (S (O (SP (PRP you) (IN from))) (VBP (QP (WRB where))))
-# I live here -> (S (O (SP (PRP i))) (VBP (VB live) (RB here)))
-# How are you (How you?) -> (S (QP (WRB how)) (SP (PRP you)))
+# Are you a student (You occupation study)
+# I am cooking eggs (eggs, I-me, cook)
 # Where do you live? (you, live, where?) -> (S (O (SP (PRP you))) (VBP (VB live) (WRB where)))
 # Are you okay? (you, okay) ->(S (O (SP (PRP you) (NN okay))))
 # My name is (I-Me, name) -> (S (O (SP (PRP i) (NN name))))
@@ -149,11 +170,12 @@ grammar6 = nltk.CFG.fromstring("""
 # Go to work (Go, to, work) -> (S (VBP (VB go) (TO to)) (SP (NN work)))
 
 grammar1.productions()
+grammar8.productions()
 
-text = "you name what"
+text = 'go to work'
 sent = text.split()
 # rd_parser = nltk.parse.shiftreduce.ShiftReduceParser(grammar1)
-rd_parser = nltk.parse.recursivedescent.RecursiveDescentParser(grammar1)
+rd_parser = nltk.parse.recursivedescent.RecursiveDescentParser(grammar8)
 for tree in rd_parser.parse(sent):
   print(tree)
 # nltk.parse.shiftreduce.demo()

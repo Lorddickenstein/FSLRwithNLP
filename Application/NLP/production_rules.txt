@@ -1,3 +1,22 @@
+S := QP | VP SP | QP SP | O VP | WP | O JJ
+SP := PRP NN | PRP IN | NN | PRP |
+QP := SP WP | WRB A2 | WP | WRB
+O := SP A1 | SP A2 A3 | SP
+VP := VB RB | VB WRB | VB TO
+A1 := "is"
+A2 := "are"
+A3 := "am"
+IN := "from"
+JJ := "good"
+WP := "what" | "when"
+WDT := "which"
+WRB := "where" | "how"
+NN := "name" | "okay" | "office" | "work"
+PRP := "you" | "i"
+RB := "here"
+TO := "to"
+VB := "live" | "go"
+
 TO_BE := am | is | are
 PRP := in | on | with | of | by | into | at | for
 DT := a | an | the

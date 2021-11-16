@@ -138,7 +138,7 @@ grammar6 = nltk.CFG.fromstring("""
   """)
 
 grammar8 = nltk.CFG.fromstring("""
-  S -> QP | SP VP | SP JJ | SP PNN | VP PP
+  S -> QP | SP VP | SP JJ | SP NNP | VP PP
   QP -> SP WQ | SP PP WQ | SP VP WQ
   SP -> PRP NN | PRP | NN | NN SP
   VP -> VB RB | VB 
@@ -172,11 +172,18 @@ grammar8 = nltk.CFG.fromstring("""
 grammar1.productions()
 grammar8.productions()
 
-text = 'go to work'
+text = 'i-me J E R S'
 sent = text.split()
 # rd_parser = nltk.parse.shiftreduce.ShiftReduceParser(grammar1)
 rd_parser = nltk.parse.recursivedescent.RecursiveDescentParser(grammar8)
+string = ''
 for tree in rd_parser.parse(sent):
   print(tree)
+
+# def find_state(string):
+#   if string == '(S (VP (VB go)) (PP (IN to) (SP (NN work))))':
+#     print
+
+
 # nltk.parse.shiftreduce.demo()
 # nltk.parse.recursivedescent.demo()

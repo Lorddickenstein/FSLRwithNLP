@@ -16,7 +16,7 @@ def find_match(x):
                32: 'I-Love-You', 33: 'I-Me-My', 104: 'Introduce', 105: 'Introduce', 53: 'Invite', 9: 'J', 10: 'K',
                11: 'L', 54: 'Late', 55: 'Late', 106: 'Let', 107: 'Let', 108: 'Live', 12: 'M', 109: 'Mango',
                110: 'Maybe', 42: 'Meet', 34: 'Mine', 13: 'N', 44: 'Name', 111: 'Nice', 56: 'No', 57: 'No', 112: 'Now',
-               14: 'O', 45: 'Occupation', 113: 'Office', 114: 'Office', 58: 'Our', 59: 'Our', 15: 'P', 48: 'Pen',
+               14: 'O', 45: 'Person', 113: 'Office', 114: 'Office', 58: 'Our', 59: 'Our', 15: 'P', 48: 'Pen',
                46: 'Pray', 16: 'Q', 17: 'R', 47: 'Rest', 18: 'S', 115: 'School', 116: 'Sit', 60: 'Sorry', 49: 'Stand',
                117: 'Store', 118: 'Strawberry', 50: 'Study', 19: 'T', 43: 'Table', 35: 'Tanghali', 119: 'Thank-You',
                120: 'Thank-You', 61: 'That', 62: 'Them', 63: 'This', 51: 'To', 121: 'Today', 122: 'Today', 20: 'U',

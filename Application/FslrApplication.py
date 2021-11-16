@@ -28,7 +28,7 @@ window.configure(background="grey")
 TEN_MILLION = 10000000.0
 THRESHOLD = 20.0
 FRAME_LIMIT = 10
-THRESH_EXTRA = 0.8
+THRESH_EXTRA = 0.5
 
 # Variables
 detector = HTM.HandDetector()
@@ -56,7 +56,8 @@ cropped_img_path = 'D:\Documents\Thesis\Keyframes\Cropped Images'
 # FSLR Model
 model_path = 'D:\Documents\Thesis\Experimental_Models\Best so far'
 model_name = 'Model_3-Epochs 35.hdf5'
-model_name2 = 'Model_2-Epochs 29.hdf5'
+# model_name2 = 'Model_2-Epochs 29.hdf5'
+model_name2 = 'Model_4-Epochs 49.hdf5'
 model_name3 = 'Model_1-Epochs 38.hdf5'
 model1 = SCM.load_and_compile(os.path.join(model_path, model_name))
 model2 = SCM.load_and_compile(os.path.join(model_path, model_name2))
@@ -111,8 +112,8 @@ def start_application():
         frameCopy = frame.copy()
 
         sentence = bowText.get('1.0', END)
-        sentence = Tagger.tokenize(sentence.strip())
-        sentence = Tagger.pos_tag(sentence)
+        sentence = Tagger.separate_words(sentence.strip())
+        sentence = Tagger.tokenize(sentence)
         window.count = len(sentence) if sentence != [''] else 0
         update_count()
 
@@ -315,7 +316,7 @@ def endCapture():
                 print('From frame {} to {}: {} total frames {}'.format(start_frm, end_frm, length, word))
 
         print(sentence, len(sentence))
-        sentence = Tagger.pos_tag(sentence)
+        sentence = Tagger.tokenize(sentence)
         bowText.insert(END, sentence)
         window.count = len(sentence)
         update_count()
@@ -346,8 +347,8 @@ def homePage():
 
 def Generate():
     sentence = bowText.get('1.0', END)
-    sentence = Tagger.tokenize(sentence.strip())
-    sentence = Tagger.pos_tag(sentence)
+    sentence = Tagger.separate_words(sentence.strip())
+    sentence = Tagger.tokenize(sentence)
     genLanCountText.delete('1.0', END)
     genLanCountText.insert(END, len(sentence))
     print(sentence)

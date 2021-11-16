@@ -17,6 +17,7 @@ def read_file(name='None') -> list:
 
     return content
 
+
 if __name__ == '__main__':
     # dictionary = read_file('dictionary.txt')
     # print(dictionary)

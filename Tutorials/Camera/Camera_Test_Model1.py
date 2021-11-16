@@ -38,7 +38,7 @@ detector = HTM.HandDetector()
 # model = keras.models.load_model('D:\Documents\Thesis\Experimental_Models\Best so far\Fingerspell_Detector_Experiment5(55-epochs)-accuracy_0.87-val_accuracy_0.84.h5')
 # model = keras.models.load_model('D:\Documents\Thesis\Expeimental_Models\Part2_FSLR_CNN_Model(38-epochs)-accuracy_0.91-val_accuracy_0.91-loss_0.34-val_loss_0.33.h5')
 model_path = 'D:\Documents\Thesis\Experimental_Models\Best so far'
-model_name = 'Model_1-Epochs 38.hdf5'
+model_name = 'Model_4-Epochs 49.hdf5'
 model = SCM.load_and_compile(os.path.join(model_path, model_name))
 
 

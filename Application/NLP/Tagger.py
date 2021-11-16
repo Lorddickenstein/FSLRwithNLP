@@ -69,7 +69,7 @@ def tokenize(tokens):
 
 
 persons = {}
-for occupation, person in read_file('NLP\persons.txt'):
+for occupation, person in read_file('persons.txt'):
   persons[occupation] = person
 
 

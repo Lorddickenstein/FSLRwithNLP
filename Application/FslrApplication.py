@@ -49,12 +49,12 @@ window.pTime = datetime.now().second
 window.sec = 6
 
 # Paths and Directories
-figures_path = 'D:\Documents\Thesis\Figures'
-keyframes_path = 'D:\Documents\Thesis\Keyframes'
-cropped_img_path = 'D:\Documents\Thesis\Keyframes\Cropped Images'
+figures_path = 'E:\\test\\Figures'
+keyframes_path = 'E:\test\\keyframes'
+cropped_img_path = 'E:\\test\\keyframes\\cropped_images'
 
 # FSLR Model
-model_path = 'D:\Documents\Thesis\Experimental_Models\Best so far'
+model_path = 'E:\\'
 model_name = 'Model_3-Epochs 35.hdf5'
 model_name2 = 'Model_2-Epochs 29.hdf5'
 model_name3 = 'Model_1-Epochs 38.hdf5'

@@ -100,7 +100,7 @@ grammar4 = nltk.CFG.fromstring("""
   A1 -> "is"
   """)
 
-grammar7= nltk.CFG.fromstring("""
+grammar7 = nltk.CFG.fromstring("""
   S -> A
   A -> QP SP  
   SP -> NN

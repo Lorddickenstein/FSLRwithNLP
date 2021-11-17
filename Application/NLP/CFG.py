@@ -1,11 +1,10 @@
 import nltk
 import re
+from Utilities import read_file
 from nltk import Tree
 from nltk.util import flatten
 
-data_list = ['name', 'egg','office','work','person','student','you','i-me','he-she','what','who','when','how','where','good','okay','from','to','here','live',
-             'cook','go','study']
-
+word_list = read_file('dictionary.txt')
 
 def update_grammar(word='lagoon'):
   grammar = f"""
@@ -19,7 +18,7 @@ def update_grammar(word='lagoon'):
     PRP -> 'you' | 'i-me' | 'he-she'
     WP -> 'what' | 'who' | 'when'
     WRB -> 'how' | 'where'
-    JJ -> 'good' | 'okay'
+    JJ -> 'GOOD' | 'okay'
     IN -> 'from' | 'to'
     RB -> 'here'
     VB -> 'live' | 'cook' | 'go' | 'study' | 'come'
@@ -136,7 +135,7 @@ def naturalized_sentence(text):
   tree = None
   sent = text.split()
 
-  pnn_list = [word for word in sent if word not in data_list]
+  pnn_list = [word for word in sent if word not in word_list]
   pnn_list = '\'' + '\' | \''.join(pnn_list) + '\'' if len(pnn_list) else ''
   grammar = nltk.CFG.fromstring(update_grammar(word=pnn_list))
 
@@ -144,10 +143,11 @@ def naturalized_sentence(text):
   rd_parser = nltk.parse.recursivedescent.RecursiveDescentParser(grammar)
   for tree in rd_parser.parse(sent):
     tree = tree
-
+    print(tree)
   try: 
     tree = parse_root(tokenize(str(tree),' +|[A-Z a-z -]+|[()]'))
     pattern = show_children(parse_root(tokenize(str(tree), ' +|[A-Za-z-]+|[()]')), "")
+    print(pattern)
     terminals = get_terminal(tree,[])
     sentence = gen_sentence(terminals, pattern.strip())
   except Exception as EXE:
@@ -156,7 +156,7 @@ def naturalized_sentence(text):
   return sentence
 
 if __name__ == '__main__':
-
-  text = 'i-me Joshua'
+  text = 'egg i-me cook'
   text = naturalized_sentence(text)
   print(text)
+  # print(word_list)

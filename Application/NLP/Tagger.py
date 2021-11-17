@@ -1,5 +1,5 @@
-from Application.NLP.Repos import read_file
-
+import os
+from Application.NLP.Utilities import read_file
 
 def separate_words(sentence):
   return sentence.split(' ')
@@ -53,28 +53,29 @@ def anotate(sentence):
     elif word == 'OK':
       word = 'OKAY'
     elif word in persons:
-      if sentence[index + 1] == 'OCCUPATION':
+      if sentence[index + 1] == 'PERSON':
         word = persons[word]
         index += 1
 
     new_sentence.append(word)
     index += 1
+
   return new_sentence
 
 
-def tokenize(tokens):
+def tokenization(tokens):
   tokens = build_letters(tokens)
   tokens = anotate(tokens)
   return tokens
 
 
-persons = {}
-for occupation, person in read_file('persons.txt'):
-  persons[occupation] = person
-
+cwd = os.getcwd()
+cwd = cwd + '\\NLP' if '\\NLP' not in cwd else cwd
+path = os.path.join(cwd, 'persons.txt')
+persons = {occupation: person for occupation, person in read_file(path, dict_format=True)}
 
 if __name__ == '__main__':
-  sentence = ['I-Me', 'J', 'E', 'R', 'S', 'O', 'N', 'and', 'I-Me', 'Live', 'in', 'C', 'U', 'B', 'A', 'O', 'HO', 'I-Me', 'DRAWING', 'OCCUPATION']
+  sentence = ['I-Me', 'J', 'E', 'R', 'S', 'O', 'N', 'and', 'I-Me', 'Live', 'in', 'C', 'U', 'B', 'A', 'O', 'HO', 'I-Me', 'DRAWING', 'PERSON']
   sentence = build_letters(sentence)
   print(sentence)
   sentence = anotate(sentence)

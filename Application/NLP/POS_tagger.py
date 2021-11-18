@@ -1,12 +1,25 @@
-# import nltk
+import nltk
 from Application.NLP.Repos import read_file
-# from easynmt import EasyNMT
-# from nltk.tag import pos_tag
-# nltk.download('averaged_perceptron_tagger')
+from nltk.tag import pos_tag
+nltk.download('averaged_perceptron_tagger')
+
+def tokenizer(text):
+  tokens = nltk.word_tokenize(text)
+  return tokens
+
+def pos_tag(tokens):
+  pos_tagged = nltk.pos_tag(tokens)
+  return pos_tagged
+
+def main(text):
+  tokens = tokenizer(text)
+  pos_tagged = pos_tag(tokens)
+
+  print("POS TAGGED: ", pos_tagged)
 
 persons = {}
-for occupation, person in read_file('NLP\persons.txt'):
-  persons[occupation] = person
+# for occupation, person in read_file('NLP\persons.txt'):
+#   persons[occupation] = person
 
 
 def is_alpha(letter):
@@ -66,17 +79,17 @@ def anotate(sentence):
   return new_sentence
 
 
-def pos_tag(tokens):
-  tokens = build_letters(tokens)
-  tokens = anotate(tokens)
-  return tokens
+# def pos_tag(tokens):
+#   tokens = build_letters(tokens)
+#   tokens = anotate(tokens)
+#   return tokens
 
 
 if __name__ == '__main__':
-  sentence = ['I-Me', 'J', 'E', 'R', 'S', 'O', 'N', 'and', 'I-Me', 'Live', 'in', 'C', 'U', 'B', 'A', 'O', 'HO', 'I-Me', 'DRAWING', 'OCCUPATION']
-  sentence = build_letters(sentence)
-  print(sentence)
-  sentence = anotate(sentence)
-  print(sentence)
+  # sentence = ['I-Me', 'J', 'E', 'R', 'S', 'O', 'N', 'and', 'I-Me', 'Live', 'in', 'C', 'U', 'B', 'A', 'O', 'HO', 'I-Me', 'DRAWING', 'OCCUPATION']
+  # sentence = build_letters(sentence)
+  # print(sentence)
+  # sentence = anotate(sentence)
+  # print(sentence)
 
-  # main('this')
+  main('Good Morning')

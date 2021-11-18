@@ -13,6 +13,7 @@ from tkinter import *
 from PIL import Image, ImageTk
 from datetime import datetime
 from NLP import Tagger
+from Application.NLP import Generator
 
 # GUI Variables
 cap = cv2.VideoCapture(0)
@@ -28,7 +29,7 @@ window.configure(background="grey")
 TEN_MILLION = 10000000.0
 THRESHOLD = 20.0
 FRAME_LIMIT = 10
-THRESH_EXTRA = 0.8
+THRESH_EXTRA = 0.5
 
 # Variables
 detector = HTM.HandDetector()
@@ -56,7 +57,8 @@ cropped_img_path = 'E:\\test\\keyframes\\cropped_images'
 # FSLR Model
 model_path = 'E:\\'
 model_name = 'Model_3-Epochs 35.hdf5'
-model_name2 = 'Model_2-Epochs 29.hdf5'
+# model_name2 = 'Model_2-Epochs 29.hdf5'
+model_name2 = 'Model_4-Epochs 49.hdf5'
 model_name3 = 'Model_1-Epochs 38.hdf5'
 model1 = SCM.load_and_compile(os.path.join(model_path, model_name))
 model2 = SCM.load_and_compile(os.path.join(model_path, model_name2))
@@ -94,11 +96,11 @@ def predict(img_arr, interval, model):
     return most_occuring_word, frm_position * interval, frm_score, crop_img
 
 
-def update_count():
-    bowCountText['state'] = NORMAL
-    bowCountText.delete('1.0', END)
-    bowCountText.insert(END, window.count)
-    bowCountText['state'] = DISABLED
+def update_text_field(text_field, value):
+    text_field['state'] = NORMAL
+    text_field.delete('1.0', END)
+    text_field.insert(END, value)
+    text_field['state'] = DISABLED
 
 
 def start_application():
@@ -111,10 +113,10 @@ def start_application():
         frameCopy = frame.copy()
 
         sentence = bowText.get('1.0', END)
-        sentence = Tagger.tokenize(sentence.strip())
-        sentence = Tagger.pos_tag(sentence)
+        sentence = Tagger.separate_words(sentence.strip())
+        sentence = Tagger.tokenization(sentence)
         window.count = len(sentence) if sentence != [''] else 0
-        update_count()
+        update_text_field(bowCountText, window.count)
 
         if window.is_calculating is False:
             cv2.putText(frame, window.text_is_capturing, (10, int(0.98 * height)),
@@ -255,6 +257,8 @@ def startCapture():
         os.makedirs(cropped_img_path)
 
         bowText.delete('1.0', END)
+        update_text_field(genLanText, '')
+        update_text_field(genLanCountText, 0)
 
         window.text_is_capturing = 'Capturing'
         window.color_is_capturing = (51, 255, 51)
@@ -314,11 +318,11 @@ def endCapture():
                     prev_word = word
                 print('From frame {} to {}: {} total frames {}'.format(start_frm, end_frm, length, word))
 
-        print(sentence, len(sentence))
-        sentence = Tagger.pos_tag(sentence)
+        print(f'\nPredictions: {sentence} \nWord Count: {len(sentence)}')
+        sentence = Tagger.tokenization(sentence)
         bowText.insert(END, sentence)
         window.count = len(sentence)
-        update_count()
+        update_text_field(bowCountText, window.count)
 
         window.keyframes_arr, window.crop_frm_arr, window.frm_arr, window.frm_num_arr, window.frm_gradients = [], [], [], [], []
         window.prevGradient = np.array([])
@@ -346,11 +350,12 @@ def homePage():
 
 def Generate():
     sentence = bowText.get('1.0', END)
-    sentence = Tagger.tokenize(sentence.strip())
-    sentence = Tagger.pos_tag(sentence)
-    genLanCountText.delete('1.0', END)
-    genLanCountText.insert(END, len(sentence))
-    print(sentence)
+    sentence = Tagger.separate_words(sentence.strip())
+    sentence = Tagger.tokenization(sentence)
+    sentence = Generator.naturalized_sentence(sentence)
+    update_text_field(genLanText, sentence)
+    update_text_field(genLanCountText, len(sentence.split()))
+    print(f'\nGenerated Sentence: {sentence}\nWord Count: {len(sentence.split())}')
 
 
 def switch_model_num():
@@ -402,7 +407,7 @@ bowText = tk.Text(bowFrame, width=38, height=8, bg="#FDFAFA", font="Montserrat")
 bowText.place(x=15, y=45)
 bowCountText = tk.Text(bowFrame, width=10, height=2, bg="#FDFAFA", font="Montserrat", state=DISABLED)
 bowCountText.place(x=267, y=200)
-genLanText = tk.Text(genLanFrame, width=38, height=8, bg="#FDFAFA", font="Montserrat")
+genLanText = tk.Text(genLanFrame, width=38, height=8, bg="#FDFAFA", font="Montserrat", state=DISABLED)
 genLanText.place(x=15, y=45)
 genLanCountText = tk.Text(genLanFrame, width=10, height=2, bg="#FDFAFA", font="Montserrat", state=DISABLED)
 genLanCountText.place(x=267, y=200)

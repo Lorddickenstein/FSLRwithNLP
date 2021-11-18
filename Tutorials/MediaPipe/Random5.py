@@ -8,13 +8,8 @@ mp_hands = mp.solutions.hands
 
 hands = mp_hands.Hands(max_num_hands=2, min_detection_confidence=0.5, min_tracking_confidence=0.5)
 
-# img = cv2.imread('D:\Documents\Thesis\OurDataset\Raw Dataset\A\color_0_1.jpg')
-<<<<<<< HEAD
 img = cv2.imread('D:\THESIS\FSLRwithNLP\FSLRwithNLP\Datasets\Test_Images\Y_2.jpg')
-# img = cv2.imread('D:\Documents\Thesis\FSLRwithNLP\Datasets\Test_Images\C.jpg')
-=======
-img = cv2.imread('D:\Documents\Thesis\FSLRwithNLP\Datasets\Test_Images\Tanghali2.jpg')
->>>>>>> 0593556a0c39c1e11953a098021b60d8238d3ede
+
 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 img.flags.writeable = False
 results = hands.process(img)

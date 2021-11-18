@@ -26,7 +26,7 @@ Static Single
 	4		(I-Love-You -> L)		11/13
 			(Tanghali -> Who)
 	5		(I-Love-You -> L)		11/13
-			(Who -> Tanghali)
+			(Tanghali -> Who)
 									[10.8] / 13 * 100 = 83.07%
 	
 Static Double
@@ -43,7 +43,7 @@ Dynamic Single
 	3		(No -> D)				14/15
 	4		(No -> D)				14/15
 	5		(Yesterday -> Q)		14/15
-									[14.2] / 15 * 100 = 94.57%
+									[14.2] / 15 * 100 = 94.67%
 									
 Dynamic Double
 	1		(Buy -> Welcome)		33/35
@@ -84,7 +84,7 @@ Static Single
 	3		(You -> Extra)			12/13
 	4								13/13
 	5								13/13
-									[12.4] / 13 * 100 = 95.34%
+									[12.4] / 13 * 100 = 95.38%
 
 Static Double
 	1		(Pray -> Banana)		13/14
@@ -127,6 +127,5 @@ Dynamic Double
 									[30.8] / 35 * 100 = 88.0%
 									
 Overall
-	One model = (89.6 + 83.07 + 94.29 + 94.57 + 90.29) / 5 = 90.36%
-	Three models = (90.4 + 95.34 + 95.71 + 93.33 + 88.0) / 5 = 92.56%
-			
+	One model = (89.6 + 83.08 + 94.29 + 94.67 + 90.29) / 5 = 90.79%
+	Three models = (90.4 + 95.38 + 95.71 + 93.33 + 88.0) / 5 = 92.56%

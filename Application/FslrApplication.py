@@ -57,8 +57,8 @@ cropped_img_path = 'D:\Documents\Thesis\Keyframes\Cropped Images'
 # FSLR Model
 model_path = 'D:\Documents\Thesis\Experimental_Models\Best so far'
 model_name = 'Model_3-Epochs 35.hdf5'
-# model_name2 = 'Model_2-Epochs 29.hdf5'
-model_name2 = 'Model_4-Epochs 49.hdf5'
+model_name2 = 'Model_2-Epochs 29.hdf5'
+# model_name2 = 'Model_4-Epochs 49.hdf5'
 model_name3 = 'Model_1-Epochs 38.hdf5'
 model1 = SCM.load_and_compile(os.path.join(model_path, model_name))
 model2 = SCM.load_and_compile(os.path.join(model_path, model_name2))
@@ -316,7 +316,7 @@ def endCapture():
                             word = '[unrecognized]'
                     sentence.append(word)
                     prev_word = word
-                print('From frame {} to {}: {} total frames {}'.format(start_frm, end_frm, length, word))
+                print('From frame {} to {}: {} total frames {} {}'.format(start_frm, end_frm, length, word, frm_score))
 
         print(f'\nPredictions: {sentence} \nWord Count: {len(sentence)}')
         sentence = Tagger.tokenization(sentence)

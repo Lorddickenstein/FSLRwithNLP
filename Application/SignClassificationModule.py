@@ -57,9 +57,37 @@ def create_model_original():
   return model
 
 
+# Create the Sequential Model
+def create_model():
+  model = Sequential()
+
+  # Layers
+  model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', input_shape=(120, 120, 1), padding='same'))
+  model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
+  model.add(MaxPool2D(pool_size=(2, 2), strides=2))
+  model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
+  model.add(MaxPool2D(pool_size=(2, 2), strides=2))
+  model.add(Flatten())
+  model.add(Dense(512, activation='relu'))
+  model.add(Dropout(0.20))
+  model.add(Dense(512, activation='relu'))
+  model.add(Dropout(0.40))
+  model.add(Dense(127, activation='softmax'))
+
+  return model
+
+
 # Load Weights and Compile Model
 def load_and_compile(path):
     model = create_model_original()
+    model.load_weights(path)
+    model.compile(loss='categorical_crossentropy', optimizer=keras.optimizers.Adam(), metrics=['accuracy'])
+    return model
+
+
+# Load Weights and Compile Model
+def load_and_compile_2(path):
+    model = create_model()
     model.load_weights(path)
     model.compile(loss='categorical_crossentropy', optimizer=keras.optimizers.Adam(), metrics=['accuracy'])
     return model

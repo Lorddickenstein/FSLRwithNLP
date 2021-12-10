@@ -60,7 +60,6 @@ Welcome		VB
 Welcome		UH
 Welcome		JJ
 When		WP
-When		CC
 Who		WP
 Why		WRB
 Yes		UH
@@ -85,7 +84,6 @@ Get		VB
 Go		VB
 Happen		NN
 How		WRB
-How		CC
 How		NN
 Introduce		NN
 Introduce		VB
@@ -109,7 +107,6 @@ Today		NN
 Today		RB
 What		WP
 Where		WRB
-Where		CC
 Where		RB
 Which		WDT
 Work		NN

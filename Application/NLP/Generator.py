@@ -154,6 +154,7 @@ def gen_sentence(terminals, pattern):
   elif pattern == '(S -> VP PP) (VP -> VB) (PP -> IN SP) (SP -> NN)':
     vb, ins, nn = terminals
     string = f'(S (VP (VB {vb.split()[1]})) (PP (IN {ins.split()[1]}) (SP (NN {nn.split()[1]}))))'
+  # you study person
   elif pattern == '(S -> SP) (SP -> PRP NN)':
     prp, nn = terminals
     fwa = 'ARE' if prp.split(' ')[1] == 'YOU' else 'IS' if prp.split(' ')[1] == 'HE-SHE' else 'AM'

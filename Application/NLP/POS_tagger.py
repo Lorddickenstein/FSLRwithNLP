@@ -1,5 +1,5 @@
 import nltk
-from Application.NLP.Repos import read_file
+from Application.NLP.Utilities import read_file
 from nltk.tag import pos_tag
 nltk.download('averaged_perceptron_tagger')
 

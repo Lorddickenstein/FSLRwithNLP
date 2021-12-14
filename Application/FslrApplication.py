@@ -1,5 +1,4 @@
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Disable Tensorflow's Debugging Infos
 import cv2
 import shutil
 import numpy as np
@@ -15,6 +14,7 @@ from datetime import datetime
 from NLP import Tagger
 from Application.NLP import Generator
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Disable Tensorflow's Debugging Info
 # GUI Variables
 cap = cv2.VideoCapture(0)
 cap.set(3, 640)
@@ -55,11 +55,11 @@ keyframes_path = 'E:\test\\keyframes'
 cropped_img_path = 'E:\\test\\keyframes\\cropped_images'
 
 # FSLR Model
-model_path = 'E:\\'
-model_name = 'Model_3-Epochs 35.hdf5'
+model_path = 'E:\\test'
+model_name = 'FSLR5_weights_improvements-epoch_35-acc_0.94-loss_0.21-val_accuracy_0.95-val_loss_0.20.hdf5'
 # model_name2 = 'Model_2-Epochs 29.hdf5'
-model_name2 = 'Model_4-Epochs 49.hdf5'
-model_name3 = 'Model_1-Epochs 38.hdf5'
+model_name2 = 'FSLR5_weights_improvements-epoch_49-acc_0.94-loss_0.20-val_accuracy_0.95-val_loss_0.22.hdf5'
+model_name3 = 'Part_2_weights_improvements-epoch_38-acc_0.94-loss_0.19-val_accuracy_0.92-val_loss_0.58.hdf5'
 model1 = SCM.load_and_compile(os.path.join(model_path, model_name))
 model2 = SCM.load_and_compile(os.path.join(model_path, model_name2))
 model3 = SCM.load_and_compile(os.path.join(model_path, model_name3))

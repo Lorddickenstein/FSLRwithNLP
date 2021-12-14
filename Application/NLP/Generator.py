@@ -114,6 +114,7 @@ def get_terminal(tree, terminals):
 
 
 def gen_sentence(terminals, pattern):
+<<<<<<< HEAD
     tree = ""
     string = "unrecognized"
 
@@ -170,6 +171,64 @@ def gen_sentence(terminals, pattern):
     tree = Tree.fromstring(string)
     return ' '.join(flatten(tree))
 
+=======
+  tree = ""
+  string = "unrecognized"
+
+  # you name what
+  if pattern == '(S -> QP) (QP -> SP WQ) (SP -> PRP NN) (WQ -> WP)':
+    prps, nn, wp = terminals
+    prps = 'YOUR' if prps.split(' ')[1] == 'YOU' else 'MY' if prps.split(' ')[1] == 'I-ME' else 'HIS-HER'
+    string = f'(S (QP (WQ (WP {wp.split()[1]}) (FWA IS)) (SP (PRPS {prps}) (NN {nn.split()[1]}))))'
+  # you live where
+  elif pattern == '(S -> QP) (QP -> SP VP WQ) (SP -> PRP) (VP -> VB) (WQ -> WRB)':
+    prp, vb, wrb = terminals
+    prp = prp.split(' ')[1]
+    fwc = 'DOES' if prp == 'HE-SHE' else 'DO'
+    prp = 'I' if prp == 'I-ME' else prp
+    string = f'(S (QP (WQ (WRB {wrb.split()[1]}) (FWC {fwc})) (SP (PRP {prp})) (VP (VB {vb.split()[1]}))))'
+  # you from where
+  elif pattern == '(S -> QP) (QP -> SP PP WQ) (SP -> PRP) (PP -> IN) (WQ -> WRB)':
+    prp, ins, wrb = terminals
+    prp = prp.split(' ')[1]
+    fwa = 'AM' if prp == 'I-ME' else 'ARE' if prp == 'YOU' else 'IS'
+    prp = 'I' if prp == 'I-ME' else prp
+    string = f'(S (QP (WQ (WRB {wrb.split()[1]}) (FWA {fwa})) (SP (PRP {prp})) (PP (IN {ins.split()[1]}))))'
+  # i-me name +
+  elif pattern == '(S -> SP NNP) (SP -> PRP NN)':
+    prps, nn, nnp = terminals
+    prps = 'YOUR' if prps.split(' ')[1] == 'YOU' else 'MY' if prps.split(' ')[1] == 'I-ME' else 'HIS-HER'
+    string = f'(S (SP (PRPS {prps}) (NN {nn.split()[1]}) (FWA IS)) (NNP {nnp.split()[1]}))'
+  # i-me good
+  elif pattern == '(S -> SP JJ) (SP -> PRP)':
+    prp, jj = terminals
+    prp = prp.split(' ')[1]
+    fwa = 'AM' if prp == 'I-ME' else 'ARE' if prp == 'YOU' else 'IS'
+    prp = 'I' if prp == 'I-ME' else prp
+    string = f'(S (SP (PRP {prp}) (FWA {fwa})) (JJ {jj.split()[1]}))'
+  # egg i-me cook
+  elif pattern == '(S -> SP VP) (SP -> NN SP) (SP -> PRP) (VP -> VB)':
+    nn, prp, vb = terminals
+    prp = prp.split(' ')[1]
+    fwa = 'AM' if prp == 'I-ME' else 'ARE' if prp == 'YOU' else 'IS'
+    vb = vb.split(' ')[1]
+    vb = vb if prp == 'YOU' or prp == 'I-ME' else vb + 'S'
+    prp = 'I' if prp == 'I-ME' else prp
+    string = f'(S (SP (PRP {prp})) (VP (VB {vb}) (NN {nn.split()[1]})))'
+  # go to office
+  elif pattern == '(S -> VP PP) (VP -> VB) (PP -> IN SP) (SP -> NN)':
+    vb, ins, nn = terminals
+    string = f'(S (VP (VB {vb.split()[1]})) (PP (IN {ins.split()[1]}) (SP (NN {nn.split()[1]}))))'
+  # you study person
+  elif pattern == '(S -> SP) (SP -> PRP NN)':
+    prp, nn = terminals
+    fwa = 'ARE' if prp.split(' ')[1] == 'YOU' else 'IS' if prp.split(' ')[1] == 'HE-SHE' else 'AM'
+    prp = 'I' if prp.split()[1] == 'I-ME' else prp.split()[1]
+    string = f'(S (SP (PRP {prp}) (FWA {fwa}) (SP (NN {nn.split()[1]}))))'
+
+  tree = Tree.fromstring(string)
+  return ' '.join(flatten(tree))
+>>>>>>> 6a6d6336d35552672d5ec13afeea210098b945e0
 
 def naturalized_sentence(tokens):
     tree = None
@@ -193,7 +252,7 @@ def naturalized_sentence(tokens):
 
 
 if __name__ == '__main__':
-    text = 'YOU STUDENT'
+    text = 'YOU WORK WHEN'
     text = text.split()
     text = naturalized_sentence(text)
     print(text)

@@ -55,11 +55,19 @@ keyframes_path = 'E:\test\\keyframes'
 cropped_img_path = 'E:\\test\\keyframes\\cropped_images'
 
 # FSLR Model
+<<<<<<< HEAD
 model_path = 'E:\\test'
 model_name = 'FSLR5_weights_improvements-epoch_35-acc_0.94-loss_0.21-val_accuracy_0.95-val_loss_0.20.hdf5'
 # model_name2 = 'Model_2-Epochs 29.hdf5'
 model_name2 = 'FSLR5_weights_improvements-epoch_49-acc_0.94-loss_0.20-val_accuracy_0.95-val_loss_0.22.hdf5'
 model_name3 = 'Part_2_weights_improvements-epoch_38-acc_0.94-loss_0.19-val_accuracy_0.92-val_loss_0.58.hdf5'
+=======
+model_path = 'D:\Documents\Thesis\Experimental_Models\Best so far'
+model_name = 'Model_3-Epochs 35.hdf5'
+model_name2 = 'Model_2-Epochs 29.hdf5'
+# model_name2 = 'Model_4-Epochs 49.hdf5'
+model_name3 = 'Model_1-Epochs 38.hdf5'
+>>>>>>> 6a6d6336d35552672d5ec13afeea210098b945e0
 model1 = SCM.load_and_compile(os.path.join(model_path, model_name))
 model2 = SCM.load_and_compile(os.path.join(model_path, model_name2))
 model3 = SCM.load_and_compile(os.path.join(model_path, model_name3))
@@ -103,6 +111,26 @@ def update_text_field(text_field, value):
     text_field['state'] = DISABLED
 
 
+def delete_text(text_field):
+    text_field['state'] = NORMAL
+    text_field.delete('1.0', END)
+    text_field['state'] = DISABLED
+
+
+def get_text(text_field):
+    text_field['state'] = NORMAL
+    text = bowText.get('1.0', END)
+    text_field['state'] = DISABLED
+    return text
+
+
+def insert_text(text_field, text):
+    text_field['state'] = NORMAL
+    text_field.insert(END, text)
+    text_field['state'] = DISABLED
+
+
+
 def start_application():
     ret, frame = cap.read()
 
@@ -112,7 +140,7 @@ def start_application():
         height, width, channel = frame.shape
         frameCopy = frame.copy()
 
-        sentence = bowText.get('1.0', END)
+        sentence = get_text(bowText)
         sentence = Tagger.separate_words(sentence.strip())
         sentence = Tagger.tokenization(sentence)
         window.count = len(sentence) if sentence != [''] else 0
@@ -157,7 +185,7 @@ def start_application():
                             frm_diff = cv2.absdiff(currGradient, window.prevGradient)
                             frm_sum = cv2.sumElems(frm_diff)
                             frm_sum = frm_sum[0] / TEN_MILLION
-                            print('%.2f' % frm_sum, window.frm_num, window.GRADIENT_THRESH_VALUE)
+                            # print('%.2f' % frm_sum, window.frm_num, window.GRADIENT_THRESH_VALUE)
 
                             if '%.2f' % frm_sum < window.GRADIENT_THRESH_VALUE:
                                 img_name = os.path.join(keyframes_path, 'keyframe_' + str(window.frm_num) + '.jpg')
@@ -214,7 +242,7 @@ def start_application():
                     frm_diff = cv2.absdiff(currGradient, window.prevGradient)
                     frm_sum = cv2.sumElems(frm_diff)
                     frm_sum = frm_sum[0] / TEN_MILLION
-                    print('%.2f' % frm_sum, window.frm_num)
+                    # print('%.2f' % frm_sum, window.frm_num)
                     window.gradient_thresh_arr.append(frm_sum)
                 else:
                     window.GRADIENT_THRESH_VALUE = '%.2f' % (np.mean(window.gradient_thresh_arr) + THRESH_EXTRA)
@@ -256,7 +284,7 @@ def startCapture():
         os.makedirs(keyframes_path)
         os.makedirs(cropped_img_path)
 
-        bowText.delete('1.0', END)
+        delete_text(bowText)
         update_text_field(genLanText, '')
         update_text_field(genLanCountText, 0)
 
@@ -316,11 +344,11 @@ def endCapture():
                             word = '[unrecognized]'
                     sentence.append(word)
                     prev_word = word
-                print('From frame {} to {}: {} total frames {}'.format(start_frm, end_frm, length, word))
+                print('From frame {} to {}: {} total frames {} {}'.format(start_frm, end_frm, length, word, frm_score))
 
         print(f'\nPredictions: {sentence} \nWord Count: {len(sentence)}')
         sentence = Tagger.tokenization(sentence)
-        bowText.insert(END, sentence)
+        insert_text(bowText, sentence)
         window.count = len(sentence)
         update_text_field(bowCountText, window.count)
 
@@ -332,6 +360,8 @@ def endCapture():
         window.text_is_capturing = 'Not Capturing'
         window.color_is_capturing = (51, 51, 255)
         window.is_capturing = False
+
+        Generate()
 
 
 def set_gradient():
@@ -349,7 +379,7 @@ def homePage():
 
 
 def Generate():
-    sentence = bowText.get('1.0', END)
+    sentence = get_text(bowText)
     sentence = Tagger.separate_words(sentence.strip())
     sentence = Tagger.tokenization(sentence)
     sentence = Generator.naturalized_sentence(sentence)
@@ -395,15 +425,15 @@ genLanFrame = tk.Canvas(rightFrame, width=385, height=250, bg="#E84747")
 genLanFrame.place(x=20, y=330)
 
 
-bowBut = tk.Button(rightFrame, width=10, height=2, text="GENERATE", bg="#c4c4c4",
-                   font=("Montserrat", 9, "bold"), command=Generate)
-bowBut.place(x=330, y=280)
+# bowBut = tk.Button(rightFrame, width=10, height=2, text="GENERATE", bg="#c4c4c4",
+#                    font=("Montserrat", 9, "bold"), command=Generate)
+# bowBut.place(x=330, y=280)
 
 bowThreeModels = tk.Button(rightFrame, width=35, height=2, text="Use One Model (Fast)", bg="#c4c4c4",
                            font=("Montserrat", 9, "bold"), command=switch_model_num)
 bowThreeModels.place(x=20, y=280)
 
-bowText = tk.Text(bowFrame, width=38, height=8, bg="#FDFAFA", font="Montserrat")
+bowText = tk.Text(bowFrame, width=38, height=8, bg="#FDFAFA", font="Montserrat", state=DISABLED)
 bowText.place(x=15, y=45)
 bowCountText = tk.Text(bowFrame, width=10, height=2, bg="#FDFAFA", font="Montserrat", state=DISABLED)
 bowCountText.place(x=267, y=200)
@@ -412,11 +442,11 @@ genLanText.place(x=15, y=45)
 genLanCountText = tk.Text(genLanFrame, width=10, height=2, bg="#FDFAFA", font="Montserrat", state=DISABLED)
 genLanCountText.place(x=267, y=200)
 
-bowLabel = tk.Label(bowFrame, text="BAG OF WORDS    :", bg="#E84747", fg="#FDFAFA", font=("Montserrat", 14, "bold"))
+bowLabel = tk.Label(bowFrame, text="IDENTIFIED WORDS    :", bg="#E84747", fg="#FDFAFA", font=("Montserrat", 14, "bold"))
 bowLabel.place(x=15, y=10)
 bowCountLabel = tk.Label(bowFrame, text="COUNT    :", bg="#E84747", fg="#FDFAFA", font=("Montserrat", 12, "bold"))
 bowCountLabel.place(x=170, y=205)
-genLanLabel = tk.Label(genLanFrame, text="GENERATED LANGUAGE    :", bg="#E84747", fg="#FDFAFA",
+genLanLabel = tk.Label(genLanFrame, text="GENERATED SENTENCE    :", bg="#E84747", fg="#FDFAFA",
                        font=("Montserrat", 14, "bold"))
 genLanLabel.place(x=15, y=10)
 genLanCountLabel = tk.Label(genLanFrame, text="COUNT    :", bg="#E84747", fg="#FDFAFA", font=("Montserrat", 12, "bold"))

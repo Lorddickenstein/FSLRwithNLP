@@ -186,7 +186,7 @@ def naturalized_sentence(tokens):
 
 
 if __name__ == '__main__':
-    text = 'YOU STUDENT'
+    text = 'YOU WORK WHEN'
     text = text.split()
     text = naturalized_sentence(text)
     print(text)

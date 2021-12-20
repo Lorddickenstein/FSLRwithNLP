@@ -5,8 +5,8 @@ from keras.layers import Dense, Flatten, MaxPool2D, Conv2D, Dropout
 import numpy as np
 
 
-# Return the sign that corresponds to the index of the predicted class
 def find_match(x):
+    """ Returns the sign that corresponds to the index of the predicted class"""
     classes = {0: 'A', 1: 'B', 75: 'Ball', 76: 'Banana', 77: 'Banana', 78: 'Banana', 79: 'Bread', 80: 'Break',
                82: 'Break', 83: 'Bring', 84: 'Buy', 85: 'Buy', 86: 'Bye', 2: 'C', 52: 'Chair', 87: 'Coconut',
                89: 'Coffee', 90: 'Come', 91: 'Come', 39: 'Congratulations', 92: 'Cook', 3: 'D', 4: 'E', 81: 'Egg',
@@ -26,8 +26,13 @@ def find_match(x):
     return classes[x]
 
 
-# Classify the image using the model
 def classify_image(src_img, model):
+    """ Classifies the image using the model.
+
+        Returns:
+            predictions: Numpy Array. An array of predictions.
+            top_predictions: List. A list of top 5 predictions.
+    """
     predictions = model.predict(src_img)
     top_prediction_indices = np.argsort(predictions)[0, -5:]
     top_predictions = []
@@ -38,55 +43,55 @@ def classify_image(src_img, model):
     return predictions, top_predictions
 
 
-# Create the original Sequential Model
 def create_model_original():
-  model = Sequential()
+    """ Creates the original Sequential Model"""
+    model = Sequential()
 
-  # Layers
-  model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(120, 120, 1), padding='same'))
-  model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
-  model.add(MaxPool2D(pool_size=(2, 2), strides=2))
-  model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
-  model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
-  model.add(MaxPool2D(pool_size=(2, 2), strides=2))
-  model.add(Flatten())
-  model.add(Dense(512, activation='relu'))
-  model.add(Dropout(0.20))
-  model.add(Dense(127, activation='softmax'))
+    # Layers
+    model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(120, 120, 1), padding='same'))
+    model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
+    model.add(MaxPool2D(pool_size=(2, 2), strides=2))
+    model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
+    model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
+    model.add(MaxPool2D(pool_size=(2, 2), strides=2))
+    model.add(Flatten())
+    model.add(Dense(512, activation='relu'))
+    model.add(Dropout(0.20))
+    model.add(Dense(127, activation='softmax'))
 
-  return model
+    return model
 
 
-# Create the Sequential Model
 def create_model():
-  model = Sequential()
+    """ Create the Sequential Model"""
+    model = Sequential()
 
-  # Layers
-  model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', input_shape=(120, 120, 1), padding='same'))
-  model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
-  model.add(MaxPool2D(pool_size=(2, 2), strides=2))
-  model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
-  model.add(MaxPool2D(pool_size=(2, 2), strides=2))
-  model.add(Flatten())
-  model.add(Dense(512, activation='relu'))
-  model.add(Dropout(0.20))
-  model.add(Dense(512, activation='relu'))
-  model.add(Dropout(0.40))
-  model.add(Dense(127, activation='softmax'))
+    # Layers
+    model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', input_shape=(120, 120, 1), padding='same'))
+    model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
+    model.add(MaxPool2D(pool_size=(2, 2), strides=2))
+    model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
+    model.add(MaxPool2D(pool_size=(2, 2), strides=2))
+    model.add(Flatten())
+    model.add(Dense(512, activation='relu'))
+    model.add(Dropout(0.20))
+    model.add(Dense(512, activation='relu'))
+    model.add(Dropout(0.40))
+    model.add(Dense(127, activation='softmax'))
 
-  return model
+    return model
 
 
-# Load Weights and Compile Model
 def load_and_compile(path):
+    """ Load Weights and Compile Model"""
     model = create_model_original()
     model.load_weights(path)
     model.compile(loss='categorical_crossentropy', optimizer=keras.optimizers.Adam(), metrics=['accuracy'])
     return model
 
 
-# Load Weights and Compile Model
 def load_and_compile_2(path):
+    """ Load Weights and Compile Model"""
     model = create_model()
     model.load_weights(path)
     model.compile(loss='categorical_crossentropy', optimizer=keras.optimizers.Adam(), metrics=['accuracy'])

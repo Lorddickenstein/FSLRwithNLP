@@ -132,9 +132,9 @@ def predict(img_arr, interval, model):
 
     most_occuring_word = max(set(temp_sentence), key=temp_sentence.count)
     frm_position = temp_sentence.index(most_occuring_word)
-    frm_position = frm_position * interval
     frm_score = temp_score[frm_position]
     crop_img = temp_crop_img[frm_position]
+    frm_position = frm_position * interval
     return most_occuring_word, frm_position, frm_score, crop_img
 
 

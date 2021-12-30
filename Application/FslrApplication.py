@@ -68,15 +68,13 @@ cropped_img_path = 'D:\Documents\Thesis\Keyframes\Cropped Images'
 
 # FSLR MODEL
 model_path = 'D:\Documents\Thesis\Experimental_Models\Best so far'
-# model_name = 'Model_1-Epochs 34.hdf5'
-# model_name2 = 'Model_2-Epoch 73.hdf5'
-# model_name3 = 'Model_1-Epochs 38.hdf5'
 # model_name = 'Model_3-Epochs 35.hdf5'
 # model_name2 = 'Model_2-Epochs 29.hdf5'
 # model_name3 = 'Model_1-Epochs 38.hdf5'
 # model1 = SCM.load_and_compile(os.path.join(model_path, model_name))
 # model2 = SCM.load_and_compile(os.path.join(model_path, model_name2))
 # model3 = SCM.load_and_compile(os.path.join(model_path, model_name3))
+model_name = 'Model_1-Epochs 34.hdf5'
 model_name2 = 'Model_2-Epochs 73.hdf5'
 model_name3 = 'Model_3-Epochs 52.hdf5'
 model1 = SCM.load_and_compile(os.path.join(model_path, model_name), 1)

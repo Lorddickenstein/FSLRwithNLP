@@ -50,24 +50,16 @@ window.pTime = datetime.now().second
 window.sec = 6
 
 # Paths and Directories
-figures_path = 'E:\\test\\Figures'
-keyframes_path = 'E:\test\\keyframes'
-cropped_img_path = 'E:\\test\\keyframes\\cropped_images'
+figures_path = 'D:\\Documents\\Thesis\\Figures'
+keyframes_path = 'D:\\Documents\\Thesis\\keyframes'
+cropped_img_path = 'D:\\Documents\\Thesis\\keyframes\\Cropped images'
 
 # FSLR Model
-<<<<<<< HEAD
-model_path = 'E:\\test'
-model_name = 'FSLR5_weights_improvements-epoch_35-acc_0.94-loss_0.21-val_accuracy_0.95-val_loss_0.20.hdf5'
-# model_name2 = 'Model_2-Epochs 29.hdf5'
-model_name2 = 'FSLR5_weights_improvements-epoch_49-acc_0.94-loss_0.20-val_accuracy_0.95-val_loss_0.22.hdf5'
-model_name3 = 'Part_2_weights_improvements-epoch_38-acc_0.94-loss_0.19-val_accuracy_0.92-val_loss_0.58.hdf5'
-=======
-model_path = 'D:\Documents\Thesis\Experimental_Models\Best so far'
+model_path = 'D:\\Documents\\Thesis\\Experimental_Models\\Best so far'
 model_name = 'Model_3-Epochs 35.hdf5'
-model_name2 = 'Model_2-Epochs 29.hdf5'
-# model_name2 = 'Model_4-Epochs 49.hdf5'
+# model_name2 = 'Model_2-Epochs 29.hdf5'
+model_name2 = 'Model_4-Epochs 49.hdf5'
 model_name3 = 'Model_1-Epochs 38.hdf5'
->>>>>>> 6a6d6336d35552672d5ec13afeea210098b945e0
 model1 = SCM.load_and_compile(os.path.join(model_path, model_name))
 model2 = SCM.load_and_compile(os.path.join(model_path, model_name2))
 model3 = SCM.load_and_compile(os.path.join(model_path, model_name3))
@@ -128,7 +120,6 @@ def insert_text(text_field, text):
     text_field['state'] = NORMAL
     text_field.insert(END, text)
     text_field['state'] = DISABLED
-
 
 
 def start_application():
@@ -410,7 +401,8 @@ startBut = tk.Button(leftFrame, width=20, height=2, text="START", bg="#1B7B03", 
                      command=startCapture)
 startBut.place(x=20, y=525)
 setGradBut = tk.Button(leftFrame, width=20, height=2, text='SET THRESHOLD', bg="#c4c4c4", font=("Montserrat", 9,
-                       "bold"), command=set_gradient)
+                                                                                                "bold"),
+                       command=set_gradient)
 setGradBut.place(x=350, y=525)
 endBut = tk.Button(leftFrame, width=20, height=2, text="END", bg="#E21414", font=("Montserrat", 9, "bold"),
                    command=endCapture)
@@ -423,7 +415,6 @@ bowFrame = tk.Canvas(rightFrame, width=385, height=250, bg="#E84747")
 bowFrame.place(x=20, y=20)
 genLanFrame = tk.Canvas(rightFrame, width=385, height=250, bg="#E84747")
 genLanFrame.place(x=20, y=330)
-
 
 # bowBut = tk.Button(rightFrame, width=10, height=2, text="GENERATE", bg="#c4c4c4",
 #                    font=("Montserrat", 9, "bold"), command=Generate)

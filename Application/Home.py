@@ -1,3 +1,11 @@
+#####################################################################
+# Author: Jerson Destacamento, Joshua Cruzat, Rocella Legaspi       #
+# Date: October-December                                            #
+# Description: Serves as the front of the whole application tool    #
+# General System Design: GUI Part                                   #
+# Requirements: None
+#####################################################################
+
 import tkinter as tk
 import sys
 

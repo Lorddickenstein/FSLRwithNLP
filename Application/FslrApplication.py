@@ -1,4 +1,20 @@
+#####################################################################
+# Author: Jerson Destacamento, Joshua Cruzat, Rocella Legaspi       #
+# Date: October-December                                            #
+# Description: Contains the whole operation of the program.         #
+#              Implemented with a GUI. Captures images from a       #
+#              camera and predicts the sign language using the      #
+#              loaded model.                                        #
+# General System Design: Main Operation, CNN Part                   #
+# Requirements: Camera (Hardware)                                   #
+#####################################################################
+
 import os
+<<<<<<< HEAD
+=======
+"""Disable Tensorflow's Debugging Infos"""
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+>>>>>>> 23a0a57c8983128fb9cf7718ffe754331c6b1538
 import cv2
 import shutil
 import numpy as np
@@ -14,8 +30,12 @@ from datetime import datetime
 from NLP import Tagger
 from Application.NLP import Generator
 
+<<<<<<< HEAD
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Disable Tensorflow's Debugging Info
 # GUI Variables
+=======
+# GUI VARIABLES
+>>>>>>> 23a0a57c8983128fb9cf7718ffe754331c6b1538
 cap = cv2.VideoCapture(0)
 cap.set(3, 640)
 cap.set(4, 480)
@@ -25,13 +45,13 @@ window.resizable(False, False)
 window.title("FSLR Translator")
 window.configure(background="grey")
 
-# Constants
+# CONSTANT VARIABLES
 TEN_MILLION = 10000000.0
 THRESHOLD = 20.0
 FRAME_LIMIT = 10
 THRESH_EXTRA = 0.5
 
-# Variables
+# VARIABLES
 detector = HTM.HandDetector()
 window.keyframes_arr, window.crop_frm_arr, window.frm_arr, window.frm_num_arr, window.frm_gradients = [], [], [], [], []
 window.prevGradient = np.array([])
@@ -49,6 +69,7 @@ window.gradient_thresh_arr = []
 window.pTime = datetime.now().second
 window.sec = 6
 
+<<<<<<< HEAD
 # Paths and Directories
 figures_path = 'D:\\Documents\\Thesis\\Figures'
 keyframes_path = 'D:\\Documents\\Thesis\\keyframes'
@@ -56,6 +77,15 @@ cropped_img_path = 'D:\\Documents\\Thesis\\keyframes\\Cropped images'
 
 # FSLR Model
 model_path = 'D:\\Documents\\Thesis\\Experimental_Models\\Best so far'
+=======
+# PATHS AND DIRECTORIES
+figures_path = 'D:\Documents\Thesis\Figures'
+keyframes_path = 'D:\Documents\Thesis\Keyframes'
+cropped_img_path = 'D:\Documents\Thesis\Keyframes\Cropped Images'
+
+# FSLR MODEL
+model_path = 'D:\Documents\Thesis\Experimental_Models\Best so far'
+>>>>>>> 23a0a57c8983128fb9cf7718ffe754331c6b1538
 model_name = 'Model_3-Epochs 35.hdf5'
 # model_name2 = 'Model_2-Epochs 29.hdf5'
 model_name2 = 'Model_4-Epochs 49.hdf5'
@@ -66,6 +96,35 @@ model3 = SCM.load_and_compile(os.path.join(model_path, model_name3))
 
 
 def predict(img_arr, interval, model):
+    """ Predicts the image using the model at a specific frame interval.
+        Returns the prediction, which frame it was found, the prediction score,
+        and the cropped image of the hand/s.
+
+        Always predicts on 5 equally distributed frames and looks for the most
+        number of occurring word as the final predicted sign language.
+
+        Args:
+            img_arr: Numpy Array. A specific section of the cropped main array that
+                contains all the significant frames to be recognized by the model.
+            interval: Integer. A calculated integer that specifies which frame the model
+                will predict from the img_arr. Equally divides the img_arr into 5 frames
+                 to be used for prediction.
+            model: Model. The model used for predicting the cropped images. The weights
+                are loaded and compiled using a specific architecture to create the model.
+
+        Returns:
+            most_occurring_word: String. The final prediction of the model. The most occurring
+                predicted word from the total of 5 predictions made by the model.
+            frm_position: Integer. The frame position in the cropped main array where the
+                most_occurring_word is found.
+            frm_score: The prediction score of the image in the particular frm_position by
+                the model.
+            crop_img: Numpy Array. The image of the prediction word in the particular frm_position.
+
+        Raises:
+            Exception: if the image is empty, the predicted word is empty with a score of
+                zero and an empty cropped crop_img.
+    """
     temp_sentence, temp_score, temp_crop_img = [], [], []
     index = 0
     while index < len(img_arr):
@@ -93,10 +152,14 @@ def predict(img_arr, interval, model):
     frm_position = temp_sentence.index(most_occuring_word)
     frm_score = temp_score[frm_position]
     crop_img = temp_crop_img[frm_position]
-    return most_occuring_word, frm_position * interval, frm_score, crop_img
+    frm_position = frm_position * interval
+    return most_occuring_word, frm_position, frm_score, crop_img
 
 
 def update_text_field(text_field, value):
+    """ Updates any generic text field. It makes the text field editable, deletes
+        and inserts new content before finally making it uneditable again.
+    """
     text_field['state'] = NORMAL
     text_field.delete('1.0', END)
     text_field.insert(END, value)
@@ -104,12 +167,14 @@ def update_text_field(text_field, value):
 
 
 def delete_text(text_field):
+    """ Deletes the content of any generic text field."""
     text_field['state'] = NORMAL
     text_field.delete('1.0', END)
     text_field['state'] = DISABLED
 
 
 def get_text(text_field):
+    """ Takes the content of a text field and returns it as a string."""
     text_field['state'] = NORMAL
     text = bowText.get('1.0', END)
     text_field['state'] = DISABLED
@@ -117,12 +182,23 @@ def get_text(text_field):
 
 
 def insert_text(text_field, text):
+    """ Inserts a new content to a text field"""
     text_field['state'] = NORMAL
     text_field.insert(END, text)
     text_field['state'] = DISABLED
 
 
 def start_application():
+    """ This function is called when this program runs. It displays the camera
+        on the GUI. This section is where the images are captured from the camera.
+        At the start of the program, gradient values are computed from each of
+        the frames for 3 seconds to get the average gradient value of the frame.
+        The texts that are displayed on the camera section are customized in this
+        function section.
+
+        Raises:
+            Exception: if image is empty and could not be saved
+    """
     ret, frame = cap.read()
 
     if ret:
@@ -131,10 +207,12 @@ def start_application():
         height, width, channel = frame.shape
         frameCopy = frame.copy()
 
+        # Counts the number of identified words from the bowText text field
         sentence = get_text(bowText)
         sentence = Tagger.separate_words(sentence.strip())
         sentence = Tagger.tokenization(sentence)
         window.count = len(sentence) if sentence != [''] else 0
+        # Updates the bowCountText based on the number of words from the bowText
         update_text_field(bowCountText, window.count)
 
         if window.is_calculating is False:
@@ -155,11 +233,13 @@ def start_application():
                 detected, pts_upper_left, pts_lower_right = detector.find_hands(frameCopy)
                 if detected:
                     roi = frameCopy[pts_lower_right[1]:pts_upper_left[1], pts_upper_left[0]:pts_lower_right[0]]
+                    # Calculate the gradient value of the current frame using the sobel operators
                     currFrame = utils.convert_to_grayscale(frameCopy)
                     sobelx = cv2.Sobel(currFrame, cv2.CV_64F, 1, 0, ksize=cv2.FILTER_SCHARR)
                     sobely = cv2.Sobel(currFrame, cv2.CV_64F, 0, 1, ksize=cv2.FILTER_SCHARR)
                     currGradient = np.sqrt(np.square(sobelx) + np.square(sobely))
 
+                    # Check if stable frames are greater than frame limit to detect if sign is captured or not
                     if window.stable_ctr >= FRAME_LIMIT:
                         sign_captured_pos = (int(0.66 * width), int(0.07 * height))
                         text_sign_captured = 'Sign Captured.'
@@ -173,17 +253,20 @@ def start_application():
 
                     try:
                         if window.frm_num != 0:
+                            # Calculates the gradient difference between the current frame and the previous frame
                             frm_diff = cv2.absdiff(currGradient, window.prevGradient)
                             frm_sum = cv2.sumElems(frm_diff)
                             frm_sum = frm_sum[0] / TEN_MILLION
                             # print('%.2f' % frm_sum, window.frm_num, window.GRADIENT_THRESH_VALUE)
 
                             if '%.2f' % frm_sum < window.GRADIENT_THRESH_VALUE:
+                                # Save images if below the gradient threshold value as key frames
                                 img_name = os.path.join(keyframes_path, 'keyframe_' + str(window.frm_num) + '.jpg')
                                 cv2.imwrite(img_name, frameCopy)
                                 window.stable_ctr += 1
                                 frm_sum = 0.0
 
+                                # Determine where the key frames start and end
                                 if window.prev_frm_sum != 0:
                                     window.start_index = window.frm_num
                                 else:
@@ -210,11 +293,13 @@ def start_application():
                 cv2.putText(frame, text_sign_captured, sign_captured_pos,
                             cv2.FONT_HERSHEY_COMPLEX, 0.8, color_sign_captured, 2, cv2.LINE_AA)
         else:
+            # Calculate the average gradient value of the background for 3 seconds
             currFrame = utils.convert_to_grayscale(frameCopy)
             sobelx = cv2.Sobel(currFrame, cv2.CV_64F, 1, 0, ksize=cv2.FILTER_SCHARR)
             sobely = cv2.Sobel(currFrame, cv2.CV_64F, 0, 1, ksize=cv2.FILTER_SCHARR)
             currGradient = np.sqrt(np.square(sobelx) + np.square(sobely))
 
+            # Starts the countdown
             if window.sec >= 3:
                 frame = cv2.GaussianBlur(frame, (51, 51), 0)
                 cv2.putText(frame, str(window.sec - 3), (int(width / 2) - 40, int(height / 2) - 20),
@@ -223,6 +308,7 @@ def start_application():
                             cv2.FONT_HERSHEY_COMPLEX, 1, (102, 255, 255), 3, cv2.LINE_AA)
                 cv2.putText(frame, 'Try not to move.', (int(0.25 * width), int(0.68 * height)),
                             cv2.FONT_HERSHEY_COMPLEX, 1, (102, 255, 255), 3, cv2.LINE_AA)
+            # Starts calculating average frame gradient
             else:
                 if window.sec >= -1:
                     cv2.putText(frame, 'Calculating average gradient.', (75, int(0.60 * height)),
@@ -256,6 +342,7 @@ def start_application():
         cv2.putText(frame, datetime.now().strftime('%d/%m/%Y %H:%M:%S'), (20, 30),
                     cv2.FONT_HERSHEY_DUPLEX, 0.6, (0, 255, 255), 1, cv2.LINE_AA)
 
+        # Displays the image in the GUI
         cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
         videoImg = Image.fromarray(cv2image)
         img = ImageTk.PhotoImage(image=videoImg)
@@ -267,7 +354,15 @@ def start_application():
 
 
 def startCapture():
+    """ Switches the boolean window.is_capturing from False to True to start capturing.
+        Clears all the previously saved images from their respected directories and also
+        the text fields to start a new sequence of sign captures.
+
+        Raises:
+            OSError: if directory is not found and therefore could not delete the folder
+    """
     if not window.is_capturing:
+        # Delete the whole directory instead of individually deleting all images and create a new directory
         try:
             shutil.rmtree(keyframes_path)
         except OSError as e:
@@ -275,34 +370,41 @@ def startCapture():
         os.makedirs(keyframes_path)
         os.makedirs(cropped_img_path)
 
+        # Clear the content of the bowText
         delete_text(bowText)
         update_text_field(genLanText, '')
         update_text_field(genLanCountText, 0)
 
         window.text_is_capturing = 'Capturing'
         window.color_is_capturing = (51, 255, 51)
+        # Switch boolean to True
         window.is_capturing = True
-    window.is_capturing = True
 
 
 def endCapture():
+    """ This function displays the predictions after the user finishes his/her signing.
+        Once the End Capture Button is pressed, first, this function will start predicting on
+        the captured images. Next, it will display those predictions on a particular
+        text field. Then, it will call the function that generates the sentence. Finally,
+        it will display the generated sentence in the GUI.
+
+        Raises:
+            Exception: If image is empty and the program could not save the image
+    """
     if window.is_capturing:
         if window.prev_frm_sum == 0 and window.start_index < window.end_index:
             window.keyframes_arr.append((window.start_index, window.end_index))
-        date_now = datetime.now()
-        fig_name = 'Figure_' + date_now.strftime('%Y-%m-%d_%H%M%S') + '.png'
-        plt.plot(window.frm_num_arr, window.frm_gradients)
-        plt.title('Key Frame Extraction Using The Gradient Values')
-        plt.xlabel('frame')
-        plt.ylabel('gradient value')
-        plt.savefig(os.path.join(figures_path, fig_name), bbox_inches='tight')
-        # plt.show()
 
+        # Plot the gradient values and save the figure as png image
+        save_figures()
+
+        # Predict on the key frames and place it on an array of Strings
         prev_word = ''
         sentence = []
         for (start_frm, end_frm) in window.keyframes_arr:
             length = end_frm - start_frm + 1
             if length >= FRAME_LIMIT:
+                # Calculate the interval to find the 5 frames to use for predictions
                 interval = length // 5
                 word1, frm_position, frm_score, crop_img = predict(window.crop_frm_arr[start_frm: (end_frm + 1)],
                                                                    interval, model1)
@@ -320,6 +422,7 @@ def endCapture():
 
                 frm_position += start_frm
                 if word != prev_word:
+                    # Save the cropped image as key frames but only 1 out of 5 predictions
                     img_crop_path = os.path.join(cropped_img_path, str(frm_position) + '_'
                                                  + word + '_' + str(frm_score) + '.jpg')
                     try:
@@ -335,7 +438,8 @@ def endCapture():
                             word = '[unrecognized]'
                     sentence.append(word)
                     prev_word = word
-                print('From frame {} to {}: {} total frames {} {}'.format(start_frm, end_frm, length, word, frm_score))
+                print(f'From frame {start_frm} to {end_frm}: [{length}] total frames, [{word}] final word, '
+                      f'[{frm_score}] final score')
 
         print(f'\nPredictions: {sentence} \nWord Count: {len(sentence)}')
         sentence = Tagger.tokenization(sentence)
@@ -343,6 +447,7 @@ def endCapture():
         window.count = len(sentence)
         update_text_field(bowCountText, window.count)
 
+        # Reset values of global variables
         window.keyframes_arr, window.crop_frm_arr, window.frm_arr, window.frm_num_arr, window.frm_gradients = [], [], [], [], []
         window.prevGradient = np.array([])
         window.start_index, window.end_index, window.frm_num, window.stable_ctr = 0, 0, 0, 0
@@ -352,10 +457,24 @@ def endCapture():
         window.color_is_capturing = (51, 51, 255)
         window.is_capturing = False
 
+        # Call the function that generate the sentence
         Generate()
 
 
+def save_figures():
+    """ Plot the gradient values of the whole capturing session and saves the graph as a png image"""
+    date_now = datetime.now()
+    fig_name = 'Figure_' + date_now.strftime('%Y-%m-%d_%H%M%S') + '.png'
+    plt.plot(window.frm_num_arr, window.frm_gradients)
+    plt.title('Key Frame Extraction Using The Gradient Values')
+    plt.xlabel('frame')
+    plt.ylabel('gradient value')
+    plt.savefig(os.path.join(figures_path, fig_name), bbox_inches='tight')
+    # plt.show()
+
+
 def set_gradient():
+    """ Configures the global variables for when calculating the average gradient values manually"""
     window.pTime = datetime.now().second
     window.sec = 6
     window.cTime = 0
@@ -370,6 +489,9 @@ def homePage():
 
 
 def Generate():
+    """ Generates the sentence by calling the other nlp programs and display the generated
+        sentence in the GUI.
+    """
     sentence = get_text(bowText)
     sentence = Tagger.separate_words(sentence.strip())
     sentence = Tagger.tokenization(sentence)
@@ -380,6 +502,7 @@ def Generate():
 
 
 def switch_model_num():
+    """ Switches the mode of the prediction whether to use one model or three models."""
     if not window.is_using_three_models:
         bowThreeModels.config(text='Use One Model (Fast)')
         window.is_using_three_models = True

@@ -6,6 +6,7 @@ def separate_words(sentence):
 
 
 def is_alpha(letter):
+  """ Checks if the recognized sign belongs to the english alphabet or not. """
   letters = ['A', 'B', 'C', 'D', 'E',
              'F', 'G', 'H', 'I', 'J',
              'K', 'L', 'M', 'N', 'O',
@@ -16,6 +17,9 @@ def is_alpha(letter):
 
 
 def build_letters(sentence):
+  """ Groups all the recognized letters to form a word. As long as the next recognized sign is an alphabet, it
+      will be appended as one word.
+  """
   index = 0
   new_sentence = []
   while index < len(sentence):
@@ -39,6 +43,9 @@ def build_letters(sentence):
 
 
 def anotate(sentence):
+  """ Expands or gives meaning to the recognized sign language if it has other meanings other than the meaning of
+      the word that used to sign the actual word.
+  """
   new_sentence = []
   index = 0
 
@@ -64,6 +71,7 @@ def anotate(sentence):
 
 
 def tokenization(tokens):
+  """ Creates a list of all the words that are recognized and will be treated as tokens. """
   tokens = build_letters(tokens)
   tokens = anotate(tokens)
   return tokens

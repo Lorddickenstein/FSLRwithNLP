@@ -3,69 +3,69 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-""" Returns an image with dimension height by width. """
 def resize_image(src_img, height=224, width=224, xScale=0, yScale=0):
+    """ Returns an image with dimension height by width. """
     return cv2.resize(src_img, (height, width), fx=xScale, fy=yScale, interpolation=cv2.INTER_AREA)
 
 
-""" Show image in opencv. """
 def show_image(name, img):
+    """ Show image in opencv. """
     cv2.imshow(name, img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
 
-""" Show image in matplotlib. """
 def show_plt_image(src_img):
+    """ Show image in matplotlib. """
     plt.imshow(src_img)
     plt.show()
 
 
-""" Convert image into grayscale. """
 def convert_to_grayscale(src_img):
+    """ Convert image into grayscale. """
     return cv2.cvtColor(src_img, cv2.COLOR_BGR2GRAY)
 
 
-""" Returns the image in binary using Otsu's binarization. """
 def get_thresh(src_img):
+    """ Returns the image in binary using Otsu's binarization. """
     return cv2.threshold(src_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
 
-""" Returns an image with morphological transformation using MORPH_CLOSE. """
 def morph_image(src_img, method=cv2.MORPH_CLOSE, kernel=(5, 5)):
+    """ Returns an image with morphological transformation using MORPH_CLOSE. """
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, kernel)
     return cv2.morphologyEx(src_img, method, kernel)
 
 
-""" Get edges using Canny Edge Detection """
 def get_edges(src_img, th1=150, th2=210):
+    """ Get edges using Canny Edge Detection """
     return cv2.Canny(src_img, th1, th2)
 
 
-""" Calculate the contours of an image. """
 def get_contours(img, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE):
+    """ Calculate the contours of an image. """
     return cv2.findContours(img.copy(), mode, method)
 
 
-""" Returns a new image with bounding rectangle. """
 def get_bounding_rect(src_img, mask):
+    """ Returns a new image with bounding rectangle. """
     pts = np.column_stack(np.where(mask.transpose() > 0))
     x, y, w, h = cv2.boundingRect(pts)
     return cv2.rectangle(src_img, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
 
-""" Draw contours into an image. """
 def draw_contours(src_img, contours):
+    """ Draw contours into an image. """
     return cv2.drawContours(src_img, contours, -1, (255, 255, 255), 2)
 
 
-""" Computes the Laplacian and returns the focus measure which is simply the variance of the Laplacian"""
 def variance_of_laplacian(image):
-	return cv2.Laplacian(image, cv2.CV_64F).var()
+    """ Computes the Laplacian and returns the focus measure which is simply the variance of the Laplacian"""
+    return cv2.Laplacian(image, cv2.CV_64F).var()
 
 
-""" Draw convex hull from the given hull"""
 def draw_convex_hull(hull, src_img):
+    """ Draw convex hull from the given hull"""
     pts = np.column_stack(np.where(src_img.transpose() > 0))
     hullpts = cv2.convexHull(pts)
     ((centx, centy), (width, height), angle) = cv2.fitEllipse(hullpts)
@@ -75,8 +75,8 @@ def draw_convex_hull(hull, src_img):
     return hull
 
 
-""" Apply Skin Segmentation"""
 def skin_segmentation(src_img):
+    """ Apply Skin Segmentation"""
     # YCrCb pixel upper and lower boundaries
     YCbCr_lower = np.array([0, 135, 85], np.uint8)
     YCbCr_upper = np.array([255, 180, 135], np.uint8)
@@ -104,8 +104,8 @@ def skin_segmentation(src_img):
     return cv2.bitwise_and(src_img.copy(), src_img.copy(), mask=YCrCb_mask_blur)
 
 
-""" Transform the image into a format that the model expects. """
 def preprocess_image(src_img):
+    """ Transform the image into a format that the model expects. """
     skin_mask = skin_segmentation(src_img)
     gray_img = convert_to_grayscale(skin_mask)
     new_size = resize_image(gray_img, height=120, width=120)
@@ -115,20 +115,21 @@ def preprocess_image(src_img):
     return new_size, np.expand_dims(norm_img, axis=(-1, 0))
 
 
-""" Returns a boolean if the img is blurry or not """
 # https://www.pyimagesearch.com/2015/09/07/blur-detection-with-opencv/
 def detect_blur(src_img):
+    """ Returns a boolean if the img is blurry or not """
     focus_measure = variance_of_laplacian(src_img)
     blurriness = True if focus_measure < 500 else False
     return blurriness, focus_measure
+
 
 def detect_blur2(src_img):
     focus_measure = variance_of_laplacian(src_img)
     return focus_measure
 
 
-""" Returns a 2-tuple, the magnitude mean and a boolean indicating whether the image is blurry or not"""
 def detect_blur_fft(image, size=60, thresh=10):
+    """ Returns a 2-tuple, the magnitude mean and a boolean indicating whether the image is blurry or not"""
     # grab the dimensions of the image and use the dimensions to
     # derive the center (x, y)-coordinates
     (h, w) = image.shape

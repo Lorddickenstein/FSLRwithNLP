@@ -10,11 +10,6 @@
 #####################################################################
 
 import os
-<<<<<<< HEAD
-=======
-"""Disable Tensorflow's Debugging Infos"""
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
->>>>>>> 23a0a57c8983128fb9cf7718ffe754331c6b1538
 import cv2
 import shutil
 import numpy as np
@@ -29,13 +24,9 @@ from PIL import Image, ImageTk
 from datetime import datetime
 from NLP import Tagger
 from Application.NLP import Generator
-
-<<<<<<< HEAD
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Disable Tensorflow's Debugging Info
-# GUI Variables
-=======
+"""Disable Tensorflow's Debugging Infos"""
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 # GUI VARIABLES
->>>>>>> 23a0a57c8983128fb9cf7718ffe754331c6b1538
 cap = cv2.VideoCapture(0)
 cap.set(3, 640)
 cap.set(4, 480)
@@ -69,15 +60,6 @@ window.gradient_thresh_arr = []
 window.pTime = datetime.now().second
 window.sec = 6
 
-<<<<<<< HEAD
-# Paths and Directories
-figures_path = 'D:\\Documents\\Thesis\\Figures'
-keyframes_path = 'D:\\Documents\\Thesis\\keyframes'
-cropped_img_path = 'D:\\Documents\\Thesis\\keyframes\\Cropped images'
-
-# FSLR Model
-model_path = 'D:\\Documents\\Thesis\\Experimental_Models\\Best so far'
-=======
 # PATHS AND DIRECTORIES
 figures_path = 'D:\Documents\Thesis\Figures'
 keyframes_path = 'D:\Documents\Thesis\Keyframes'
@@ -85,10 +67,9 @@ cropped_img_path = 'D:\Documents\Thesis\Keyframes\Cropped Images'
 
 # FSLR MODEL
 model_path = 'D:\Documents\Thesis\Experimental_Models\Best so far'
->>>>>>> 23a0a57c8983128fb9cf7718ffe754331c6b1538
 model_name = 'Model_3-Epochs 35.hdf5'
-# model_name2 = 'Model_2-Epochs 29.hdf5'
-model_name2 = 'Model_4-Epochs 49.hdf5'
+model_name2 = 'Model_2-Epochs 29.hdf5'
+# model_name2 = 'Model_4-Epochs 49.hdf5'
 model_name3 = 'Model_1-Epochs 38.hdf5'
 model1 = SCM.load_and_compile(os.path.join(model_path, model_name))
 model2 = SCM.load_and_compile(os.path.join(model_path, model_name2))
@@ -99,10 +80,8 @@ def predict(img_arr, interval, model):
     """ Predicts the image using the model at a specific frame interval.
         Returns the prediction, which frame it was found, the prediction score,
         and the cropped image of the hand/s.
-
         Always predicts on 5 equally distributed frames and looks for the most
         number of occurring word as the final predicted sign language.
-
         Args:
             img_arr: Numpy Array. A specific section of the cropped main array that
                 contains all the significant frames to be recognized by the model.
@@ -111,7 +90,6 @@ def predict(img_arr, interval, model):
                  to be used for prediction.
             model: Model. The model used for predicting the cropped images. The weights
                 are loaded and compiled using a specific architecture to create the model.
-
         Returns:
             most_occurring_word: String. The final prediction of the model. The most occurring
                 predicted word from the total of 5 predictions made by the model.
@@ -120,7 +98,6 @@ def predict(img_arr, interval, model):
             frm_score: The prediction score of the image in the particular frm_position by
                 the model.
             crop_img: Numpy Array. The image of the prediction word in the particular frm_position.
-
         Raises:
             Exception: if the image is empty, the predicted word is empty with a score of
                 zero and an empty cropped crop_img.
@@ -188,6 +165,7 @@ def insert_text(text_field, text):
     text_field['state'] = DISABLED
 
 
+
 def start_application():
     """ This function is called when this program runs. It displays the camera
         on the GUI. This section is where the images are captured from the camera.
@@ -195,7 +173,6 @@ def start_application():
         the frames for 3 seconds to get the average gradient value of the frame.
         The texts that are displayed on the camera section are customized in this
         function section.
-
         Raises:
             Exception: if image is empty and could not be saved
     """
@@ -357,7 +334,6 @@ def startCapture():
     """ Switches the boolean window.is_capturing from False to True to start capturing.
         Clears all the previously saved images from their respected directories and also
         the text fields to start a new sequence of sign captures.
-
         Raises:
             OSError: if directory is not found and therefore could not delete the folder
     """
@@ -387,7 +363,6 @@ def endCapture():
         the captured images. Next, it will display those predictions on a particular
         text field. Then, it will call the function that generates the sentence. Finally,
         it will display the generated sentence in the GUI.
-
         Raises:
             Exception: If image is empty and the program could not save the image
     """
@@ -524,8 +499,7 @@ startBut = tk.Button(leftFrame, width=20, height=2, text="START", bg="#1B7B03", 
                      command=startCapture)
 startBut.place(x=20, y=525)
 setGradBut = tk.Button(leftFrame, width=20, height=2, text='SET THRESHOLD', bg="#c4c4c4", font=("Montserrat", 9,
-                                                                                                "bold"),
-                       command=set_gradient)
+                       "bold"), command=set_gradient)
 setGradBut.place(x=350, y=525)
 endBut = tk.Button(leftFrame, width=20, height=2, text="END", bg="#E21414", font=("Montserrat", 9, "bold"),
                    command=endCapture)
@@ -538,6 +512,7 @@ bowFrame = tk.Canvas(rightFrame, width=385, height=250, bg="#E84747")
 bowFrame.place(x=20, y=20)
 genLanFrame = tk.Canvas(rightFrame, width=385, height=250, bg="#E84747")
 genLanFrame.place(x=20, y=330)
+
 
 # bowBut = tk.Button(rightFrame, width=10, height=2, text="GENERATE", bg="#c4c4c4",
 #                    font=("Montserrat", 9, "bold"), command=Generate)

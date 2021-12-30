@@ -41,8 +41,6 @@ vb_list = get_list('VB')
 
 
 def update_grammar(nn=nn_list, prp=prp_list, wp=wp_list, wrb=wrb_list, jj=jj_list, ins=in_list, vb=vb_list, nnp=''):
-<<<<<<< HEAD
-=======
     """ Dynamically updates the production of the cfg to accommodate non-recognizable words or words
         that are not in the dictionary and label them as Proper Nouns.
 
@@ -52,7 +50,7 @@ def update_grammar(nn=nn_list, prp=prp_list, wp=wp_list, wrb=wrb_list, jj=jj_lis
         Returns:
             grammar: The context free grammar that the program uses in recognizing the sentence.
     """
->>>>>>> 23a0a57c8983128fb9cf7718ffe754331c6b1538
+
     grammar = f"""
     S -> QP | SP VP | SP JJ | SP NNP | VP PP | SP
     QP -> SP WQ | SP PP WQ | SP VP WQ
@@ -69,14 +67,9 @@ def update_grammar(nn=nn_list, prp=prp_list, wp=wp_list, wrb=wrb_list, jj=jj_lis
     RB -> 'here'
     VB -> {vb}
     NNP -> {nnp}
-<<<<<<< HEAD
-  """
-    return grammar
-
-=======
     """
     return grammar
->>>>>>> 23a0a57c8983128fb9cf7718ffe754331c6b1538
+
 
 class ParseError(Exception):
     pass
@@ -148,8 +141,6 @@ def show_children(tree, pattern):
 
 
 def get_terminal(tree, terminals):
-<<<<<<< HEAD
-=======
     """ A recursion function that acquires all the terminals of a given tree. Useful in acquiring the
         actual words that are used by the user in the sentence structure that he/she
         produces after the recognized text.
@@ -164,7 +155,6 @@ def get_terminal(tree, terminals):
             terminals: String List. A list of all the terminals found in the given parse tree that contains all the
                 end nodes and their pos tag.
     """
->>>>>>> 23a0a57c8983128fb9cf7718ffe754331c6b1538
     name, children = tree
     # print(children)
     if not children:
@@ -177,7 +167,6 @@ def get_terminal(tree, terminals):
 
 
 def gen_sentence(terminals, pattern):
-<<<<<<< HEAD
     tree = ""
     string = "unrecognized"
 
@@ -237,38 +226,38 @@ def gen_sentence(terminals, pattern):
     tree = ""
     string = "unrecognized"
 
-  # you name what
+    # you name what
     if pattern == '(S -> QP) (QP -> SP WQ) (SP -> PRP NN) (WQ -> WP)':
         prps, nn, wp = terminals
         prps = 'YOUR' if prps.split(' ')[1] == 'YOU' else 'MY' if prps.split(' ')[1] == 'I-ME' else 'HIS-HER'
         string = f'(S (QP (WQ (WP {wp.split()[1]}) (FWA IS)) (SP (PRPS {prps}) (NN {nn.split()[1]}))))'
-  # you live where
+    # you live where
     elif pattern == '(S -> QP) (QP -> SP VP WQ) (SP -> PRP) (VP -> VB) (WQ -> WRB)':
         prp, vb, wrb = terminals
         prp = prp.split(' ')[1]
         fwc = 'DOES' if prp == 'HE-SHE' else 'DO'
         prp = 'I' if prp == 'I-ME' else prp
         string = f'(S (QP (WQ (WRB {wrb.split()[1]}) (FWC {fwc})) (SP (PRP {prp})) (VP (VB {vb.split()[1]}))))'
-  # you from where
+    # you from where
     elif pattern == '(S -> QP) (QP -> SP PP WQ) (SP -> PRP) (PP -> IN) (WQ -> WRB)':
         prp, ins, wrb = terminals
         prp = prp.split(' ')[1]
         fwa = 'AM' if prp == 'I-ME' else 'ARE' if prp == 'YOU' else 'IS'
         prp = 'I' if prp == 'I-ME' else prp
         string = f'(S (QP (WQ (WRB {wrb.split()[1]}) (FWA {fwa})) (SP (PRP {prp})) (PP (IN {ins.split()[1]}))))'
-  # i-me name +
+    # i-me name +
     elif pattern == '(S -> SP NNP) (SP -> PRP NN)':
         prps, nn, nnp = terminals
         prps = 'YOUR' if prps.split(' ')[1] == 'YOU' else 'MY' if prps.split(' ')[1] == 'I-ME' else 'HIS-HER'
         string = f'(S (SP (PRPS {prps}) (NN {nn.split()[1]}) (FWA IS)) (NNP {nnp.split()[1]}))'
-  # i-me good
+    # i-me good
     elif pattern == '(S -> SP JJ) (SP -> PRP)':
         prp, jj = terminals
         prp = prp.split(' ')[1]
         fwa = 'AM' if prp == 'I-ME' else 'ARE' if prp == 'YOU' else 'IS'
         prp = 'I' if prp == 'I-ME' else prp
         string = f'(S (SP (PRP {prp}) (FWA {fwa})) (JJ {jj.split()[1]}))'
-  # egg i-me cook
+    # egg i-me cook
     elif pattern == '(S -> SP VP) (SP -> NN SP) (SP -> PRP) (VP -> VB)':
         nn, prp, vb = terminals
         prp = prp.split(' ')[1]
@@ -277,11 +266,11 @@ def gen_sentence(terminals, pattern):
         vb = vb if prp == 'YOU' or prp == 'I-ME' else vb + 'S'
         prp = 'I' if prp == 'I-ME' else prp
         string = f'(S (SP (PRP {prp})) (VP (VB {vb}) (NN {nn.split()[1]})))'
-  # go to office
+    # go to office
     elif pattern == '(S -> VP PP) (VP -> VB) (PP -> IN SP) (SP -> NN)':
         vb, ins, nn = terminals
         string = f'(S (VP (VB {vb.split()[1]})) (PP (IN {ins.split()[1]}) (SP (NN {nn.split()[1]}))))'
-  # you study person
+    # you study person
     elif pattern == '(S -> SP) (SP -> PRP NN)':
         prp, nn = terminals
         fwa = 'ARE' if prp.split(' ')[1] == 'YOU' else 'IS' if prp.split(' ')[1] == 'HE-SHE' else 'AM'
@@ -290,8 +279,6 @@ def gen_sentence(terminals, pattern):
 
     tree = Tree.fromstring(string)
     return ' '.join(flatten(tree))
-
-=======
     """ Generates a sentence by matching the patterns to the known sentence structure of the program.
         The program takes the terminals from the parse tree and then, transforms them into a natural language
         by providing the necessary improvements of that sentence in the english form. This function matches
@@ -364,7 +351,7 @@ def gen_sentence(terminals, pattern):
 
     tree = Tree.fromstring(string)
     return ' '.join(flatten(tree))
->>>>>>> 23a0a57c8983128fb9cf7718ffe754331c6b1538
+
 
 def naturalized_sentence(tokens):
     """ This function takes a list of tokens to generate a sentence based on those tokens. Any unrecognized

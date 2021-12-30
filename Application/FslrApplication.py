@@ -1,17 +1,4 @@
-#####################################################################
-# Author: Jerson Destacamento, Joshua Cruzat, Rocella Legaspi       #
-# Date: October-December                                            #
-# Description: Contains the whole operation of the program.         #
-#              Implemented with a GUI. Captures images from a       #
-#              camera and predicts the sign language using the      #
-#              loaded model.                                        #
-# General System Design: Main Operation, CNN Part                   #
-# Requirements: Camera (Hardware)                                   #
-#####################################################################
-
 import os
-"""Disable Tensorflow's Debugging Infos"""
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import cv2
 import shutil
 import numpy as np
@@ -26,6 +13,7 @@ from PIL import Image, ImageTk
 from datetime import datetime
 from NLP import Tagger
 from Application.NLP import Generator
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 # GUI VARIABLES
 cap = cv2.VideoCapture(0)
@@ -65,7 +53,6 @@ window.sec = 6
 figures_path = 'D:\Documents\Thesis\Figures'
 keyframes_path = 'D:\Documents\Thesis\Keyframes'
 cropped_img_path = 'D:\Documents\Thesis\Keyframes\Cropped Images'
-
 # FSLR MODEL
 model_path = 'D:\Documents\Thesis\Experimental_Models\Best so far'
 model_name = 'Model_3-Epochs 35.hdf5'

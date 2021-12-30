@@ -13,11 +13,9 @@ class HandDetector():
 
         # Initialize mediapipe variables
         self.mpHands = mp.solutions.hands
-        self.hands = self.mpHands.Hands(self.mode, self.maxHands,
-                                        self.detectionConf, self.trackingConf)
+        self.hands = self.mpHands.Hands(self.mode, self.maxHands, self.detectionConf, self.trackingConf)
         self.mpDraw = mp.solutions.drawing_utils
         self.extra = 0.08
-
 
     def find_hands(self, src_img, draw=False):
         # Convert frame to rgb for mediapipe
@@ -44,13 +42,15 @@ class HandDetector():
             if i == 21 or i == 42:
                 # Find the max and min points
                 y_max, y_min, x_max, x_min = max(y_pts), min(y_pts), max(x_pts), min(x_pts)
-                extra_space = src_img.shape[0] * self.extra if src_img.shape[0] < src_img.shape[1] else src_img.shape[1] * self.extra
+                extra_space = src_img.shape[0] * self.extra if src_img.shape[0] < src_img.shape[1] else src_img.shape[
+                                                                                                            1] * self.extra
                 tuple_upper_left = (int(x_min - extra_space), int(y_max + extra_space))
                 tuple_lower_right = (int(x_max + extra_space), int(y_min - extra_space))
                 x1, y1 = (value if value > 0 else 0 for value in tuple_upper_left)
                 x2, y2 = (value if value > 0 else 0 for value in tuple_lower_right)
                 return True, (x1, y1), (x2, y2)
         return False, (), ()
+
 
 def main():
     # Open the camera
@@ -79,7 +79,7 @@ def main():
         fps = 1 / (cTime - pTime)
         pTime = cTime
         # Show Fps
-        cv2.putText(frame, str(int(fps)), (10, 50), cv2.FONT_HERSHEY_PLAIN , 3, (0, 255, 0), 3)
+        cv2.putText(frame, str(int(fps)), (10, 50), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 3)
 
         cv2.imshow('Original', frame)
         if cv2.waitKey(1) & 0xFF == 27:

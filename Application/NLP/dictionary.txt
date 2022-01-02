@@ -5,16 +5,15 @@ Afternoon		NN
 Afternoon		RB
 He-She		PRP
 His-Her		DT
-His-Her		PRP$
+His-Her		PRPS
 I-Love-You		NN
 I-Me		PRP
-Mine		PRP
-Mine		NN
+Mine		PRPS
 Noon		NN
 Morning		NN
 Morning		RB
 You		PRP
-Your		PRP$
+Your		PRPS
 Your		DT
 Congratulations		NNS
 Great		JJ
@@ -24,7 +23,6 @@ Girlfriend		NN
 Help		VB
 Help		NN
 Meet		VB
-Meet		NN
 Table		NN
 Name		NN
 Person		NN
@@ -33,7 +31,6 @@ Rest		VB
 Rest		NN
 Pen		NN
 Stand		VB
-Stand		NN
 Study		VB
 Study		NN
 To		IN
@@ -42,9 +39,8 @@ Invite		VB
 Invite		NN
 Late		RB
 Late		JJ
-No		DT
 No		UH
-Our		PRP$
+Our		PRPS
 Our		DT
 Our		NN
 Sorry		JJ
@@ -53,7 +49,7 @@ That		DT
 Them		PRP
 Them		NN
 This		DT
-This		PRP$
+This		PRPS
 We		PRP
 Welcome		NN
 Welcome		VB
@@ -82,9 +78,8 @@ Cook		VB
 From		IN
 Get		VB
 Go		VB
-Happen		NN
+Happen		VB
 How		WRB
-How		NN
 Introduce		NN
 Introduce		VB
 Let		VB
@@ -107,8 +102,8 @@ Today		NN
 Today		RB
 What		WP
 Where		WRB
-Where		RB
 Which		WDT
 Work		NN
-Work		VBP
+Work		VB
 Hello		NN
+Here		RB

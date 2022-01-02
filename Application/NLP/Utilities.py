@@ -1,6 +1,6 @@
 import os
 
-def read_file(name='None', dict_format=False) -> list:
+def read_dictionary(name='None', dict_format=False) -> list:
     """ Returns a list containing all the recognizable words by the program or a
         dictionary if dict_format is True. Reads a file such as the dictionary.txt
         and puts all its content on a variable.
@@ -39,9 +39,38 @@ def read_file(name='None', dict_format=False) -> list:
     return dictionary if dict_format else list(set(word_list))
 
 
+def read_file(name=None, mode='input'):
+    content = []
+    f = None
+    if name:
+        try:
+            f = open(name, 'r')
+            for line in f:
+                if mode == 'input':
+                    content.append(line.strip())
+                elif mode == 'reference':
+                    line = line.strip()
+                    line = line.split(', ')
+                    content.append(line)
+        except FileNotFoundError as exc:
+            print(exc)
+        finally:
+            if f is not None: f.close()
+        return content
+
+
+def write_file(name=None, content=[]):
+    f = None
+    if name:
+        f = open(name, 'w')
+        for line in content:
+            f.write(line + '\n')
+        f.close()
+
+
 if __name__ == '__main__':
-    dictionary = read_file('dictionary.txt', dict_format=True)
+    dictionary = read_dictionary('dictionary.txt', dict_format=True)
     print(dictionary)
 
-    # persons = read_file('persons.txt', dict_format=True)
+    # persons = read_dictionary('persons.txt', dict_format=True)
     # print(persons)

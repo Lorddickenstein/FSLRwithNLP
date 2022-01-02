@@ -479,8 +479,9 @@ def Generate():
     sentence = Tagger.tokenization(sentence)
     sentence = Generator.naturalized_sentence(sentence)
     update_text_field(genLanText, sentence)
-    update_text_field(genLanCountText, len(sentence.split()))
-    print(f'\nGenerated Sentence: {sentence}\nWord Count: {len(sentence.split())}')
+    count = 0 if sentence == 'Sentence is unrecognized.' else len(sentence.split())
+    update_text_field(genLanCountText, count)
+    print(f'\nGenerated Sentence: {sentence}\nWord Count: {count}')
 
 
 def switch_model_num():

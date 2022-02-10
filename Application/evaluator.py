@@ -45,5 +45,5 @@ if __name__ == '__main__':
     for id, sentence in enumerate(translation):
         scores = calculate_cummulative_ngram(reference[id], sentence)
         print(f'{sentence}\n{reference[id]}')
-        print(f'\tCumulative 1-gram(BLUE-1): {scores[0]:.2f}\n\tCumulative 2-gram(BLUE-3): {scores[1]:.2f}\n'
-              f'\tCumulative 3-gram(BLUE-2): {scores[2]:.2f}\n\tCumulative 4-gram(BLUE-4): {scores[3]:.2f}\n')
+        print(f'\tCumulative 1-gram(BLUE-1): {scores[0]:.4f}\n\tCumulative 2-gram(BLUE-3): {scores[1]:.4f}\n'
+              f'\tCumulative 3-gram(BLUE-2): {scores[2]:.4f}\n\tCumulative 4-gram(BLUE-4): {scores[3]:.4f}\n')

@@ -344,7 +344,7 @@ def naturalized_sentence(tokens):
 
 
 if __name__ == '__main__':
-    text = 'YOU LIVE WHERE'
+    text = 'MEAT I-ME EAT'
     text = text.split()
     text = naturalized_sentence(text)
     print(text)

@@ -377,9 +377,6 @@ def endCapture():
         if window.prev_frm_sum == 0 and window.start_index < window.end_index:
             window.keyframes_arr.append((window.start_index, window.end_index))
 
-        # Plot the gradient values and save the figure as png image
-        save_figures()
-
         # Predict on the key frames and place it on an array of Strings
         prev_word = ''
         sentence = []
@@ -423,6 +420,9 @@ def endCapture():
                 print(f'From frame {start_frm} to {end_frm}: [{length}] total frames, [{word}] final word, '
                       f'[{frm_score}] final score')
 
+        # Plot the gradient values and save the figure as png image
+        save_figures(sentence)
+
         print(f'\nPredictions: {sentence} \nWord Count: {len(sentence)}')
         sentence = Tagger.tokenization(sentence)
         insert_text(bowText, sentence)
@@ -443,16 +443,17 @@ def endCapture():
         Generate()
 
 
-def save_figures():
+def save_figures(sentence):
     """ Plot the gradient values of the whole capturing session and saves the graph as a png image"""
     date_now = datetime.now()
     fig_name = 'Figure_' + date_now.strftime('%Y-%m-%d_%H%M%S') + '.png'
     plt.plot(window.frm_num_arr, window.frm_gradients)
-    plt.title('Key Frame Extraction Using The Gradient Values')
+    sentence = ' '.join([word for word in sentence])
+    plt.title(f'Key Frame Extraction of {sentence}')
     plt.xlabel('frame')
     plt.ylabel('gradient value')
     plt.savefig(os.path.join(figures_path, fig_name), bbox_inches='tight')
-    # plt.show()
+    plt.close()
 
 
 def set_gradient():

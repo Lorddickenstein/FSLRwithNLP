@@ -107,3 +107,7 @@ Work		NN
 Work		VB
 Hello		NN
 Here		RB
+Throw		VB
+Kick		VB
+Eat		VB
+Meat		NN

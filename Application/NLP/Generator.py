@@ -211,7 +211,7 @@ def gen_sentence(terminals, pattern):
     elif pattern == '(S -> QP) (QP -> SP PP WQ) (SP -> PRP) (PP -> IN) (WQ -> WRB)':
         prp, ins, wrb = terminals
         prp = prp.split(' ')[1]
-        fwa = 'AM' if prp == 'I-ME' else 'ARE' if prp == 'YOU' else 'IS'
+        fwa = 'AM' if prp == 'I-ME' else 'IS' if prp == 'HE-SHE' else 'ARE'
         prp = 'I' if prp == 'I-ME' else prp
         string = f'(S (QP (WQ (WRB {wrb.split()[1]}) (FWA {fwa})) (SP (PRP {prp})) (PP (IN {ins.split()[1]}))))'
     #4 i-me name +
@@ -222,9 +222,8 @@ def gen_sentence(terminals, pattern):
     #5 i-me good
     elif pattern == '(S -> SP JJ) (SP -> PRP)':
         prp, jj = terminals
-        prp = prp.split(' ')[1]
-        fwa = 'AM' if prp == 'I-ME' else 'ARE' if prp == 'YOU' else 'IS'
-        prp = 'I' if prp == 'I-ME' else prp
+        fwa = 'AM' if prp.split(' ')[1] == 'I-ME' else 'IS' if prp.split(' ')[1] == 'HE-SHE' else 'ARE'
+        prp = 'I' if prp.split(' ')[1] == 'I-ME' else prp.split(' ')[1]
         string = f'(S (SP (PRP {prp}) (FWA {fwa})) (JJ {jj.split()[1]}))'
     #6 egg i-me cook
     elif pattern == '(S -> SP VP) (SP -> NN SP) (SP -> PRP) (VP -> VB)':
@@ -232,7 +231,7 @@ def gen_sentence(terminals, pattern):
         prp = prp.split(' ')[1]
         fwa = 'AM' if prp == 'I-ME' else 'ARE' if prp == 'YOU' else 'IS'
         vb = vb.split(' ')[1]
-        vb = vb if prp == 'YOU' or prp == 'I-ME' else vb + 'S'
+        vb = vb + 'S' if prp == 'HE-SHE' else vb
         prp = 'I' if prp == 'I-ME' else prp
         string = f'(S (SP (PRP {prp})) (VP (VB {vb}) (NN {nn.split()[1]})))'
     #7 go to office
@@ -242,25 +241,31 @@ def gen_sentence(terminals, pattern):
     #8 you study person
     elif pattern == '(S -> SP) (SP -> PRP NN)':
         prp, nn = terminals
-        fwa = 'ARE' if prp.split(' ')[1] == 'YOU' else 'IS' if prp.split(' ')[1] == 'HE-SHE' else 'AM'
+        fwa = 'AM' if prp.split(' ')[1] == 'I-ME' else 'IS' if prp.split(' ')[1] == 'HE-SHE' else 'ARE'
         prp = 'I' if prp.split()[1] == 'I-ME' else prp.split()[1]
         string = f'(S (SP (PRP {prp}) (FWA {fwa}) (SP (NN {nn.split()[1]}))))'
     #9 i-me live here
     elif pattern == '(S -> SP VP) (SP -> PRP) (VP -> VB RB)':
         prp, vb, rb = terminals
-        vb = 'LIVE' if prp.split(' ')[1] == 'I-ME' else 'LIVES'
-        string = f'(S (SP (PRP {prp.split()[1]})) (VP (VB {vb}) (RB {rb.split()[1]})))'
+        prp = prp.split(' ')[1]
+        vb = vb.split(' ')[1]
+        vb = vb + 'S' if prp == 'HE-SHE' else vb
+        prp = 'I' if prp == 'I-ME' else prp
+        string = f'(S (SP (PRP {prp})) (VP (VB {vb}) (RB {rb.split()[1]})))'
     #10 how you
     elif pattern == '(S -> QP) (QP -> WQ PRP) (WQ -> WRB)':
         wrb, prp = terminals
         prp = prp.split(' ')[1]
-        fwa = 'ARE' if prp == 'YOU' else 'AM' if prp == 'I-ME' else 'IS'
+        fwa = 'AM' if prp == 'I-ME' else 'IS' if prp == 'HE-SHE' else 'ARE'
+        prp = 'I' if prp == 'I-ME' else prp
         string = f'(S (QP (WQ (WRB {wrb.split()[1]}) (FWA {fwa})) (SP (PRP {prp}))))'
     #11 you study what
     elif pattern == '(S -> QP) (QP -> SP VP WQ) (SP -> PRP) (VP -> VB) (WQ -> WP)':
         prp, vb, wp = terminals
-        fwc = 'DOES' if prp.split(' ')[1] == 'HE-SHE' else 'DO'
-        string = f'(S (QP (WQ (WP {wp.split()[1]}) (FWC {fwc})) (SP (PRP {prp.split()[1]})) (VP (VB {vb.split()[1]}))))'
+        prp = prp.split(' ')[1]
+        fwc = 'DOES' if prp == 'HE-SHE' else 'DO'
+        prp = 'I' if prp == 'I-ME' else prp
+        string = f'(S (QP (WQ (WP {wp.split()[1]}) (FWC {fwc})) (SP (PRP {prp})) (VP (VB {vb.split()[1]}))))'
     #12 happen what
     elif pattern == '(S -> QP) (QP -> VP WQ) (VP -> VB) (WQ -> WP)':
         vb, wp = terminals
@@ -293,7 +298,11 @@ def gen_sentence(terminals, pattern):
     #18 no i-me work / yes i-me study
     elif pattern == '(S -> SP) (SP -> UH PRP VP) (VP -> VB)':
         uh, prp, vb = terminals
-        string = f'(S (SP (UH {uh.split()[1]}) (PRP {prp.split()[1]}) (VP (VB {vb.split()[1]}))))'
+        prp = prp.split()[1]
+        vb = vb.split()[1]
+        vb = vb + 'S' if prp == 'HE-SHE' else vb
+        prp = 'I' if prp == 'I-ME' else prp
+        string = f'(S (SP (UH {uh.split()[1]}) (PRP {prp}) (VP (VB {vb}))))'
 
     tree = Tree.fromstring(string)
     return ' '.join(flatten(tree))
@@ -332,7 +341,7 @@ def naturalized_sentence(tokens):
         try:
             tree = parse_root(tokenize(str(tree), ' +|[A-Z a-z -]+|[()]'))
             pattern = show_children(parse_root(tokenize(str(tree), ' +|[A-Za-z-]+|[()]')), "")
-            # print(pattern)
+            print(pattern)
             terminals = get_terminal(tree, [])
             sentence = gen_sentence(terminals, pattern.strip())
         except Exception as EXE:
@@ -344,7 +353,7 @@ def naturalized_sentence(tokens):
 
 
 if __name__ == '__main__':
-    text = 'MEAT I-ME EAT'
+    text = 'THIS EGG'
     text = text.split()
     text = naturalized_sentence(text)
     print(text)

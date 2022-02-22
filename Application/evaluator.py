@@ -40,7 +40,7 @@ if __name__ == '__main__':
     reference = [[sentence.split() for sentence in sentences] for sentences in reference]
 
     # Uncomment if you want to write translations in a text file
-    # write_translations(translation)
+    write_translations(translation)
 
     for id, sentence in enumerate(translation):
         scores = calculate_cummulative_ngram(reference[id], sentence)

@@ -64,6 +64,7 @@ def write_file(name=None, content=[]):
     if name:
         f = open(name, 'w')
         for line in content:
+            line = ' '.join(line)
             f.write(line + '\n')
         f.close()
 

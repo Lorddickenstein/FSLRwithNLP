@@ -1,5 +1,5 @@
 import os
-from Application.NLP.Utilities import read_file
+from Application.NLP.Utilities import read_dictionary
 
 def separate_words(sentence):
   return sentence.split(' ')
@@ -44,7 +44,7 @@ def build_letters(sentence):
 
 def anotate(sentence):
   """ Expands or gives meaning to the recognized sign language if it has other meanings other than the meaning of
-      the word that used to sign the actual word.
+      the word that was used to sign the actual word.
   """
   new_sentence = []
   index = 0
@@ -60,9 +60,12 @@ def anotate(sentence):
     elif word == 'OK':
       word = 'OKAY'
     elif word in persons:
-      if sentence[index + 1] == 'PERSON':
-        word = persons[word]
-        index += 1
+      try:
+        if sentence[index + 1] == 'PERSON':
+          word = persons[word]
+          index += 1
+      except Exception:
+        pass
 
     new_sentence.append(word)
     index += 1
@@ -80,7 +83,7 @@ def tokenization(tokens):
 cwd = os.getcwd()
 cwd = cwd + '\\NLP' if '\\NLP' not in cwd else cwd
 path = os.path.join(cwd, 'persons.txt')
-persons = {occupation: person for occupation, person in read_file(path, dict_format=True)}
+persons = {occupation: person for occupation, person in read_dictionary(path, dict_format=True)}
 
 if __name__ == '__main__':
   sentence = ['I-Me', 'J', 'E', 'R', 'S', 'O', 'N', 'and', 'I-Me', 'Live', 'in', 'C', 'U', 'B', 'A', 'O', 'HO', 'I-Me', 'DRAWING', 'PERSON']

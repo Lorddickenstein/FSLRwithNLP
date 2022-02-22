@@ -12,7 +12,7 @@
 import os
 import nltk
 import re
-from Application.NLP.Utilities import read_file
+from Application.NLP.Utilities import read_dictionary
 from nltk import Tree
 from nltk.util import flatten
 
@@ -20,8 +20,8 @@ from nltk.util import flatten
 cwd = os.getcwd()
 cwd = cwd + '\\NLP' if '\\NLP' not in cwd else cwd
 path = os.path.join(cwd, 'dictionary.txt')
-word_list = read_file(path)
-dictionary = read_file(path, dict_format=True)
+word_list = read_dictionary(path)
+dictionary = read_dictionary(path, dict_format=True)
 
 
 def get_list(pos_tag):
@@ -32,15 +32,22 @@ def get_list(pos_tag):
 
 # Acquire all the productions from the dictionary
 nn_list = get_list('NN')
+nns_list = get_list('NNS')
 prp_list = get_list('PRP')
+prps_list = get_list('PRPS')
 wp_list = get_list('WP')
 wrb_list = get_list('WRB')
 jj_list = get_list('JJ')
 in_list = get_list('IN')
 vb_list = get_list('VB')
+rb_list = get_list('RB')
+dt_list = get_list('DT')
+uh_list = get_list('UH')
+wdt_list = get_list('WDT')
 
 
-def update_grammar(nn=nn_list, prp=prp_list, wp=wp_list, wrb=wrb_list, jj=jj_list, ins=in_list, vb=vb_list, nnp=''):
+def update_grammar(nn=nn_list, prp=prp_list, wp=wp_list, wrb=wrb_list, jj=jj_list, ins=in_list, vb=vb_list, nnp='',
+                   rb=rb_list, dt=dt_list, prps=prps_list, uh=uh_list, nns=nns_list, wdt=wdt_list):
     """ Dynamically updates the production of the cfg to accommodate non-recognizable words or words
         that are not in the dictionary and label them as Proper Nouns.
 
@@ -52,21 +59,26 @@ def update_grammar(nn=nn_list, prp=prp_list, wp=wp_list, wrb=wrb_list, jj=jj_lis
     """
 
     grammar = f"""
-    S -> QP | SP VP | SP JJ | SP NNP | VP PP | SP
-    QP -> SP WQ | SP PP WQ | SP VP WQ
-    SP -> PRP NN | PRP | NN | NN SP 
-    VP -> VB RB | VB 
-    PP -> IN SP | IN
+    S -> QP | SP VP | SP JJ | SP NNP | VP PP | SP | JJ SP
+    QP -> SP WQ | SP PP WQ | SP VP WQ | WQ PRP | VP WQ 
+    SP -> PRP NN | PRP | NN | NN SP | PP VP | PP NN | VP NN | UH PRP VP | PP
+    VP -> VB RB | VB PRP | VB DT | VB 
+    PP -> IN SP | DT PP | IN | DT | PRPS
     WQ -> WP | WRB
     NN -> {nn}
     PRP -> {prp}
+    PRPS -> {prps}
     WP -> {wp}
     WRB -> {wrb}
     JJ -> {jj}
     IN -> {ins}
-    RB -> 'here'
+    RB -> {rb}
     VB -> {vb}
     NNP -> {nnp}
+    DT -> {dt}
+    UH -> {uh}
+    NNS -> {nns}
+    WDT -> {wdt}
     """
     return grammar
 
@@ -297,57 +309,115 @@ def gen_sentence(terminals, pattern):
     """
     tree = ""
     string = "unrecognized"
-
-    # you name what
+    vowels = ['A', 'E', 'I', 'O', 'U']
+    #1 you name what
     if pattern == '(S -> QP) (QP -> SP WQ) (SP -> PRP NN) (WQ -> WP)':
         prps, nn, wp = terminals
         prps = 'YOUR' if prps.split(' ')[1] == 'YOU' else 'MY' if prps.split(' ')[1] == 'I-ME' else 'HIS-HER'
         string = f'(S (QP (WQ (WP {wp.split()[1]}) (FWA IS)) (SP (PRPS {prps}) (NN {nn.split()[1]}))))'
-    # you live where
+    #2 you live where
     elif pattern == '(S -> QP) (QP -> SP VP WQ) (SP -> PRP) (VP -> VB) (WQ -> WRB)':
         prp, vb, wrb = terminals
         prp = prp.split(' ')[1]
         fwc = 'DOES' if prp == 'HE-SHE' else 'DO'
         prp = 'I' if prp == 'I-ME' else prp
         string = f'(S (QP (WQ (WRB {wrb.split()[1]}) (FWC {fwc})) (SP (PRP {prp})) (VP (VB {vb.split()[1]}))))'
-    # you from where
+    #3 you from where
     elif pattern == '(S -> QP) (QP -> SP PP WQ) (SP -> PRP) (PP -> IN) (WQ -> WRB)':
         prp, ins, wrb = terminals
         prp = prp.split(' ')[1]
-        fwa = 'AM' if prp == 'I-ME' else 'ARE' if prp == 'YOU' else 'IS'
+        fwa = 'AM' if prp == 'I-ME' else 'IS' if prp == 'HE-SHE' else 'ARE'
         prp = 'I' if prp == 'I-ME' else prp
         string = f'(S (QP (WQ (WRB {wrb.split()[1]}) (FWA {fwa})) (SP (PRP {prp})) (PP (IN {ins.split()[1]}))))'
-    # i-me name +
+    #4 i-me name +
     elif pattern == '(S -> SP NNP) (SP -> PRP NN)':
         prps, nn, nnp = terminals
         prps = 'YOUR' if prps.split(' ')[1] == 'YOU' else 'MY' if prps.split(' ')[1] == 'I-ME' else 'HIS-HER'
         string = f'(S (SP (PRPS {prps}) (NN {nn.split()[1]}) (FWA IS)) (NNP {nnp.split()[1]}))'
-    # i-me good
+    #5 i-me good
     elif pattern == '(S -> SP JJ) (SP -> PRP)':
         prp, jj = terminals
-        prp = prp.split(' ')[1]
-        fwa = 'AM' if prp == 'I-ME' else 'ARE' if prp == 'YOU' else 'IS'
-        prp = 'I' if prp == 'I-ME' else prp
+        fwa = 'AM' if prp.split(' ')[1] == 'I-ME' else 'IS' if prp.split(' ')[1] == 'HE-SHE' else 'ARE'
+        prp = 'I' if prp.split(' ')[1] == 'I-ME' else prp.split(' ')[1]
         string = f'(S (SP (PRP {prp}) (FWA {fwa})) (JJ {jj.split()[1]}))'
-    # egg i-me cook
+    #6 egg i-me cook
     elif pattern == '(S -> SP VP) (SP -> NN SP) (SP -> PRP) (VP -> VB)':
         nn, prp, vb = terminals
         prp = prp.split(' ')[1]
         fwa = 'AM' if prp == 'I-ME' else 'ARE' if prp == 'YOU' else 'IS'
         vb = vb.split(' ')[1]
-        vb = vb if prp == 'YOU' or prp == 'I-ME' else vb + 'S'
+        vb = vb + 'S' if prp == 'HE-SHE' else vb
         prp = 'I' if prp == 'I-ME' else prp
         string = f'(S (SP (PRP {prp})) (VP (VB {vb}) (NN {nn.split()[1]})))'
-    # go to office
+    #7 go to office
     elif pattern == '(S -> VP PP) (VP -> VB) (PP -> IN SP) (SP -> NN)':
         vb, ins, nn = terminals
         string = f'(S (VP (VB {vb.split()[1]})) (PP (IN {ins.split()[1]}) (SP (NN {nn.split()[1]}))))'
-    # you study person
+    #8 you study person
     elif pattern == '(S -> SP) (SP -> PRP NN)':
         prp, nn = terminals
-        fwa = 'ARE' if prp.split(' ')[1] == 'YOU' else 'IS' if prp.split(' ')[1] == 'HE-SHE' else 'AM'
+        fwa = 'AM' if prp.split(' ')[1] == 'I-ME' else 'IS' if prp.split(' ')[1] == 'HE-SHE' else 'ARE'
         prp = 'I' if prp.split()[1] == 'I-ME' else prp.split()[1]
         string = f'(S (SP (PRP {prp}) (FWA {fwa}) (SP (NN {nn.split()[1]}))))'
+    #9 i-me live here
+    elif pattern == '(S -> SP VP) (SP -> PRP) (VP -> VB RB)':
+        prp, vb, rb = terminals
+        prp = prp.split(' ')[1]
+        vb = vb.split(' ')[1]
+        vb = vb + 'S' if prp == 'HE-SHE' else vb
+        prp = 'I' if prp == 'I-ME' else prp
+        string = f'(S (SP (PRP {prp})) (VP (VB {vb}) (RB {rb.split()[1]})))'
+    #10 how you
+    elif pattern == '(S -> QP) (QP -> WQ PRP) (WQ -> WRB)':
+        wrb, prp = terminals
+        prp = prp.split(' ')[1]
+        fwa = 'AM' if prp == 'I-ME' else 'IS' if prp == 'HE-SHE' else 'ARE'
+        prp = 'I' if prp == 'I-ME' else prp
+        string = f'(S (QP (WQ (WRB {wrb.split()[1]}) (FWA {fwa})) (SP (PRP {prp}))))'
+    #11 you study what
+    elif pattern == '(S -> QP) (QP -> SP VP WQ) (SP -> PRP) (VP -> VB) (WQ -> WP)':
+        prp, vb, wp = terminals
+        prp = prp.split(' ')[1]
+        fwc = 'DOES' if prp == 'HE-SHE' else 'DO'
+        prp = 'I' if prp == 'I-ME' else prp
+        string = f'(S (QP (WQ (WP {wp.split()[1]}) (FWC {fwc})) (SP (PRP {prp})) (VP (VB {vb.split()[1]}))))'
+    #12 happen what
+    elif pattern == '(S -> QP) (QP -> VP WQ) (VP -> VB) (WQ -> WP)':
+        vb, wp = terminals
+        # vb = 'HAPPEN' if wp.split(' ')[1] == 'what' else 'happen'
+        string = f'(S (QP (WQ (WP {wp.split()[1]})) (VP (VB {vb.split()[1]}))))'
+    #13 Good Morning/ Afternoon / Evening + other nouns
+    elif pattern == '(S -> JJ SP) (SP -> NN)':
+        jj, nn = terminals
+        string = f'(S (JJ {jj.split()[1]}) (SP (NN {nn.split()[1]})))'
+    #14 nice to meet you
+    elif pattern == '(S -> JJ SP) (SP -> PP VP) (PP -> IN) (VP -> VB PRP)':
+        jj, ins, vb, prp = terminals
+        string = f'(S (JJ {jj.split()[1]}) (SP (PP (IN {ins.split()[1]})) (VP (VB {vb.split()[1]}) (PRP {prp.split()[1]}))))'
+    #15 this banana
+    elif pattern == '(S -> SP) (SP -> PP NN) (PP -> DT)':
+        dt, nn = terminals
+        dt_vowel = 'AN' if nn.split(' ')[1][0] == vowels[0] else 'AN' if nn.split(' ')[1][0] == vowels[1] \
+            else 'AN' if nn.split(' ')[1][0] == vowels[2] else 'AN' if nn.split(' ')[1][0] == vowels[3] \
+            else 'AN' if nn.split(' ')[1][0] == vowels[4] else 'A'
+        string = f'(S (SP (PP (DT {dt.split()[1]}) (FWA IS) (PP (DT {dt_vowel}))) (NN {nn.split()[1]})))'
+    #16 that mine
+    elif pattern == '(S -> SP) (SP -> PP) (PP -> DT PP) (PP -> PRPS)':
+        dt, prps = terminals
+        prps = 'YOURS' if prps.split(' ')[1] == 'YOUR' else prps.split(' ')[1]
+        string = f'(S (SP (PP (DT {dt.split()[1]}) (FWA IS) (PP (PRPS {prps})))))'
+    #17 get the ball
+    elif pattern == '(S -> SP) (SP -> VP NN) (VP -> VB)':
+        vb, nn = terminals
+        string = f'(S (SP (VP (VB {vb.split()[1]}) (DT THE)) (NN {nn.split()[1]})))'
+    #18 no i-me work / yes i-me study
+    elif pattern == '(S -> SP) (SP -> UH PRP VP) (VP -> VB)':
+        uh, prp, vb = terminals
+        prp = prp.split()[1]
+        vb = vb.split()[1]
+        vb = vb + 'S' if prp == 'HE-SHE' else vb
+        prp = 'I' if prp == 'I-ME' else prp
+        string = f'(S (SP (UH {uh.split()[1]}) (PRP {prp}) (VP (VB {vb}))))'
 
     tree = Tree.fromstring(string)
     return ' '.join(flatten(tree))
@@ -383,19 +453,23 @@ def naturalized_sentence(tokens):
     for tree in rd_parser.parse(tokens):
         tree = tree
 
-    try:
-        tree = parse_root(tokenize(str(tree), ' +|[A-Z a-z -]+|[()]'))
-        pattern = show_children(parse_root(tokenize(str(tree), ' +|[A-Za-z-]+|[()]')), "")
-        terminals = get_terminal(tree, [])
-        sentence = gen_sentence(terminals, pattern.strip())
-    except Exception as EXE:
-        sentence = "Unrecognized"
+    if len(tokens) != 1:
+        try:
+            tree = parse_root(tokenize(str(tree), ' +|[A-Z a-z -]+|[()]'))
+            pattern = show_children(parse_root(tokenize(str(tree), ' +|[A-Za-z-]+|[()]')), "")
+            print(pattern)
+            terminals = get_terminal(tree, [])
+            sentence = gen_sentence(terminals, pattern.strip())
+        except Exception as EXE:
+            sentence = "Sentence is unrecognized."
+    else:
+        sentence = tokens[0]
 
     return sentence
 
 
 if __name__ == '__main__':
-    text = 'YOU NAME WHAT'
+    text = 'THIS EGG'
     text = text.split()
     text = naturalized_sentence(text)
     print(text)

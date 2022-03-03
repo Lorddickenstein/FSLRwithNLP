@@ -1,3 +1,14 @@
+#####################################################################
+# Author: Jerson Destacamento, Joshua Cruzat, Rocella Legaspi       #
+# Date: October-December                                            #
+# Program Title: SignClassificationModule.py                        #
+# Description: Provides the Mediapipe hand tracking functionalities #
+#              for the main program.                                #
+# General System Design: FSL Classification/Prediction, CNN part    #
+# Data structures, Algorithms, Controls: List, Dictionary, CNN      #
+# Requirements: Models                                              #
+#####################################################################
+
 import tensorflow as tf
 from tensorflow import keras
 from keras.models import Sequential, load_model

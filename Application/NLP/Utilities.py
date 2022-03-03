@@ -1,3 +1,14 @@
+#####################################################################
+# Author: Jerson Destacamento, Joshua Cruzat, Rocella Legaspi       #
+# Date: October-December                                            #
+# Program Title: Utilities.py                                       #
+# Description: Contains all the functions required in file handling #
+# General System Design: Utility                                    #
+# Data structures, Algorithms, Controls: Lists, Dictionaries,       #
+#                 File Handling, Try Except                         #
+# Requirements: None                                                #
+#####################################################################
+
 import os
 
 def read_dictionary(name='None', dict_format=False) -> list:

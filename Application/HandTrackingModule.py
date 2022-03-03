@@ -1,3 +1,15 @@
+#####################################################################
+# Author: Jerson Destacamento, Joshua Cruzat, Rocella Legaspi       #
+# Date: October-December                                            #
+# Program Title: HandTrackingModule.py                              #
+# Description: Provides the Mediapipe hand tracking functionalities #
+#              for the main program.                                #
+# General System Design: FSL Recognition                            #
+# Data structures, Algorithms, Controls: Class, Lists, Dictionary   #
+#               Tuples                                              #
+# Requirements: Camera (Hardware)                                   #
+#####################################################################
+
 import cv2
 import mediapipe as mp
 import time

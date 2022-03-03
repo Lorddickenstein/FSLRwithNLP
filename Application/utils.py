@@ -1,3 +1,15 @@
+#####################################################################
+# Author: Jerson Destacamento, Joshua Cruzat, Rocella Legaspi       #
+# Date: October-December                                            #
+# Program Title: utils.py                                           #
+# Description: Contains all the utility functions needed for image  #
+#              processings                                          #
+# General System Design: Utility                                    #
+# Data structures, Algorithms, Controls: List, Dictionary, File     #
+#              Handling, Try Except                                 #
+# Requirements: None		                                        #
+#####################################################################
+
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt

@@ -82,7 +82,6 @@ Now		JJ
 Office		NN
 School		NN
 Student		NN
-Sit		NN
 Sit		VB
 Store		NN
 Strawberry		NN
@@ -118,8 +117,11 @@ Catch		NN
 Job		NN
 Call		VB
 Leave		VB
-Kow		VB
+Know		VB
 See		VB
 Breakup		NN
 Cat		NN
-BUILDING		NN
+Building		NN
+Friend		NN
+Put		VB
+Park		NN

@@ -1,0 +1,2 @@
+cd Application
+python FslrApplication.py

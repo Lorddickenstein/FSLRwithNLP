@@ -1,18 +1,21 @@
 #####################################################################
 # Author: Jerson Destacamento, Joshua Cruzat, Rocella Legaspi       #
 # Date: October-December                                            #
+# Program Title: Generator.py                                       #
 # Description: Contains the natural language processing using the   #
 #              context free grammar. The cfg were designed by the   #
 #              programmers and reads from the dictionary.txt file   #
 #              to get the pos tag of each recognized word.          #
 # General System Design: Sentence Generator, NLP Part               #
-# Requirements: Camera (Hardware)                                   #
+# Data structures, Algorithms, Controls: Lists, Dictionary,         #
+#               Recursions, Tree (NLTK), Try Except                 #
+# Requirements: None                                                #
 #####################################################################
 
 import os
 import nltk
 import re
-from Application.NLP.Utilities import read_dictionary
+from NLP.Utilities import read_dictionary
 from nltk import Tree
 from nltk.util import flatten
 
@@ -269,7 +272,6 @@ def gen_sentence(terminals, pattern):
     #12 happen what
     elif pattern == '(S -> QP) (QP -> VP WQ) (VP -> VB) (WQ -> WP)':
         vb, wp = terminals
-        # vb = 'HAPPEN' if wp.split(' ')[1] == 'what' else 'happen'
         string = f'(S (QP (WQ (WP {wp.split()[1]})) (VP (VB {vb.split()[1]}))))'
     #13 Good Morning/ Afternoon / Evening + other nouns
     elif pattern == '(S -> JJ SP) (SP -> NN)':
@@ -289,7 +291,8 @@ def gen_sentence(terminals, pattern):
     #16 that mine
     elif pattern == '(S -> SP) (SP -> PP) (PP -> DT PP) (PP -> PRPS)':
         dt, prps = terminals
-        prps = 'YOURS' if prps.split(' ')[1] == 'YOUR' else prps.split(' ')[1]
+        prps = prps.split(' ')[1]
+        prps = prps if prps == 'MINE' else prps + 'S'
         string = f'(S (SP (PP (DT {dt.split()[1]}) (FWA IS) (PP (PRPS {prps})))))'
     #17 get the ball
     elif pattern == '(S -> SP) (SP -> VP NN) (VP -> VB)':
@@ -341,7 +344,7 @@ def naturalized_sentence(tokens):
         try:
             tree = parse_root(tokenize(str(tree), ' +|[A-Z a-z -]+|[()]'))
             pattern = show_children(parse_root(tokenize(str(tree), ' +|[A-Za-z-]+|[()]')), "")
-            print(pattern)
+            # print(pattern)
             terminals = get_terminal(tree, [])
             sentence = gen_sentence(terminals, pattern.strip())
         except Exception as EXE:
@@ -353,7 +356,7 @@ def naturalized_sentence(tokens):
 
 
 if __name__ == '__main__':
-    text = 'THIS EGG'
+    text = 'I-ME LIVE HERE'
     text = text.split()
     text = naturalized_sentence(text)
     print(text)

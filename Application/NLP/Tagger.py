@@ -1,5 +1,17 @@
+#####################################################################
+# Author: Jerson Destacamento, Joshua Cruzat, Rocella Legaspi       #
+# Date: October-December                                            #
+# Program Title: Tagger.py                                          #
+# Description: Transforms the inputs into a format that is          #
+#              recognizable by the program.                         #
+# General System Design: Data Conversion, NLP Part                  #
+# Data structures, Algorithms, Controls: List, Dictionary, File     #
+#              Handling, Try Except                                 #
+# Requirements: None		                                        #
+#####################################################################
+
 import os
-from Application.NLP.Utilities import read_dictionary
+from NLP.Utilities import read_dictionary
 
 def separate_words(sentence):
   return sentence.split(' ')
